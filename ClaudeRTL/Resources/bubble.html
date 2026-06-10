@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>
+  :root{
+    --accent:#C15F3C;
+    --accent-soft:#D4A27F;
+    --bg:#262220; --card:#2E2A27; --surface:#211E1C;
+    --ink:#F4F3EE; --muted:#B1ADA1; --line:#3A3531;
+    --code-bg:#1B1815;
+    --shadow:0 18px 50px rgba(0,0,0,.45),0 3px 10px rgba(0,0,0,.3);
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --accent:#C15F3C;
+      --bg:#FAF9F5; --card:#FFFFFF; --surface:#F4F3EE;
+      --ink:#191919; --muted:#6B675F; --line:#E7E3D8;
+      --code-bg:#F4F3EE;
+      --shadow:0 16px 40px rgba(25,25,25,.12),0 2px 8px rgba(25,25,25,.08);
+    }
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --accent:#D97757; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:transparent;overflow:hidden;
+    font-family:-apple-system,"SF Arabic","Geeza Pro",system-ui,sans-serif;color:var(--ink)}
+  .wrap{padding:14px}
+  .bubble{position:relative;width:max-content;max-width:410px;
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);
+    opacity:0;transform:translateY(-8px) scale(.96);
+    transition:opacity .16s cubic-bezier(.2,.8,.2,1),transform .16s cubic-bezier(.2,.8,.2,1)}
+  .bubble.show{opacity:1;transform:none}
+  .arrow{position:absolute;top:-6px;inset-inline-start:34px;width:13px;height:13px;
+    background:var(--card);border-inline-start:1px solid var(--line);
+    border-block-start:1px solid var(--line);transform:rotate(45deg);border-radius:4px 0 0 0}
+  .arrow.bottom{top:auto;bottom:-6px;border-block-start:none;border-block-end:1px solid var(--line);
+    border-radius:0 0 0 4px;transform:rotate(225deg)}
+  .head{display:flex;align-items:center;gap:6px;padding:10px 14px 9px;border-bottom:1px solid var(--line)}
+  .brand{font-family:Georgia,"Times New Roman",serif;font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--accent);
+    margin-inline-start:auto;display:flex;align-items:center;gap:6px}
+  .brand .sp{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px color-mix(in srgb,var(--accent) 60%, transparent)}
+  .ic{width:26px;height:26px;display:grid;place-items:center;border:none;
+    background:transparent;color:var(--muted);border-radius:8px;cursor:pointer;transition:.13s}
+  .ic:hover{background:var(--surface);color:var(--ink)}
+  .ic.play:hover{color:var(--accent)}
+  .ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .body{position:relative;margin:0 14px;padding:11px 14px 12px;
+    border-inline-start:3px solid var(--accent);background:var(--surface);border-radius:10px;
+    max-height:290px;overflow-y:auto;font-size:16px;line-height:1.85;color:var(--ink);unicode-bidi:plaintext}
+  .body::-webkit-scrollbar{width:8px}
+  .body::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--line) 80%, var(--muted));border-radius:8px}
+  .body p,.body li,.body blockquote,.body h1,.body h2,.body h3,.body h4{unicode-bidi:plaintext;margin:.12em 0 .5em}
+  .body h1,.body h2,.body h3,.body h4{font-family:Georgia,"Times New Roman",serif}
+  .body>:first-child{margin-top:0}.body>:last-child{margin-bottom:0}
+  .body h1{font-size:1.32em}.body h2{font-size:1.18em}.body h3{font-size:1.07em}
+  .body ul,.body ol{margin:.25em 0 .55em;padding-inline-start:1.3em}
+  .body li{margin:.12em 0}
+  .body blockquote{border-inline-start:3px solid var(--accent-soft);padding-inline-start:11px;color:var(--muted)}
+  .body a{color:var(--accent);text-decoration:none}
+  .body hr{border:none;border-top:1px solid var(--line);margin:.7em 0}
+  .body strong{font-weight:700}.body em{font-style:italic}
+  .body code.inl{background:var(--code-bg);border:1px solid var(--line);border-radius:6px;
+    padding:1px 6px;font-family:"SF Mono",Menlo,monospace;font-size:.85em;direction:ltr;unicode-bidi:isolate}
+  .body pre{direction:ltr;unicode-bidi:isolate;text-align:left;background:var(--code-bg);
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto;margin:.3em 0 .55em}
+  .body pre code{font-family:"SF Mono",Menlo,monospace;font-size:13px;line-height:1.55;white-space:pre;color:var(--ink)}
+  .body .w.on{background:color-mix(in srgb,var(--accent) 26%, transparent);border-radius:3px;
+    box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 18%, transparent)}
+  .foot{padding:8px 10px 9px;text-align:center;font-size:9.5px;line-height:1.5;letter-spacing:.2px;color:var(--muted)}
+  .foot b{color:var(--accent);font-weight:700}
+  .toast{position:absolute;bottom:34px;inset-inline:0;margin:auto;width:max-content;
+    background:color-mix(in srgb,var(--ink) 88%, transparent);color:var(--card);font-size:11.5px;
+    padding:5px 12px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+</style></head><body>
+  <div class="wrap"><div class="bubble" id="bubble">
+    <div class="arrow"></div>
+    <div class="head">
+      <button class="ic" id="bClose" title="اغلاق (Esc)"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+      <button class="ic play" id="bPlay" title="استماع للنص">
+        <svg id="iconPlay" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" style="display:none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <button class="ic" id="bCopy" title="نسخ"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+      <span class="brand"><span class="sp"></span>Claude RTL</span>
+    </div>
+    <div class="body" id="body"></div>
+    <div class="foot" dir="ltr">by <b>GRW&nbsp;Lab</b> &mdash; grwlab.net</div>
+    <div class="toast" id="toast">اتنسخ ✓</div>
+  </div></div>
+
+<script>
+  var RAW = "", PLAIN = "", toastT;
+  function bridge(msg) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
+      window.webkit.messageHandlers.bridge.postMessage(msg);
+  }
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function mdToHtml(src){
+    src = src.replace(/\r\n/g,"\n");
+    var codes = [];
+    src = src.replace(/```([\w+-]*)\n?([\s\S]*?)```/g, function(m, lang, code){
+      codes.push(code.replace(/\n$/,"")); return "@@C"+(codes.length-1)+"@@";
+    });
+    src = esc(src);
+    src = src.replace(/`([^`]+)`/g, function(m,c){return '<code class="inl">'+c+"</code>";});
+    src = src.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    src = src.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    src = src.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>');
+    var lines = src.split("\n"), out = [], i = 0, list = null;
+    function close(){ if(list){ out.push("</"+list+">"); list=null; } }
+    while(i < lines.length){
+      var ln = lines[i];
+      var cm = ln.match(/^@@C(\d+)@@$/);
+      if(cm){ close(); out.push("<pre><code>"+esc(codes[+cm[1]])+"</code></pre>"); i++; continue; }
+      var h = ln.match(/^(#{1,6})\s+(.*)$/);
+      if(h){ close(); var l=h[1].length; out.push("<h"+l+">"+h[2]+"</h"+l+">"); i++; continue; }
+      if(/^\s*([-*+_]){3,}\s*$/.test(ln)){ close(); out.push("<hr>"); i++; continue; }
+      if(/^\s*>\s?/.test(ln)){ close(); out.push("<blockquote>"+ln.replace(/^\s*>\s?/,"")+"</blockquote>"); i++; continue; }
+      var ul = ln.match(/^\s*[-*+]\s+(.*)$/);
+      if(ul){ if(list!=="ul"){close(); out.push("<ul>"); list="ul";} out.push("<li>"+ul[1]+"</li>"); i++; continue; }
+      var ol = ln.match(/^\s*\d+[.)]\s+(.*)$/);
+      if(ol){ if(list!=="ol"){close(); out.push("<ol>"); list="ol";} out.push("<li>"+ol[1]+"</li>"); i++; continue; }
+      if(ln.trim()===""){ close(); i++; continue; }
+      close();
+      var buf=[ln]; i++;
+      while(i<lines.length && lines[i].trim()!=="" && !/^@@C\d+@@$/.test(lines[i])
+            && !/^(#{1,6})\s/.test(lines[i]) && !/^\s*[-*+]\s/.test(lines[i])
+            && !/^\s*\d+[.)]\s/.test(lines[i]) && !/^\s*>\s?/.test(lines[i])){
+        buf.push(lines[i]); i++;
+      }
+      out.push('<p dir="auto">'+buf.join("<br>")+"</p>");
+    }
+    close(); return out.join("");
+  }
+  function skipWrap(el){
+    return /^(PRE|CODE|SCRIPT|STYLE)$/i.test(el.tagName);
+  }
+  function wrapWordSpans(root){
+    var state = { i: 0 };
+    function walk(node){
+      if (node.nodeType === 3){
+        var text = node.textContent;
+        if (!text) return;
+        var parts = text.split(/(\s+)/);
+        var frag = document.createDocumentFragment();
+        parts.forEach(function(p){
+          if (!p) return;
+          if (/^\s+$/.test(p)){
+            frag.appendChild(document.createTextNode(p));
+            state.i += p.length;
+          } else {
+            var span = document.createElement("span");
+            span.className = "w";
+            span.dataset.start = state.i;
+            span.textContent = p;
+            span.dataset.end = state.i + p.length;
+            state.i += p.length;
+            frag.appendChild(span);
+          }
+        });
+        node.parentNode.replaceChild(frag, node);
+        return;
+      }
+      if (node.nodeType === 1 && !skipWrap(node)){
+        var kids = Array.prototype.slice.call(node.childNodes);
+        kids.forEach(walk);
+      }
+    }
+    walk(root);
+    return state.i;
+  }
+  function clearHighlight(){
+    document.querySelectorAll(".body .w.on").forEach(function(el){ el.classList.remove("on"); });
+  }
+  function highlightRange(loc, len){
+    clearHighlight();
+    if (len <= 0) return;
+    var end = loc + len;
+    var first = null;
+    document.querySelectorAll(".body .w").forEach(function(el){
+      var s = +el.dataset.start, e = +el.dataset.end;
+      if (s < end && e > loc){
+        el.classList.add("on");
+        if (!first) first = el;
+      }
+    });
+    if (first) first.scrollIntoView({block:"nearest", behavior:"smooth"});
+  }
+  window.highlightRange = highlightRange;
+  window.clearHighlight = clearHighlight;
+  function fit(){
+    var b=document.getElementById("bubble"); var r=b.getBoundingClientRect();
+    bridge({action:"resize", w: Math.ceil(r.width)+28, h: Math.ceil(r.height)+28});
+  }
+  function showBubble(text, fontSize, arrowBelow){
+    RAW = text;
+    clearHighlight();
+    var body = document.getElementById("body");
+    if (fontSize) body.style.fontSize = fontSize + "px";
+    body.innerHTML = mdToHtml(text);
+    wrapWordSpans(body);
+    PLAIN = body.innerText.replace(/\u00a0/g, " ");
+    body.scrollTop = 0;
+    var bubble = document.getElementById("bubble");
+    var arrow = bubble.querySelector(".arrow");
+    if (arrowBelow) arrow.classList.add("bottom"); else arrow.classList.remove("bottom");
+    bubble.classList.add("show");
+    setSpeaking(false);
+    requestAnimationFrame(function(){ requestAnimationFrame(fit); });
+  }
+  function setSpeaking(on){
+    document.getElementById("iconPlay").style.display = on ? "none" : "";
+    document.getElementById("iconPause").style.display = on ? "" : "none";
+    document.getElementById("bPlay").title = on ? "إيقاف" : "استماع للنص";
+    if (!on) clearHighlight();
+  }
+  window.setSpeaking = setSpeaking;
+  function hide(){
+    clearHighlight();
+    document.getElementById("bubble").classList.remove("show");
+    setTimeout(function(){ bridge({action:"close"}); }, 160);
+  }
+  document.getElementById("bClose").onclick=hide;
+  document.getElementById("bPlay").onclick=function(){ bridge({action:"speak", text: PLAIN || RAW}); };
+  document.getElementById("bCopy").onclick=function(){
+    bridge({action:"copy", text: RAW});
+    var t=document.getElementById("toast"); t.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove("show"); }, 1400);
+  };
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape") hide(); });
+  window.showBubble = showBubble;
+</script></body></html>

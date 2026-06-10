@@ -1,0 +1,55 @@
+:root {
+  /* ألوان Claude */
+  --coral: #C15F3C;
+  --coral-bright: #D97757;
+  --tan: #D4A27F;
+  --cream: #F4F3EE;
+  --paper: #FAF9F5;
+  --ink: #191919;
+  --muted: #6B675F;
+  --line: #E7E3D8;
+
+  /* المسافات (8px grid, base 10px) */
+  --s-1: 0.8rem;
+  --s-2: 1.6rem;
+  --s-3: 2.4rem;
+  --s-4: 3.2rem;
+  --s-6: 4.8rem;
+  --s-8: 6.4rem;
+  --radius: 1.4rem;
+  --shadow: 0 1.2rem 3.2rem rgba(25, 25, 25, 0.1);
+
+  /* الخطوط */
+  --font-ar: "IBM Plex Sans Arabic", "Tajawal", -apple-system, "SF Arabic", sans-serif;
+  --font-serif: "Source Serif 4", "Newsreader", ui-serif, Georgia, serif;
+
+  /* أسطح الوضع الفاتح */
+  --bg: var(--paper);
+  --card: #fff;
+  --surface: var(--cream);
+  --text: var(--ink);
+  --text-soft: var(--muted);
+  --border: var(--line);
+  --accent: var(--coral);
+  --code-bg: var(--cream);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #262220;
+    --card: #2E2A27;
+    --surface: #211E1C;
+    --text: var(--cream);
+    --text-soft: #B1ADA1;
+    --border: #3A3531;
+    --accent: var(--coral-bright);
+    --code-bg: #1B1815;
+    --shadow: 0 1.2rem 3.2rem rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion: 0s;
+  }
+}

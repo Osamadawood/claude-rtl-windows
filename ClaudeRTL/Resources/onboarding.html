@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>
+  :root{
+    --accent:#C15F3C;
+    --accent-soft:#D4A27F;
+    --bg:#262220; --card:#2E2A27; --surface:#211E1C;
+    --ink:#F4F3EE; --muted:#B1ADA1; --line:#3A3531;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --accent:#C15F3C;
+      --bg:#FAF9F5; --card:#FFFFFF; --surface:#F4F3EE;
+      --ink:#191919; --muted:#6B675F; --line:#E7E3D8;
+    }
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --accent:#D97757; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);
+    font-family:-apple-system,"SF Arabic","Geeza Pro",system-ui,sans-serif;color:var(--ink)}
+  .wrap{max-width:460px;margin:0 auto;padding:36px 28px 28px}
+  .logo{font-family:Georgia,"Times New Roman",serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:var(--accent);margin-bottom:8px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:26px;margin:0 0 10px;line-height:1.35}
+  .lead{color:var(--muted);font-size:15px;line-height:1.85;margin:0 0 24px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;
+    border-inline-start:3px solid var(--accent)}
+  .card h2{font-size:15px;margin:0 0 8px;color:var(--ink)}
+  .card p{margin:0;font-size:14px;line-height:1.85;color:var(--muted)}
+  .actions{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+  button{font:inherit;border:none;border-radius:10px;padding:12px 16px;cursor:pointer;transition:.15s}
+  .primary{background:var(--accent);color:#fff;font-weight:700}
+  .primary:hover{filter:brightness(1.08)}
+  .secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .secondary:hover{background:var(--surface)}
+  .foot{margin-top:22px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    text-align:center;font-size:11px;line-height:1.75;color:var(--muted)}
+  .foot b{color:var(--accent)}
+</style></head><body>
+  <div class="wrap">
+    <div class="logo">Claude RTL</div>
+    <h1>مرحبًا بك</h1>
+    <p class="lead">يُظهر Claude RTL فقاعةً صغيرة بجوار المؤشّر عند تحديد نصٍّ عربي داخل Claude، فيعرضه بالاتجاه الصحيح مع تنسيق Markdown، ويُبقي الشيفرة البرمجية من اليسار إلى اليمين، مع إمكانية الاستماع إلى النص وتمييز الكلمات أثناء القراءة.</p>
+
+    <div class="card">
+      <h2>الخصوصية</h2>
+      <p>يعمل التطبيق بالكامل على جهازك، ولا يُرسِل أي بيانات إلى أي جهة.</p>
+    </div>
+
+    <div class="card">
+      <h2>الصلاحيات</h2>
+      <p>يحتاج التطبيق إلى إذن Accessibility لاكتشاف التحديد تلقائيًا. وبدون هذا الإذن يمكنك نسخ النص بالضغط على ⌘C وسيظهر أيضًا.</p>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" id="btnSettings">فتح إعدادات Accessibility</button>
+      <button class="primary" id="btnStart">ابدأ الآن</button>
+    </div>
+
+    <div class="foot">Claude RTL أداة مستقلة من <b>GRW Lab</b>، غير تابعة لشركة Anthropic ولا مُعتمَدة منها. ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</div>
+  </div>
+<script>
+  function bridge(msg) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
+      window.webkit.messageHandlers.bridge.postMessage(msg);
+  }
+  document.getElementById("btnSettings").onclick = function(){ bridge({action:"openAccessibility"}); };
+  document.getElementById("btnStart").onclick = function(){ bridge({action:"finish"}); };
+</script></body></html>
