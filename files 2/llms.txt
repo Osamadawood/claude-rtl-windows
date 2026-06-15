@@ -1,0 +1,20 @@
+# Claude RTL
+
+> أداة مجانية لنظام macOS تُصلِح اتجاه النص العربي (RTL) داخل تطبيق Claude لسطح المكتب لحظة تحديده: عرضٌ صحيح، تنسيق Markdown، وقراءة صوتية مع تمييز الكلمات. تعمل محليًا بالكامل دون إرسال أي بيانات. مطوّرة من GRW Lab، وهي مستقلة وغير تابعة لشركة Anthropic.
+
+Claude RTL is a free macOS menu-bar utility that fixes right-to-left (RTL) rendering of Arabic text inside the Claude desktop app. When you select Arabic text in Claude, a floating bubble shows it correctly — proper RTL direction, Markdown formatting, and code kept left-to-right — and can read it aloud with word-by-word highlighting. Everything runs locally on the user's Mac; no text or data is sent anywhere. It triggers only inside the Claude desktop app. Requires macOS 13 or later (Universal: Apple Silicon and Intel). It is a free, independent tool by GRW Lab and is not affiliated with or endorsed by Anthropic.
+
+## الصفحات
+- [الصفحة الرئيسية](https://claude-rtl.grwlab.net/): نظرة عامة، المميزات، طريقة التثبيت، والأسئلة الشائعة.
+- [سياسة الخصوصية](https://claude-rtl.grwlab.net/privacy.html): التطبيق يعمل محليًا ولا يجمع أو يُرسِل أي بيانات.
+- [شروط الاستخدام](https://claude-rtl.grwlab.net/terms.html): أداة مجانية تُقدَّم كما هي.
+- [تنزيل التطبيق](https://claude-rtl.grwlab.net/download/ClaudeRTL-1.0.0.dmg): النسخة 1.0.0، Universal، تتطلب macOS 13 أو أحدث.
+
+## حقائق أساسية
+- الاسم: Claude RTL
+- المطوّر: GRW Lab — https://grwlab.net
+- المنصّة: macOS 13 أو أحدث (Universal: Apple Silicon و Intel)
+- السعر: مجاني
+- الخصوصية: يعمل محليًا بالكامل، بلا تتبّع، بلا إرسال بيانات
+- النطاق: يعمل داخل تطبيق Claude لسطح المكتب فقط
+- مستقل وغير تابع لشركة Anthropic؛ ‹Claude› علامة تجارية لـ Anthropic

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>سياسة الخصوصية — Claude RTL</title>
+    <meta name="description" content="سياسة خصوصية Claude RTL: يعمل التطبيق بالكامل على جهازك، ولا يجمع أو يُرسِل أي بيانات.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #171109;
+            --ink-2: #1F1810;
+            --surface: #282013;
+            --cream: #F3EEE2;
+            --cream-dim: #C9C0AD;
+            --muted: #8E8470;
+            --coral: #D9774E;
+            --coral-2: #C15F3C;
+            --line: rgba(243, 238, 226, .07);
+            --line-2: rgba(243, 238, 226, .13);
+            --maxw: 78rem;
+            --pad: clamp(2rem, 5vw, 7rem);
+            --f: "IBM Plex Sans Arabic", system-ui, sans-serif;
+            --f-mono: "IBM Plex Mono", ui-monospace, monospace
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            font-size: 62.5%
+        }
+
+        body {
+            background: var(--ink);
+            color: var(--cream);
+            font-family: var(--f);
+            font-size: 1.6rem;
+            line-height: 1.85;
+            -webkit-font-smoothing: antialiased
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .en {
+            font-family: var(--f-mono);
+            font-weight: 500;
+            font-size: .92em
+        }
+
+        .wrap {
+            max-width: var(--maxw);
+            margin-inline: auto;
+            padding-inline: var(--pad)
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            backdrop-filter: blur(14px);
+            background: rgba(23, 17, 9, .74);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .nav-in {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 6.4rem;
+            max-width: 118rem;
+            margin-inline: auto;
+            padding-inline: var(--pad)
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            font-weight: 700;
+            font-size: 1.55rem
+        }
+
+        .brand .mark {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: .7rem;
+            background: var(--coral);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.3rem
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .9rem;
+            font-weight: 600;
+            font-size: 1.45rem;
+            padding: .95rem 1.8rem;
+            border-radius: .9rem;
+            background: var(--coral);
+            color: #fff;
+            transition: background .2s
+        }
+
+        .btn:hover {
+            background: #e1845b
+        }
+
+        .kicker {
+            font-family: var(--f-mono);
+            font-size: 1.15rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            margin-bottom: 1.6rem
+        }
+
+        .kicker .dot {
+            width: .6rem;
+            height: .6rem;
+            border-radius: 50%;
+            background: var(--coral)
+        }
+
+        .legal {
+            padding-block: clamp(4rem, 7vw, 8rem) clamp(5rem, 8vw, 9rem)
+        }
+
+        .legal h1 {
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-weight: 700;
+            letter-spacing: -.01em;
+            margin-bottom: 2.4rem
+        }
+
+        .legal h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 3.4rem 0 1rem;
+            color: var(--cream)
+        }
+
+        .legal p {
+            color: var(--cream-dim);
+            max-width: 62rem;
+            margin-bottom: 1.2rem
+        }
+
+        .legal .stamp {
+            font-family: var(--f-mono);
+            font-size: 1.2rem;
+            letter-spacing: .1em;
+            color: var(--muted);
+            margin-top: 3.6rem
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding-block: 4.5rem 3.6rem
+        }
+
+        .foot-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.6rem
+        }
+
+        .foot-links {
+            display: flex;
+            gap: 2.2rem;
+            font-size: 1.45rem;
+            color: var(--cream-dim)
+        }
+
+        .foot-links a:hover {
+            color: var(--coral)
+        }
+
+        .lab {
+            font-family: var(--f-mono);
+            font-size: 1.15rem;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        .lab b {
+            color: var(--cream)
+        }
+
+        .disclaimer {
+            color: var(--muted);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            max-width: 44rem;
+            margin: 0
+        }
+    </style>
+    <link rel="canonical" href="https://claude-rtl.grwlab.net/privacy.html">
+    <meta name="theme-color" content="#171109">
+    <link rel="icon" href="assets/favicon.png">
+</head>
+
+<body>
+    <nav>
+        <div class="nav-in">
+            <a class="brand" href="index.html"><span class="mark">ا</span> Claude RTL</a>
+            <a class="btn" href="index.html#download">نزّل لـ <span class="en">macOS</span></a>
+        </div>
+    </nav>
+
+    <main class="legal wrap">
+        <div class="kicker"><span class="dot"></span> Claude RTL</div>
+        <h1>سياسة الخصوصية</h1>
+        <p>صُمِّم Claude RTL ليعمل بالكامل على جهازك. هذه الصفحة توضّح بإيجاز ما الذي يفعله التطبيق بالبيانات — والإجابة المختصرة: لا شيء يغادر جهازك.</p>
+
+        <h2>ما الذي نجمعه</h2>
+        <p>لا شيء. لا يجمع Claude RTL أي معلومات شخصية، ولا ينشئ حسابات، ولا يستخدم أي أدوات تتبّع أو تحليلات.</p>
+
+        <h2>كيف يعمل</h2>
+        <p>يقرأ التطبيق النص الذي تحدّده أو تنسخه داخل تطبيق Claude فقط، ويعرضه بالاتجاه الصحيح داخل فقاعةٍ محلية على جهازك. لا يُرسَل أي نص أو بيانات إلى أي خادم أو جهة خارجية.</p>
+
+        <h2>الأذونات</h2>
+        <p>يطلب التطبيق إذن Accessibility من macOS لاكتشاف تحديد النص داخل Claude تلقائيًا. يُستخدَم هذا الإذن لهذا الغرض حصريًا، ولا يُستعمل لمراقبة أي تطبيق آخر. ويمكنك العمل بدون منح الإذن عبر نسخ النص بالضغط على ⌘C.</p>
+
+        <h2>التواصل</h2>
+        <p>لأي استفسار أو للإبلاغ عن مشكلة، تواصل معنا عبر <a href="https://grwlab.net/" style="color:var(--coral)">grwlab.net</a>.</p>
+
+        <p class="stamp">آخر تحديث: يونيو 2026</p>
+    </main>
+
+    <footer class="wrap">
+        <div class="foot-top">
+            <p class="disclaimer">Claude RTL أداة مستقلة من GRW Lab، وهي غير تابعة لشركة Anthropic ولا مُعتمَدة منها. اسم ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</p>
+            <div class="foot-links"><a href="privacy.html">الخصوصية</a><a href="terms.html">الشروط</a><a href="https://grwlab.net/">GRW Lab</a></div>
+        </div>
+        <div class="foot-top"><span class="lab">from the lab · by <b>grw—lab</b></span></div>
+    </footer>
+</body>
+
+</html>

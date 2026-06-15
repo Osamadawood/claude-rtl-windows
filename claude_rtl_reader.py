@@ -189,7 +189,7 @@ HTML = r"""
     </div>
     <div class="body" id="body"></div>
     <div class="foot" dir="ltr">by <b>GRW&nbsp;Lab</b> &mdash; grwlab.net</div>
-    <div class="toast" id="toast">اتنسخ ✓</div>
+    <div class="toast" id="toast">تم النسخ ✓</div>
   </div></div>
 
 <script>

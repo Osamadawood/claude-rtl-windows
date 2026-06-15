@@ -1,0 +1,5 @@
+# Claude RTL — AI crawlers welcome
+User-agent: *
+Allow: /
+
+Sitemap: https://claude-rtl.grwlab.net/sitemap.xml

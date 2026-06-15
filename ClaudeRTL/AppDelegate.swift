@@ -3,8 +3,6 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var bubblePanel: BubblePanel!
-    private var enabledMenuItem: NSMenuItem!
-    private var fontSizeMenuItem: NSMenuItem!
     private var launchAtLoginMenuItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -24,6 +22,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         SelectionMonitor.shared.start()
 
         OnboardingWindowController.showIfNeeded()
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        SelectionMonitor.shared.refreshAccessibilityStatus()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -46,39 +48,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.isVisible = true
 
         if let button = statusItem.button {
-            button.image = menuBarImage()
-            button.title = "ع"
-            button.imagePosition = button.image != nil ? .imageLeading : .noImage
-            button.imageScaling = .scaleProportionallyDown
-            button.toolTip = "Claude RTL"
-            DebugLog.print("Menu bar: title=\(button.title), image=\(button.image != nil), reps=\(button.image?.representations.count ?? 0)")
+            configureStatusBarButton(button)
         }
 
         let menu = NSMenu()
 
-        enabledMenuItem = NSMenuItem(
-            title: Settings.shared.isEnabled ? "تعطيل" : "تفعيل",
-            action: #selector(toggleEnabled),
-            keyEquivalent: ""
-        )
-        enabledMenuItem.target = self
-        menu.addItem(enabledMenuItem)
+        let about = NSMenuItem(title: "حول Claude RTL", action: #selector(showAbout), keyEquivalent: "")
+        about.target = self
+        menu.addItem(about)
 
-        menu.addItem(.separator())
-
-        let smaller = NSMenuItem(title: "خط أصغر (−)", action: #selector(decreaseFont), keyEquivalent: "")
-        smaller.target = self
-        menu.addItem(smaller)
-
-        fontSizeMenuItem = NSMenuItem(title: fontSizeLabel(), action: nil, keyEquivalent: "")
-        fontSizeMenuItem.isEnabled = false
-        menu.addItem(fontSizeMenuItem)
-
-        let larger = NSMenuItem(title: "خط أكبر (+)", action: #selector(increaseFont), keyEquivalent: "")
-        larger.target = self
-        menu.addItem(larger)
-
-        menu.addItem(.separator())
+        let onboarding = NSMenuItem(title: "إعادة الشرح", action: #selector(showOnboarding), keyEquivalent: "")
+        onboarding.target = self
+        menu.addItem(onboarding)
 
         launchAtLoginMenuItem = NSMenuItem(
             title: "تشغيل عند بدء النظام",
@@ -91,81 +72,66 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
 
-        let about = NSMenuItem(title: "حول Claude RTL", action: #selector(showAbout), keyEquivalent: "")
-        about.target = self
-        menu.addItem(about)
-
-        let onboarding = NSMenuItem(title: "إعادة الشرح", action: #selector(showOnboarding), keyEquivalent: "")
-        onboarding.target = self
-        menu.addItem(onboarding)
-
         let quit = NSMenuItem(title: "خروج", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
 
         statusItem.menu = menu
+
+        DebugLog.print("STATUS ITEM created, button=\(statusItem.button != nil)")
     }
 
-    private func fontSizeLabel() -> String {
-        "حجم الخط: \(Int(Settings.shared.fontSize))px"
+    private func configureStatusBarButton(_ button: NSStatusBarButton) {
+        button.toolTip = "Claude RTL"
+        button.imagePosition = .imageOnly
+        button.imageScaling = .scaleProportionallyDown
+
+        if let symbol = statusBarSymbolImage() {
+            button.image = symbol
+            button.title = ""
+        } else {
+            button.image = nil
+            button.title = "ع"
+            button.imagePosition = .noImage
+        }
+
+        if let custom = menuBarTemplateImage() {
+            button.image = custom
+            button.title = ""
+            button.imagePosition = .imageOnly
+        }
     }
 
-    private func menuBarImage() -> NSImage? {
+    private func statusBarSymbolImage() -> NSImage? {
+        guard let symbol = NSImage(
+            systemSymbolName: "character.book.closed.fill",
+            accessibilityDescription: "Claude RTL"
+        ) else { return nil }
+
+        let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let img = symbol.withSymbolConfiguration(config) ?? symbol
+        img.isTemplate = true
+        img.size = NSSize(width: 18, height: 18)
+        return img
+    }
+
+    /// Custom menu-bar icon: black + alpha PNG rendered as template (18pt).
+    private func menuBarTemplateImage() -> NSImage? {
+        guard let source = NSImage(named: "MenuBarIcon"), source.isValid else { return nil }
+
         let image = NSImage(size: NSSize(width: 18, height: 18))
-        image.isTemplate = false
-        var added = false
-
-        if let url = Bundle.main.url(forResource: "MenuBarIcon", withExtension: "png"),
-           let data = try? Data(contentsOf: url),
-           let rep = NSBitmapImageRep(data: data) {
-            rep.size = NSSize(width: 18, height: 18)
-            image.addRepresentation(rep)
-            added = true
-        }
-        if let url = Bundle.main.url(forResource: "MenuBarIcon@2x", withExtension: "png"),
-           let data = try? Data(contentsOf: url),
-           let rep = NSBitmapImageRep(data: data) {
-            rep.size = NSSize(width: 18, height: 18)
-            image.addRepresentation(rep)
-            added = true
-        }
-        if !added {
-            added = addAssetRepresentation(to: image, named: "MenuBarIcon")
-                || addAssetRepresentation(to: image, named: "AppIcon")
-        }
-        return added ? image : nil
-    }
-
-    private func addAssetRepresentation(to image: NSImage, named: String) -> Bool {
-        guard let source = NSImage(named: named), source.isValid else { return false }
+        image.isTemplate = true
         for rep in source.representations {
             rep.size = NSSize(width: 18, height: 18)
             image.addRepresentation(rep)
         }
-        return !image.representations.isEmpty
+        guard !image.representations.isEmpty else { return nil }
+        return image
     }
 
     private func loadBundledIcon(named: String, ext: String) -> NSImage? {
         guard let url = Bundle.main.url(forResource: named, withExtension: ext) else { return nil }
         return NSImage(contentsOf: url)
-    }
-
-    @objc private func toggleEnabled() {
-        Settings.shared.isEnabled.toggle()
-        enabledMenuItem.title = Settings.shared.isEnabled ? "تعطيل" : "تفعيل"
-        if !Settings.shared.isEnabled {
-            bubblePanel.hide()
-        }
-    }
-
-    @objc private func decreaseFont() {
-        Settings.shared.fontSize = max(12, Settings.shared.fontSize - 1)
-        fontSizeMenuItem.title = fontSizeLabel()
-    }
-
-    @objc private func increaseFont() {
-        Settings.shared.fontSize = min(22, Settings.shared.fontSize + 1)
-        fontSizeMenuItem.title = fontSizeLabel()
     }
 
     @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {

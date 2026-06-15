@@ -1,0 +1,14 @@
+# Claude RTL
+User-agent: *
+Allow: /
+Disallow: /stats.php
+Disallow: /stats-export.php
+Disallow: /login.php
+Disallow: /logout.php
+Disallow: /auth.php
+Disallow: /visit.php
+Disallow: /download.php
+Disallow: /data/
+Disallow: /download/
+
+Sitemap: https://claude-rtl.grwlab.net/sitemap.xml

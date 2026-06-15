@@ -18,9 +18,13 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
         NSApp.activate(ignoringOtherApps: true)
     }
 
+    private weak var webView: WKWebView?
+    private var axStatusTimer: Timer?
+    private var armedObserver: NSObjectProtocol?
+
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 640),
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 680),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -37,12 +41,28 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
         webView.autoresizingMask = [.width, .height]
         webView.navigationDelegate = self
         window.contentView?.addSubview(webView)
+        self.webView = webView
+
+        armedObserver = NotificationCenter.default.addObserver(
+            forName: .selectionMonitorEventTapArmed,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.pushAxStatusToWebView()
+        }
 
         guard let url = Bundle.main.url(forResource: "onboarding", withExtension: "html") else {
             DebugLog.print("ERROR: onboarding.html not found in bundle")
             return
         }
         webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+    }
+
+    deinit {
+        axStatusTimer?.invalidate()
+        if let armedObserver {
+            NotificationCenter.default.removeObserver(armedObserver)
+        }
     }
 
     @available(*, unavailable)
@@ -52,6 +72,25 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         DebugLog.print("onboarding.html loaded")
+        startAxStatusUpdates()
+    }
+
+    private func startAxStatusUpdates() {
+        axStatusTimer?.invalidate()
+        axStatusTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.pushAxStatusToWebView()
+        }
+        if let axStatusTimer {
+            RunLoop.main.add(axStatusTimer, forMode: .common)
+        }
+        pushAxStatusToWebView()
+    }
+
+    private func pushAxStatusToWebView() {
+        let trusted = SelectionMonitor.isAccessibilityTrusted
+        let armed = SelectionMonitor.shared.isEventTapArmed
+        let js = "window.setAxStatus && window.setAxStatus(\(trusted), \(armed))"
+        webView?.evaluateJavaScript(js, completionHandler: nil)
     }
 
     func userContentController(
@@ -68,12 +107,23 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
                     NSWorkspace.shared.open(url)
                 }
+                SelectionMonitor.shared.refreshAccessibilityStatus()
+            case "relaunch":
+                self.relaunchApp()
             case "finish":
                 Settings.shared.didOnboard = true
+                self.axStatusTimer?.invalidate()
                 self.window?.close()
             default:
                 break
             }
+        }
+    }
+
+    private func relaunchApp() {
+        let url = Bundle.main.bundleURL
+        NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, _ in
+            NSApp.terminate(nil)
         }
     }
 }

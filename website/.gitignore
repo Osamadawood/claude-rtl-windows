@@ -1,0 +1,3 @@
+# Runtime logs — do not commit
+data/downloads.ndjson
+data/visits.ndjson

@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Claude RTL — العربية كما يجب أن تُقرأ</title>
+    <meta name="description" content="أداة مجانية لـ macOS تُصلِح اتجاه النص العربي في تطبيق Claude لحظة تحديده: عرض صحيح، تنسيق Markdown، وقراءة صوتية مع تمييز الكلمات. كل شيء محلي.">
+    <meta property="og:title" content="Claude RTL — العربية كما يجب أن تُقرأ">
+    <meta property="og:description" content="أداة macOS مجانية تُصلِح اتجاه النص العربي في تطبيق Claude فورًا.">
+    <meta property="og:image" content="assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #171109;
+            --ink-2: #1F1810;
+            --surface: #282013;
+            --surface-2: #30271a;
+            --cream: #F3EEE2;
+            --cream-dim: #C9C0AD;
+            --muted: #8E8470;
+            --coral: #D9774E;
+            --coral-2: #C15F3C;
+            --line: rgba(243, 238, 226, .07);
+            --line-2: rgba(243, 238, 226, .13);
+            --glow: rgba(217, 119, 78, .18);
+            --maxw: 118rem;
+            --pad: clamp(2rem, 5vw, 7rem);
+            --f: "IBM Plex Sans Arabic", system-ui, sans-serif;
+            --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        html {
+            font-size: 62.5%
+        }
+
+        body {
+            background: var(--ink);
+            color: var(--cream);
+            font-family: var(--f);
+            font-size: 1.6rem;
+            font-weight: 400;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .04;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+        }
+
+        .wrap {
+            max-width: var(--maxw);
+            margin-inline: auto;
+            padding-inline: var(--pad);
+            position: relative;
+            z-index: 1
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .en {
+            font-family: var(--f-mono);
+            font-weight: 500;
+            font-size: .92em
+        }
+
+        .kicker {
+            font-family: var(--f-mono);
+            font-size: 1.15rem;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: .9rem
+        }
+
+        .kicker .dot {
+            width: .6rem;
+            height: .6rem;
+            border-radius: 50%;
+            background: var(--coral)
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+            line-height: 1.12;
+            letter-spacing: -.01em
+        }
+
+        .lead {
+            color: var(--cream-dim);
+            font-size: clamp(1.65rem, 1.4vw, 1.95rem);
+            line-height: 1.85;
+            max-width: 50rem;
+            font-weight: 400
+        }
+
+        /* scroll progress */
+        #prog {
+            position: fixed;
+            top: 0;
+            inset-inline: 0;
+            height: 2px;
+            background: var(--coral);
+            transform: scaleX(0);
+            transform-origin: right;
+            z-index: 80
+        }
+
+        /* nav (smaller) */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            backdrop-filter: blur(14px);
+            background: rgba(23, 17, 9, .74);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .nav-in {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 6.4rem
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            font-weight: 700;
+            font-size: 1.55rem
+        }
+
+        .brand .mark {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: .7rem;
+            background: var(--coral);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.3rem
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .9rem;
+            font-family: var(--f);
+            font-weight: 600;
+            font-size: 1.45rem;
+            padding: .95rem 1.8rem;
+            border-radius: .9rem;
+            border: 0;
+            cursor: pointer;
+            transition: transform .2s, background .2s, border-color .2s
+        }
+
+        .btn-primary {
+            background: var(--coral);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: #e1845b;
+            transform: translateY(-1px)
+        }
+
+        .btn .tag {
+            font-family: var(--f-mono);
+            font-size: 1.05rem;
+            letter-spacing: .1em;
+            opacity: .8
+        }
+
+        .btn-ghost {
+            border: 1px solid var(--line-2);
+            color: var(--cream)
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--coral)
+        }
+
+        /* product shot frame */
+        .shot {
+            position: relative;
+            border-radius: 1.4rem;
+            background: var(--ink-2);
+            border: 1px solid var(--line-2);
+            box-shadow: 0 2.6rem 6rem rgba(0, 0, 0, .5);
+            overflow: hidden
+        }
+
+        .shot .bar {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .shot .bar i {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #564e41
+        }
+
+        .shot .bar i:nth-child(1) {
+            background: #d96b5d
+        }
+
+        .shot .bar i:nth-child(2) {
+            background: #d9ad53
+        }
+
+        .shot .bar i:nth-child(3) {
+            background: #6aa866
+        }
+
+        .shot .bar span {
+            margin-inline-start: auto;
+            font-family: var(--f-mono);
+            font-size: 1.05rem;
+            color: var(--muted);
+            letter-spacing: .08em
+        }
+
+        .shot .body {
+            padding: 2.2rem
+        }
+
+        .bubble {
+            border-inline-start: 3px solid var(--coral);
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.7rem 1.9rem
+        }
+
+        .bubble-head {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            font-weight: 700;
+            color: var(--coral);
+            font-size: 1.35rem;
+            margin-bottom: 1.2rem
+        }
+
+        .bubble-head .d {
+            width: .6rem;
+            height: .6rem;
+            border-radius: 50%;
+            background: var(--coral)
+        }
+
+        .bubble-head .sp {
+            flex: 1
+        }
+
+        .bubble-head svg {
+            width: 1.7rem;
+            height: 1.7rem;
+            stroke: var(--muted);
+            fill: none;
+            stroke-width: 1.6
+        }
+
+        .bubble p {
+            font-size: 1.65rem;
+            line-height: 2
+        }
+
+        .bubble .code {
+            font-family: var(--f-mono);
+            direction: ltr;
+            display: inline-block;
+            background: var(--ink);
+            padding: .05rem .55rem;
+            border-radius: .45rem;
+            color: var(--coral);
+            font-size: 1.35rem
+        }
+
+        .bubble mark {
+            background: rgba(217, 119, 78, .3);
+            color: var(--cream);
+            border-radius: .3rem;
+            padding: 0 .3rem
+        }
+
+        .broken {
+            direction: ltr;
+            text-align: left;
+            color: var(--cream-dim);
+            font-size: 1.55rem;
+            line-height: 1.95;
+            opacity: .85
+        }
+
+        .broken .code {
+            font-family: var(--f-mono);
+            color: #bca
+        }
+
+        /* hero — asymmetric, single subtle glow */
+        .hero {
+            padding-block: clamp(2.4rem, 3.5vw, 3.6rem) clamp(4.5rem, 6.5vw, 7rem);
+            position: relative
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 6%;
+            inset-inline-start: -6%;
+            width: 46rem;
+            height: 46rem;
+            background: radial-gradient(closest-side, var(--glow), transparent);
+            filter: blur(20px);
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: clamp(3rem, 5vw, 6rem);
+            align-items: center
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 4.3vw, 5.2rem);
+            margin: 1.6rem 0 1.9rem;
+            font-weight: 700
+        }
+
+        .hero h1 .accent {
+            color: var(--coral)
+        }
+
+        .hero .lead {
+            margin-bottom: 3rem
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.4rem;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .meta {
+            font-family: var(--f-mono);
+            font-size: 1.1rem;
+            letter-spacing: .13em;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 2rem
+        }
+
+        .tagline {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--f-mono);
+            font-size: 1.05rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .5rem
+        }
+
+        .tagline .x {
+            color: #c9685e
+        }
+
+        .tagline .v {
+            color: var(--coral)
+        }
+
+        .ba {
+            display: flex;
+            flex-direction: column;
+            gap: 1.3rem
+        }
+
+        /* quiet capability line (not a loud marquee) */
+        .caps {
+            border-block: 1px solid var(--line);
+            padding-block: 1.8rem;
+            overflow: hidden;
+            white-space: nowrap;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)
+        }
+
+        .caps .row {
+            display: inline-flex;
+            gap: 3rem;
+            animation: marq 34s linear infinite;
+            will-change: transform
+        }
+
+        @keyframes marq {
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        .caps:hover .row {
+            animation-play-state: paused
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .caps .row {
+                animation: none
+            }
+        }
+
+        .caps .row span {
+            font-family: var(--f-mono);
+            font-size: 1.3rem;
+            letter-spacing: .08em;
+            color: var(--cream-dim)
+        }
+
+        .caps .row b {
+            color: var(--coral);
+            opacity: .65;
+            font-weight: 400
+        }
+
+        /* feature rows — no per-row glow, lighter frames */
+        .rows {
+            padding-block: clamp(2.6rem, 4vw, 4.4rem)
+        }
+
+        .row-f {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(3rem, 5vw, 6rem);
+            align-items: center;
+            padding-block: clamp(3.6rem, 5vw, 5.8rem)
+        }
+
+        .row-f:nth-child(even) .copy {
+            order: 2
+        }
+
+        .row-f h2 {
+            font-size: clamp(2.6rem, 3.4vw, 4rem);
+            margin: 1.6rem 0 1.4rem
+        }
+
+        .row-f .lead {
+            margin-bottom: 2.2rem
+        }
+
+        .check {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem
+        }
+
+        .check li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.1rem;
+            font-size: 1.55rem
+        }
+
+        .check li svg {
+            flex: none;
+            width: 2rem;
+            height: 2rem;
+            margin-top: .4rem;
+            stroke: var(--coral);
+            fill: none;
+            stroke-width: 2
+        }
+
+        /* steps */
+        .sec {
+            padding-block: clamp(4.6rem, 6.5vw, 7.6rem);
+            border-top: 1px solid var(--line)
+        }
+
+        .sec-head {
+            max-width: 62rem;
+            margin-bottom: clamp(3.5rem, 5vw, 5rem)
+        }
+
+        .sec-head .kicker {
+            margin-bottom: 1.6rem
+        }
+
+        .sec-head h2 {
+            font-size: clamp(2.8rem, 4vw, 4.6rem)
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+            counter-reset: s
+        }
+
+        .step {
+            background: var(--ink-2);
+            border: 1px solid var(--line);
+            border-radius: 1.4rem;
+            padding: 2.6rem 2.3rem
+        }
+
+        .step .n {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            font-family: var(--f-mono);
+            font-size: 1.2rem;
+            color: var(--coral);
+            margin-bottom: 1.4rem
+        }
+
+        .step .n::before {
+            counter-increment: s;
+            content: counter(s, decimal-arabic);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--coral);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: grid;
+            place-items: center
+        }
+
+        .step h3 {
+            font-size: 1.75rem;
+            margin-bottom: .7rem;
+            font-weight: 600
+        }
+
+        .step p {
+            color: var(--muted);
+            font-size: 1.45rem;
+            line-height: 1.75
+        }
+
+        /* cta */
+        .cta {
+            text-align: center;
+            padding-block: clamp(5.6rem, 8vw, 9rem);
+            border-top: 1px solid var(--line)
+        }
+
+        .cta h2 {
+            font-size: clamp(3rem, 4.6vw, 5.6rem);
+            margin-bottom: 1.8rem
+        }
+
+        .cta .lead {
+            margin: 0 auto 3rem
+        }
+
+        /* footer */
+        footer {
+            border-top: 1px solid var(--line);
+            padding-block: 4.5rem 3.6rem
+        }
+
+        .foot-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.6rem
+        }
+
+        .foot-links {
+            display: flex;
+            gap: 2.2rem;
+            font-size: 1.45rem;
+            color: var(--cream-dim)
+        }
+
+        .foot-links a:hover {
+            color: var(--coral)
+        }
+
+        .social {
+            display: flex;
+            gap: 1.3rem;
+            font-family: var(--f-mono);
+            font-size: 1.15rem;
+            letter-spacing: .08em;
+            color: var(--muted)
+        }
+
+        .social a:hover {
+            color: var(--coral)
+        }
+
+        .lab {
+            font-family: var(--f-mono);
+            font-size: 1.15rem;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        .lab b {
+            color: var(--cream)
+        }
+
+        .disclaimer {
+            color: var(--muted);
+            font-size: 1.25rem;
+            line-height: 1.8;
+            max-width: 44rem;
+            margin: 0
+        }
+
+        .foot-top--start {
+            align-items: flex-start
+        }
+
+        .js-anim [data-a],
+        .js-anim [data-shot] {
+            opacity: 0;
+            transform: translateY(20px);
+            will-change: transform, opacity
+        }
+
+        @media(max-width:900px) {
+
+            .hero-grid,
+            .row-f {
+                grid-template-columns: 1fr
+            }
+
+            .row-f:nth-child(even) .copy {
+                order: 0
+            }
+
+            .steps {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="prog"></div>
+
+    <nav>
+        <div class="wrap nav-in">
+            <a class="brand" href="#"><span class="mark">ا</span> Claude RTL</a>
+            <a class="btn btn-primary" href="#download">نزّل لـ <span class="en">macOS</span></a>
+        </div>
+    </nav>
+
+    <header class="hero wrap">
+        <div class="hero-grid">
+            <div class="copy">
+                <div class="kicker" data-a><span class="dot"></span> قارئ العربية لتطبيق <span class="en">Claude</span></div>
+                <h1 data-a>العربية في <span class="en accent">Claude</span>،<br>كما يجب أن تُقرأ.</h1>
+                <p class="lead" data-a>أداةٌ مجانية لـ <span class="en">macOS</span> تُصلِح اتجاه النص العربي في تطبيق <span class="en">Claude</span> لحظة تحديده — عرضٌ صحيح، تنسيق <span class="en">Markdown</span> سليم، وقراءةٌ صوتية مع تمييز الكلمات. بلا انتظار، وبلا إرسال أي بيانات.</p>
+                <div class="hero-cta" data-a>
+                    <a class="btn btn-primary" href="#download">نزّل لـ <span class="en">macOS</span> <span class="tag">DMG</span></a>
+                    <a class="btn btn-ghost" href="#how">كيف يعمل</a>
+                </div>
+                <div class="meta" data-a>مجاني · macOS 13+ · Universal · v1.0.0</div>
+            </div>
+            <div data-shot>
+                <div class="shot">
+                    <div class="bar"><i></i><i></i><i></i><span>Claude</span></div>
+                    <div class="body ba">
+                        <div>
+                            <div class="tagline"><span>داخل Claude</span><span class="x">قبل ✕</span></div>
+                            <div class="broken">هذا النص العربي يُقرأ بالاتجاه الصحيح، مع <span class="code">code</span> وتنسيق.</div>
+                        </div>
+                        <div>
+                            <div class="tagline"><span>مع Claude RTL</span><span class="v">بعد ✓</span></div>
+                            <div class="bubble">
+                                <div class="bubble-head"><span class="d"></span> Claude RTL <span class="sp"></span>
+                                    <svg viewBox="0 0 24 24">
+                                        <rect x="9" y="9" width="11" height="11" rx="2" />
+                                        <path d="M5 15V5a2 2 0 0 1 2-2h10" /></svg>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M11 5 6 9H2v6h4l5 4z" />
+                                        <path d="M15.5 8.5a5 5 0 0 1 0 7" /></svg>
+                                </div>
+                                <p>هذا النص العربي يُقرأ بالاتجاه الصحيح، مع <span class="code">code</span> وتنسيق <span class="en" style="color:var(--coral)">Markdown</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="caps">
+        <div class="row">
+            <span>اتجاه RTL سليم</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>خصوصية كاملة</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>Universal</span><b>·</b><span>اتجاه RTL سليم</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>خصوصية كاملة</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>Universal</span><b>·</b>
+        </div>
+    </div>
+
+    <section class="rows wrap" id="features">
+        <div class="row-f">
+            <div class="copy" data-a>
+                <div class="kicker"><span class="dot"></span> العرض</div>
+                <h2>النص العربي، في اتجاهه الصحيح.</h2>
+                <p class="lead">يعرض <span class="en">Claude RTL</span> النص بالاتجاه السليم مع تنسيق <span class="en">Markdown</span> كامل، ويُبقي الشيفرة البرمجية من اليسار إلى اليمين كما يجب.</p>
+                <ul class="check">
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> اتجاه <span class="en">RTL</span> سليم للجُمل والفقرات</li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> عناوين وقوائم وروابط <span class="en">Markdown</span></li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> الشيفرة تبقى <span class="en">LTR</span> داخل النص العربي</li>
+                </ul>
+            </div>
+            <div data-a>
+                <div class="shot">
+                    <div class="bar"><i></i><i></i><i></i><span>Claude RTL</span></div>
+                    <div class="body">
+                        <div class="bubble">
+                            <div class="bubble-head"><span class="d"></span> Claude RTL</div>
+                            <p><b>عنوان فرعي</b><br>هذا النص العربي يُعرض بالاتجاه الصحيح، والكود <span class="code">npm install</span> يظل من اليسار لليمين.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-f">
+            <div class="copy" data-a>
+                <div class="kicker"><span class="dot"></span> الاستماع</div>
+                <h2>استمع، وتابع كل كلمة.</h2>
+                <p class="lead">شغّل القراءة الصوتية، وكل كلمةٍ تُضاء أثناء نطقها — تجربة قراءة فريدة بالعربية تنفع المراجعة والاستيعاب.</p>
+                <ul class="check">
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> قراءة صوتية واضحة بالعربية</li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> تمييز الكلمة الحالية لحظة نطقها</li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> تشغيل وإيقاف بنقرة واحدة</li>
+                </ul>
+            </div>
+            <div data-a>
+                <div class="shot">
+                    <div class="bar"><i></i><i></i><i></i><span>Claude RTL</span></div>
+                    <div class="body">
+                        <div class="bubble">
+                            <div class="bubble-head"><span class="d"></span> Claude RTL <span class="sp"></span>
+                                <svg viewBox="0 0 24 24" style="stroke:var(--coral)">
+                                    <path d="M11 5 6 9H2v6h4l5 4z" />
+                                    <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                                    <path d="M19 5a9 9 0 0 1 0 14" /></svg></div>
+                            <p>تتحرّك القراءة كلمةً <mark>كلمة</mark> أثناء الاستماع، فتتابع النص بسهولة.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-f">
+            <div class="copy" data-a>
+                <div class="kicker"><span class="dot"></span> الخصوصية</div>
+                <h2>داخل Claude وحده، ومحليًا تمامًا.</h2>
+                <p class="lead">يظهر فقط عند تحديد نصٍّ داخل تطبيق <span class="en">Claude</span>، ولا يقترب من أي تطبيق آخر. كل المعالجة تتم على جهازك.</p>
+                <ul class="check">
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> يعمل داخل <span class="en">Claude</span> فقط</li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> كل شيء محلي على جهازك</li>
+                    <li><svg viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" /></svg> بلا تتبّع وبلا إرسال أي بيانات</li>
+                </ul>
+            </div>
+            <div data-a>
+                <div class="shot">
+                    <div class="bar"><i></i><i></i><i></i><span>على جهازك</span></div>
+                    <div class="body" style="text-align:center;padding:4.5rem 2.2rem">
+                        <svg viewBox="0 0 24 24" style="width:5.4rem;height:5.4rem;stroke:var(--coral);fill:none;stroke-width:1.4;margin-bottom:1.4rem">
+                            <path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5z" />
+                            <polyline points="9 12 11 14 15 10" /></svg>
+                        <p style="font-weight:600;font-size:1.85rem">لا تُرسَل أي بيانات.<br><span style="color:var(--muted);font-weight:400;font-size:1.45rem">كل شيء يبقى على جهازك.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sec wrap" id="how">
+        <div class="sec-head" data-a>
+            <div class="kicker"><span class="dot"></span> كيف يعمل</div>
+            <h2>ثلاث خطوات للبدء.</h2>
+        </div>
+        <div class="steps">
+            <div class="step" data-a>
+                <div class="n">الخطوة</div>
+                <h3>نزّل ملف <span class="en">.dmg</span></h3>
+                <p>حمّل <span class="en">Claude RTL</span> وافتح ملف التثبيت.</p>
+            </div>
+            <div class="step" data-a>
+                <div class="n">الخطوة</div>
+                <h3>اسحب إلى <span class="en">Applications</span></h3>
+                <p>اسحب التطبيق إلى مجلد التطبيقات.</p>
+            </div>
+            <div class="step" data-a>
+                <div class="n">الخطوة</div>
+                <h3>فعّل <span class="en">Accessibility</span></h3>
+                <p>فعّل الإذن عند أول تشغيل، ثم حدّد نصًا عربيًا في <span class="en">Claude</span>.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta wrap" id="download">
+        <div class="kicker" data-a style="justify-content:center;margin-bottom:1.8rem"><span class="dot"></span> ابدأ الآن</div>
+        <h2 data-a>جرّبه الآن.</h2>
+        <p class="lead" data-a>حمّل <span class="en">Claude RTL</span> مجانًا، واقرأ العربية في <span class="en">Claude</span> بالاتجاه الصحيح.</p>
+        <a class="btn btn-primary" data-a href="download/ClaudeRTL-1.0.0.dmg" style="font-size:1.6rem;padding:1.3rem 2.6rem">نزّل لـ <span class="en">macOS</span> <span class="tag">DMG · UNIVERSAL</span></a>
+        <div class="meta" data-a style="text-align:center;margin-top:2.2rem">macOS 13+ · Apple Silicon · Intel</div>
+    </section>
+
+    <footer class="wrap">
+        <div class="foot-top foot-top--start">
+            <p class="disclaimer">Claude RTL أداة مستقلة من GRW Lab، وهي غير تابعة لشركة Anthropic ولا مُعتمَدة منها. اسم ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</p>
+            <div class="foot-links"><a href="privacy.html">الخصوصية</a><a href="#">الشروط</a><a href="https://grwlab.net/">GRW Lab</a></div>
+        </div>
+        <div class="foot-top"><span class="lab">from the lab · by <b>grw—lab</b></span></div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
+    <script>
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+
+        /* scroll progress bar */
+        const prog = document.getElementById('prog');
+        addEventListener('scroll', () => {
+            const h = document.documentElement;
+            const p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
+            prog.style.transform = 'scaleX(' + p + ')'
+        }, {
+            passive: true
+        });
+
+        /* Animations are PURELY additive. Content is visible by default; we only hide
+           (via the .js-anim gate) once GSAP is confirmed, then animate it back in.
+           If GSAP never loads, nothing is hidden. A safety net reveals anything stuck. */
+        if (!reduce && hasGSAP) {
+            document.documentElement.classList.add('js-anim');
+            gsap.registerPlugin(ScrollTrigger);
+
+            if (typeof Lenis !== 'undefined') {
+                const lenis = new Lenis({
+                    lerp: .1,
+                    wheelMultiplier: .9
+                });
+                (function raf(t) {
+                    lenis.raf(t);
+                    requestAnimationFrame(raf)
+                })();
+                lenis.on('scroll', ScrollTrigger.update);
+            }
+
+            /* hero entrance (on load) */
+            gsap.to('.hero [data-a]', {
+                opacity: 1,
+                y: 0,
+                duration: .8,
+                ease: 'power3.out',
+                stagger: .08,
+                delay: .05
+            });
+            gsap.to('[data-shot]', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: .15
+            });
+
+            /* scroll reveals -> animate TO visible, run once */
+            gsap.utils.toArray('.rows [data-a], .sec [data-a], .cta [data-a]').forEach(el => {
+                gsap.to(el, {
+                    opacity: 1,
+                    y: 0,
+                    duration: .7,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 90%',
+                        once: true
+                    }
+                });
+            });
+
+            /* subtle parallax on hero shot */
+            gsap.to('[data-shot] .shot', {
+                yPercent: -6,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: .6
+                }
+            });
+
+            addEventListener('load', () => ScrollTrigger.refresh());
+
+            /* SAFETY NET: never leave content hidden */
+            setTimeout(() => {
+                document.querySelectorAll('.js-anim [data-a],.js-anim [data-shot]').forEach(el => {
+                    if (parseFloat(getComputedStyle(el).opacity) < .05) gsap.to(el, {
+                        opacity: 1,
+                        y: 0,
+                        duration: .4
+                    });
+                })
+            }, 2600);
+        }
+    </script>
+</body>
+
+</html>
