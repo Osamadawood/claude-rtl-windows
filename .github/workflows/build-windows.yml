@@ -1,0 +1,26 @@
+name: build-windows
+on:
+  push: { branches: [ main ] }
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '8.0.x' }
+      - name: Publish
+        working-directory: ClaudeRTL.Windows
+        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+      - name: Build installer
+        working-directory: ClaudeRTL.Windows
+        run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\ClaudeRTL.iss'
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClaudeRTL-Windows
+          path: |
+            ClaudeRTL.Windows/publish/ClaudeRTL.exe
+            ClaudeRTL.Windows/installer/Output/*.exe
