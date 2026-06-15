@@ -6,7 +6,6 @@ public sealed class ApplicationCoordinator : IDisposable
 {
     private readonly ClipboardMonitor _clipboardMonitor = new();
     private readonly BubbleWindow _bubbleWindow;
-    private string? _lastDisplayedText;
     private DateTime _suppressClipboardUntil = DateTime.MinValue;
 
     public ApplicationCoordinator()
@@ -44,10 +43,6 @@ public sealed class ApplicationCoordinator : IDisposable
         if (string.IsNullOrWhiteSpace(text) || !ArabicDetector.ContainsArabic(text))
             return;
 
-        if (text == _lastDisplayedText)
-            return;
-
-        _lastDisplayedText = text;
         var cursor = Win32Interop.GetCursorPosition();
         Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowAt(cursor, text));
     }
