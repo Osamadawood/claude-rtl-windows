@@ -1,21 +1,31 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using Microsoft.Web.WebView2.Core;
 
 namespace ClaudeRTL;
 
 public partial class BubbleWindow : Window
 {
+    private const double Margin = 12;
+    private const double OffsetX = 20;
+    private const double OffsetY = 14;
+
     private readonly ApplicationCoordinator _coordinator;
     private readonly SpeechService _speech = new();
     private WebBridge? _bridge;
+    private System.Drawing.Point _anchorPoint;
+    private bool _arrowBelow;
     private bool _isReady;
     private string? _pendingText;
+    private bool _isHiding;
 
     public BubbleWindow(ApplicationCoordinator coordinator)
     {
         _coordinator = coordinator;
         InitializeComponent();
+        Deactivated += (_, _) => HideBubble();
         Loaded += async (_, _) => await InitializeWebViewAsync();
         Closed += (_, _) => _speech.Dispose();
 
@@ -37,7 +47,13 @@ public partial class BubbleWindow : Window
         var resourcesDir = Path.Combine(AppContext.BaseDirectory, "Resources");
         Directory.CreateDirectory(resourcesDir);
 
-        await WebView.EnsureCoreWebView2Async();
+        var environment = await CoreWebView2Environment.CreateAsync(
+            userDataFolder: Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ClaudeRTL",
+                "WebView2"));
+
+        await WebView.EnsureCoreWebView2Async(environment);
         WebView.DefaultBackgroundColor = System.Drawing.Color.Transparent;
 
         _bridge = new WebBridge(WebView);
@@ -54,7 +70,7 @@ public partial class BubbleWindow : Window
             _isReady = true;
             if (_pendingText is not null)
             {
-                await _bridge.ShowBubbleAsync(_pendingText, Settings.Instance.FontSize, false);
+                await ShowBubbleContentAsync(_pendingText);
                 _pendingText = null;
             }
         };
@@ -62,8 +78,12 @@ public partial class BubbleWindow : Window
 
     public void ShowAt(System.Drawing.Point cursor, string text)
     {
-        Left = cursor.X + 12;
-        Top = cursor.Y + 12;
+        _anchorPoint = cursor;
+        _arrowBelow = false;
+        _isHiding = false;
+
+        var preliminary = new Size(440, 420);
+        SetWindowPosition(preliminary);
 
         if (!_isReady || _bridge is null)
         {
@@ -75,14 +95,27 @@ public partial class BubbleWindow : Window
 
         Show();
         Activate();
+        _ = ShowBubbleContentAsync(text);
+    }
+
+    private async Task ShowBubbleContentAsync(string text)
+    {
+        if (_bridge is null)
+            return;
+
         _speech.Stop();
-        _ = _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, false);
+        await _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, _arrowBelow);
     }
 
     public void HideBubble()
     {
+        if (_isHiding || !IsVisible)
+            return;
+
+        _isHiding = true;
         _speech.Stop();
         Hide();
+        _isHiding = false;
     }
 
     private void OnBridgeMessage(BridgeMessage message)
@@ -104,11 +137,58 @@ public partial class BubbleWindow : Window
                 break;
             case "resize":
                 if (message.W is > 0 && message.H is > 0)
-                {
-                    Width = Math.Max(message.W.Value, 120);
-                    Height = Math.Max(message.H.Value, 80);
-                }
+                    HandleResize(message.W.Value, message.H.Value);
                 break;
         }
+    }
+
+    private void HandleResize(double width, double height)
+    {
+        var dipSize = PhysicalToDipSize(width, height);
+        Width = Math.Max(dipSize.Width, 120);
+        Height = Math.Max(dipSize.Height, 80);
+        SetWindowPosition(new Size(Width, Height));
+    }
+
+    private void SetWindowPosition(Size size)
+    {
+        var scale = GetDpiScale();
+        var anchorDip = new Point(_anchorPoint.X / scale, _anchorPoint.Y / scale);
+        var workArea = Win32Interop.GetWorkAreaForPoint(_anchorPoint);
+        var workLeft = workArea.Left / scale;
+        var workTop = workArea.Top / scale;
+        var workRight = workArea.Right / scale;
+        var workBottom = workArea.Bottom / scale;
+
+        var x = anchorDip.X - OffsetX;
+        var y = anchorDip.Y - size.Height - OffsetY;
+        _arrowBelow = false;
+
+        if (y < workTop + Margin)
+        {
+            y = anchorDip.Y + OffsetY;
+            _arrowBelow = true;
+        }
+
+        x = Math.Clamp(x, workLeft + Margin, workRight - size.Width - Margin);
+        y = Math.Clamp(y, workTop + Margin, workBottom - size.Height - Margin);
+
+        Left = x;
+        Top = y;
+    }
+
+    private double GetDpiScale()
+    {
+        var source = PresentationSource.FromVisual(this);
+        if (source?.CompositionTarget is not null)
+            return source.CompositionTarget.TransformToDevice.M11;
+
+        return 1.0;
+    }
+
+    private Size PhysicalToDipSize(double physicalWidth, double physicalHeight)
+    {
+        var scale = GetDpiScale();
+        return new Size(physicalWidth / scale, physicalHeight / scale);
     }
 }
