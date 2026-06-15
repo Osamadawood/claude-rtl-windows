@@ -44,7 +44,7 @@ public sealed class ApplicationCoordinator : IDisposable
 
         _lastDisplayedText = text;
         var cursor = Win32Interop.GetCursorPosition();
-        Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowPlainText(cursor, text));
+        Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowAt(cursor, text));
     }
 
     public void SuppressClipboard(TimeSpan duration) =>
