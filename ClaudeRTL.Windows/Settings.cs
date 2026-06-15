@@ -74,7 +74,8 @@ public sealed class Settings
 
         if (enabled)
         {
-            var exePath = Environment.ProcessPath ?? System.Windows.Application.ResourceAssembly.Location;
+            var exePath = Environment.ProcessPath
+                ?? Path.Combine(AppContext.BaseDirectory, "ClaudeRTL.exe");
             key.SetValue(RunValueName, $"\"{exePath}\"");
         }
         else

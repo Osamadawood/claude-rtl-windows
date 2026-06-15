@@ -153,7 +153,7 @@ public partial class BubbleWindow : Window
     private void SetWindowPosition(System.Windows.Size size)
     {
         var scale = GetDpiScale();
-        var anchorDip = new Point(_anchorPoint.X / scale, _anchorPoint.Y / scale);
+        var anchorDip = new System.Windows.Point(_anchorPoint.X / scale, _anchorPoint.Y / scale);
         var workArea = Win32Interop.GetWorkAreaForPoint(_anchorPoint);
         var workLeft = workArea.Left / scale;
         var workTop = workArea.Top / scale;

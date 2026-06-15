@@ -66,8 +66,7 @@ internal static class Win32Interop
         var monitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
         var info = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
         if (!GetMonitorInfo(monitor, ref info))
-            return System.Windows.Forms.Screen.PrimaryScreen?.WorkingArea
-                   ?? System.Drawing.Rectangle.Empty;
+            return System.Drawing.Rectangle.Empty;
 
         return new System.Drawing.Rectangle(
             info.rcWork.Left,

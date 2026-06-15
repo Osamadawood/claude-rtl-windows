@@ -66,7 +66,7 @@ internal sealed class SpeechService : IDisposable
     }
 
     private void OnSpeakProgress(object? sender, SpeakProgressEventArgs e) =>
-        SpeakProgress?.Invoke(e.CharacterPosition, e.Count);
+        SpeakProgress?.Invoke(e.CharacterPosition, e.CharacterCount);
 
     private void OnSpeakCompleted(object? sender, SpeakCompletedEventArgs e) => Stop();
 
