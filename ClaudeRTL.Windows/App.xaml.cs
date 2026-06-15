@@ -13,10 +13,12 @@ public partial class App : Application
         _coordinator = new ApplicationCoordinator();
         _coordinator.Start();
         _trayIcon = new TrayIcon();
+        OnboardingWindow.ShowIfNeeded();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
+        Settings.Instance.Save();
         _coordinator?.Dispose();
         _trayIcon?.Dispose();
         base.OnExit(e);

@@ -63,18 +63,11 @@ public sealed class TrayIcon : IDisposable
         about.ShowDialog();
     }
 
-    private void OnShowOnboarding(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show(
-            "ستتوفر نافذة الشرح في تحديث لاحق.",
-            "إعادة الشرح",
-            MessageBoxButton.OK,
-            MessageBoxImage.Information);
-    }
+    private void OnShowOnboarding(object sender, RoutedEventArgs e) => OnboardingWindow.Show();
 
     private void OnToggleLaunchAtLogin(object sender, RoutedEventArgs e)
     {
-        Settings.Instance.LaunchAtLogin = _launchAtLoginItem.IsChecked;
+        Settings.Instance.SetLaunchAtLogin(_launchAtLoginItem.IsChecked);
     }
 
     private void OnQuit(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
