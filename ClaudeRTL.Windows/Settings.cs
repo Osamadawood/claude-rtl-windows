@@ -74,7 +74,7 @@ public sealed class Settings
 
         if (enabled)
         {
-            var exePath = Environment.ProcessPath ?? Application.ResourceAssembly.Location;
+            var exePath = Environment.ProcessPath ?? System.Windows.Application.ResourceAssembly.Location;
             key.SetValue(RunValueName, $"\"{exePath}\"");
         }
         else

@@ -8,7 +8,7 @@ namespace ClaudeRTL;
 
 public partial class BubbleWindow : Window
 {
-    private const double Margin = 12;
+    private const double EdgeMargin = 12;
     private const double OffsetX = 20;
     private const double OffsetY = 14;
 
@@ -82,7 +82,7 @@ public partial class BubbleWindow : Window
         _arrowBelow = false;
         _isHiding = false;
 
-        var preliminary = new Size(440, 420);
+        var preliminary = new System.Windows.Size(440, 420);
         SetWindowPosition(preliminary);
 
         if (!_isReady || _bridge is null)
@@ -125,7 +125,7 @@ public partial class BubbleWindow : Window
             case "copy":
                 if (!string.IsNullOrEmpty(message.Text))
                 {
-                    Clipboard.SetText(message.Text);
+                    System.Windows.Clipboard.SetText(message.Text);
                     _coordinator.NoteAppClipboardWrite();
                 }
                 break;
@@ -147,10 +147,10 @@ public partial class BubbleWindow : Window
         var dipSize = PhysicalToDipSize(width, height);
         Width = Math.Max(dipSize.Width, 120);
         Height = Math.Max(dipSize.Height, 80);
-        SetWindowPosition(new Size(Width, Height));
+        SetWindowPosition(new System.Windows.Size(Width, Height));
     }
 
-    private void SetWindowPosition(Size size)
+    private void SetWindowPosition(System.Windows.Size size)
     {
         var scale = GetDpiScale();
         var anchorDip = new Point(_anchorPoint.X / scale, _anchorPoint.Y / scale);
@@ -164,14 +164,14 @@ public partial class BubbleWindow : Window
         var y = anchorDip.Y - size.Height - OffsetY;
         _arrowBelow = false;
 
-        if (y < workTop + Margin)
+        if (y < workTop + EdgeMargin)
         {
             y = anchorDip.Y + OffsetY;
             _arrowBelow = true;
         }
 
-        x = Math.Clamp(x, workLeft + Margin, workRight - size.Width - Margin);
-        y = Math.Clamp(y, workTop + Margin, workBottom - size.Height - Margin);
+        x = Math.Clamp(x, workLeft + EdgeMargin, workRight - size.Width - EdgeMargin);
+        y = Math.Clamp(y, workTop + EdgeMargin, workBottom - size.Height - EdgeMargin);
 
         Left = x;
         Top = y;
@@ -186,9 +186,9 @@ public partial class BubbleWindow : Window
         return 1.0;
     }
 
-    private Size PhysicalToDipSize(double physicalWidth, double physicalHeight)
+    private System.Windows.Size PhysicalToDipSize(double physicalWidth, double physicalHeight)
     {
         var scale = GetDpiScale();
-        return new Size(physicalWidth / scale, physicalHeight / scale);
+        return new System.Windows.Size(physicalWidth / scale, physicalHeight / scale);
     }
 }

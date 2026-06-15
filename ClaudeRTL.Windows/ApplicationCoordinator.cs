@@ -33,7 +33,7 @@ public sealed class ApplicationCoordinator : IDisposable
         string text;
         try
         {
-            text = Clipboard.GetText();
+            text = System.Windows.Clipboard.GetText();
         }
         catch
         {
@@ -44,7 +44,7 @@ public sealed class ApplicationCoordinator : IDisposable
             return;
 
         var cursor = Win32Interop.GetCursorPosition();
-        Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowAt(cursor, text));
+        System.Windows.Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowAt(cursor, text));
     }
 
     public void SuppressClipboard(TimeSpan duration) =>

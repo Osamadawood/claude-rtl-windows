@@ -2,7 +2,7 @@ using System.Windows;
 
 namespace ClaudeRTL;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private TrayIcon? _trayIcon;
     private ApplicationCoordinator? _coordinator;

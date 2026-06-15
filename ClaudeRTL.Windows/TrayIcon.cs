@@ -63,14 +63,14 @@ public sealed class TrayIcon : IDisposable
         about.ShowDialog();
     }
 
-    private void OnShowOnboarding(object sender, RoutedEventArgs e) => OnboardingWindow.Show();
+    private void OnShowOnboarding(object sender, RoutedEventArgs e) => OnboardingWindow.Open();
 
     private void OnToggleLaunchAtLogin(object sender, RoutedEventArgs e)
     {
         Settings.Instance.SetLaunchAtLogin(_launchAtLoginItem.IsChecked);
     }
 
-    private void OnQuit(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+    private void OnQuit(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
 
     public void Dispose() => _taskbarIcon.Dispose();
 }

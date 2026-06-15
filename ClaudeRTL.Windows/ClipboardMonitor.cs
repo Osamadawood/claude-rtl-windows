@@ -36,7 +36,7 @@ internal sealed class ClipboardMonitor : IDisposable
     {
         if (msg == Win32Interop.WM_CLIPBOARDUPDATE)
         {
-            Application.Current.Dispatcher.BeginInvoke(() => ClipboardChanged?.Invoke());
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() => ClipboardChanged?.Invoke());
             handled = true;
         }
 

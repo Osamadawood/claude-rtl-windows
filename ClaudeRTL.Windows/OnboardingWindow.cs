@@ -13,10 +13,10 @@ public sealed class OnboardingWindow : Window
         if (Settings.Instance.DidOnboard)
             return;
 
-        Show();
+        Open();
     }
 
-    public static void Show()
+    public static void Open()
     {
         if (_instance is { IsVisible: true })
         {
