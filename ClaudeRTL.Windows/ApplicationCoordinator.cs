@@ -5,9 +5,14 @@ namespace ClaudeRTL;
 public sealed class ApplicationCoordinator : IDisposable
 {
     private readonly ClipboardMonitor _clipboardMonitor = new();
-    private readonly BubbleWindow _bubbleWindow = new();
+    private readonly BubbleWindow _bubbleWindow;
     private string? _lastDisplayedText;
     private DateTime _suppressClipboardUntil = DateTime.MinValue;
+
+    public ApplicationCoordinator()
+    {
+        _bubbleWindow = new BubbleWindow(this);
+    }
 
     public void Start()
     {

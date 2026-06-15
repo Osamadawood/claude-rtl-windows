@@ -6,14 +6,30 @@ namespace ClaudeRTL;
 
 public partial class BubbleWindow : Window
 {
+    private readonly ApplicationCoordinator _coordinator;
+    private readonly SpeechService _speech = new();
     private WebBridge? _bridge;
     private bool _isReady;
     private string? _pendingText;
 
-    public BubbleWindow()
+    public BubbleWindow(ApplicationCoordinator coordinator)
     {
+        _coordinator = coordinator;
         InitializeComponent();
         Loaded += async (_, _) => await InitializeWebViewAsync();
+        Closed += (_, _) => _speech.Dispose();
+
+        _speech.SpeakingChanged += async speaking =>
+        {
+            if (_bridge is not null)
+                await _bridge.SetSpeakingAsync(speaking);
+        };
+
+        _speech.SpeakProgress += async (location, length) =>
+        {
+            if (_bridge is not null)
+                await _bridge.HighlightRangeAsync(location, length);
+        };
     }
 
     private async Task InitializeWebViewAsync()
@@ -59,15 +75,30 @@ public partial class BubbleWindow : Window
 
         Show();
         Activate();
+        _speech.Stop();
         _ = _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, false);
     }
 
-    public void HideBubble() => Hide();
+    public void HideBubble()
+    {
+        _speech.Stop();
+        Hide();
+    }
 
     private void OnBridgeMessage(BridgeMessage message)
     {
         switch (message.Action)
         {
+            case "copy":
+                if (!string.IsNullOrEmpty(message.Text))
+                {
+                    Clipboard.SetText(message.Text);
+                    _coordinator.NoteAppClipboardWrite();
+                }
+                break;
+            case "speak":
+                _speech.Toggle(message.Text ?? string.Empty);
+                break;
             case "close":
                 HideBubble();
                 break;
