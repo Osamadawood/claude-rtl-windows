@@ -17,8 +17,15 @@ final class PreferencesWindowController: NSWindowController {
         let hosting = NSHostingController(rootView: SettingsRootView())
         let window = NSWindow(contentViewController: hosting)
         window.title = "الإعدادات"
-        window.setContentSize(NSSize(width: 520, height: 440))
-        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.setContentSize(NSSize(
+            width: SettingsMetrics.windowWidth,
+            height: SettingsMetrics.windowHeight
+        ))
+        window.minSize = NSSize(
+            width: SettingsMetrics.windowMinWidth,
+            height: SettingsMetrics.windowMinHeight
+        )
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         window.center()
         window.isReleasedWhenClosed = false
 
