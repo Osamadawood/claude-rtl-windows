@@ -26,6 +26,13 @@
 		A10000010000000000000017 /* MenuRTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000019 /* MenuRTL.swift */; };
 		A10000010000000000000018 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000020 /* Localizable.strings */; };
 		A10000010000000000000019 /* settings.html in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000021 /* settings.html */; };
+		A10000010000000000000020 /* fonts.css in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000022 /* fonts.css */; };
+		A10000010000000000000021 /* IBMPlexSansArabic-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */; };
+		A10000010000000000000022 /* IBMPlexSansArabic-Medium.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */; };
+		A10000010000000000000023 /* IBMPlexSansArabic-SemiBold.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000025 /* IBMPlexSansArabic-SemiBold.woff2 */; };
+		A10000010000000000000024 /* IBMPlexSansArabic-Bold.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000026 /* IBMPlexSansArabic-Bold.woff2 */; };
+		A10000010000000000000025 /* IBMPlexMono-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000027 /* IBMPlexMono-Regular.woff2 */; };
+		A10000010000000000000026 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000028 /* OFL.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +57,13 @@
 		A20000010000000000000019 /* MenuRTL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuRTL.swift; sourceTree = "<group>"; };
 		A20000010000000000000020 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A20000010000000000000021 /* settings.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = settings.html; sourceTree = "<group>"; };
+		A20000010000000000000022 /* fonts.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = fonts.css; sourceTree = "<group>"; };
+		A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Regular.woff2; sourceTree = "<group>"; };
+		A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Medium.woff2; sourceTree = "<group>"; };
+		A20000010000000000000025 /* IBMPlexSansArabic-SemiBold.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-SemiBold.woff2; sourceTree = "<group>"; };
+		A20000010000000000000026 /* IBMPlexSansArabic-Bold.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Bold.woff2; sourceTree = "<group>"; };
+		A20000010000000000000027 /* IBMPlexMono-Regular.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexMono-Regular.woff2; sourceTree = "<group>"; };
+		A20000010000000000000028 /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,10 +122,25 @@
 				A20000010000000000000007 /* bubble.html */,
 				A20000010000000000000012 /* onboarding.html */,
 				A20000010000000000000021 /* settings.html */,
+				A20000010000000000000022 /* fonts.css */,
+				A40000010000000000000005 /* Fonts */,
 				A20000010000000000000014 /* MenuBarIcon.png */,
 				A20000010000000000000015 /* MenuBarIcon@2x.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		A40000010000000000000005 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */,
+				A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */,
+				A20000010000000000000025 /* IBMPlexSansArabic-SemiBold.woff2 */,
+				A20000010000000000000026 /* IBMPlexSansArabic-Bold.woff2 */,
+				A20000010000000000000027 /* IBMPlexMono-Regular.woff2 */,
+				A20000010000000000000028 /* OFL.txt */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,6 +210,13 @@
 				A10000010000000000000013 /* MenuBarIcon@2x.png in Resources */,
 				A10000010000000000000018 /* Localizable.strings in Resources */,
 				A10000010000000000000019 /* settings.html in Resources */,
+				A10000010000000000000020 /* fonts.css in Resources */,
+				A10000010000000000000021 /* IBMPlexSansArabic-Regular.woff2 in Resources */,
+				A10000010000000000000022 /* IBMPlexSansArabic-Medium.woff2 in Resources */,
+				A10000010000000000000023 /* IBMPlexSansArabic-SemiBold.woff2 in Resources */,
+				A10000010000000000000024 /* IBMPlexSansArabic-Bold.woff2 in Resources */,
+				A10000010000000000000025 /* IBMPlexMono-Regular.woff2 in Resources */,
+				A10000010000000000000026 /* OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

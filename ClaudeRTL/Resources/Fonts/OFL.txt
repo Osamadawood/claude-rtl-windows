@@ -1,0 +1,7 @@
+Copyright © IBM Corp. 2017–2023
+Copyright © The IBM Plex Project Authors
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+See https://openfontlicense.org
+
+Bundled in Claude RTL for offline use only — not loaded from any CDN at runtime.
