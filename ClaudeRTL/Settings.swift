@@ -1,7 +1,8 @@
+import AppKit
 import Foundation
 import ServiceManagement
 
-enum TriggerMode: String, CaseIterable {
+enum TriggerMode: String, CaseIterable, Codable {
     case allApps
     case claudeOnly
     case customList
@@ -13,6 +14,20 @@ enum TriggerMode: String, CaseIterable {
         case .customList: return "قائمة مخصّصة"
         }
     }
+}
+
+struct AppRecord: Codable, Equatable {
+    var bundleId: String
+    var name: String
+}
+
+struct SettingsSnapshot: Encodable {
+    let mode: String
+    let excluded: [AppRecord]
+    let included: [AppRecord]
+    let fontSize: Int
+    let launchAtLogin: Bool
+    let version: String
 }
 
 final class Settings {
@@ -28,6 +43,8 @@ final class Settings {
         static let triggerMode = "triggerMode"
         static let includedBundleIDs = "includedBundleIDs"
         static let excludedBundleIDsAlways = "excludedBundleIDsAlways"
+        static let excludedAppsAlways = "excludedAppsAlways"
+        static let includedApps = "includedApps"
     }
 
     /// Session-only exclusions; cleared on each launch.
@@ -63,6 +80,40 @@ final class Settings {
         set { defaults.set(newValue.rawValue, forKey: Keys.triggerMode) }
     }
 
+    var excludedAppsAlways: [AppRecord] {
+        get {
+            if let data = defaults.data(forKey: Keys.excludedAppsAlways),
+               let records = try? JSONDecoder().decode([AppRecord].self, from: data) {
+                return records
+            }
+            let ids = defaults.stringArray(forKey: Keys.excludedBundleIDsAlways) ?? []
+            return ids.map { AppRecord(bundleId: $0, name: displayName(for: $0)) }
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                defaults.set(data, forKey: Keys.excludedAppsAlways)
+            }
+            excludedBundleIDsAlways = newValue.map(\.bundleId)
+        }
+    }
+
+    var includedApps: [AppRecord] {
+        get {
+            if let data = defaults.data(forKey: Keys.includedApps),
+               let records = try? JSONDecoder().decode([AppRecord].self, from: data) {
+                return records
+            }
+            let ids = defaults.stringArray(forKey: Keys.includedBundleIDs) ?? []
+            return ids.map { AppRecord(bundleId: $0, name: displayName(for: $0)) }
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                defaults.set(data, forKey: Keys.includedApps)
+            }
+            includedBundleIDs = newValue.map(\.bundleId)
+        }
+    }
+
     var includedBundleIDs: [String] {
         get { defaults.stringArray(forKey: Keys.includedBundleIDs) ?? [] }
         set { defaults.set(newValue, forKey: Keys.includedBundleIDs) }
@@ -73,30 +124,57 @@ final class Settings {
         set { defaults.set(newValue, forKey: Keys.excludedBundleIDsAlways) }
     }
 
+    func snapshot() -> SettingsSnapshot {
+        SettingsSnapshot(
+            mode: triggerMode.rawValue,
+            excluded: excludedAppsAlways,
+            included: includedApps,
+            fontSize: Int(fontSize),
+            launchAtLogin: isLaunchAtLoginEnabled,
+            version: Self.versionLabel()
+        )
+    }
+
+    static func versionLabel() -> String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
+
     func excludeForSession(bundleID: String) {
         guard !bundleID.isEmpty else { return }
         excludedBundleIDsSession.insert(bundleID)
     }
 
-    func excludePermanently(bundleID: String) {
+    func excludePermanently(bundleID: String, name: String? = nil) {
         guard !bundleID.isEmpty else { return }
-        var list = excludedBundleIDsAlways
-        guard !list.contains(bundleID) else { return }
-        list.append(bundleID)
-        excludedBundleIDsAlways = list
-    }
-
-    func removeIncludedBundleID(_ bundleID: String) {
-        includedBundleIDs = includedBundleIDs.filter { $0 != bundleID }
-    }
-
-    func addIncludedBundleID(_ bundleID: String) {
-        guard !bundleID.isEmpty, !includedBundleIDs.contains(bundleID) else { return }
-        includedBundleIDs = includedBundleIDs + [bundleID]
+        var list = excludedAppsAlways
+        guard !list.contains(where: { $0.bundleId == bundleID }) else { return }
+        list.append(AppRecord(bundleId: bundleID, name: name ?? displayName(for: bundleID)))
+        excludedAppsAlways = list
     }
 
     func removeExcludedPermanently(_ bundleID: String) {
-        excludedBundleIDsAlways = excludedBundleIDsAlways.filter { $0 != bundleID }
+        excludedAppsAlways = excludedAppsAlways.filter { $0.bundleId != bundleID }
+    }
+
+    func addIncludedApp(bundleID: String, name: String) {
+        guard !bundleID.isEmpty else { return }
+        var list = includedApps
+        guard !list.contains(where: { $0.bundleId == bundleID }) else { return }
+        list.append(AppRecord(bundleId: bundleID, name: name))
+        includedApps = list
+    }
+
+    func removeIncludedApp(_ bundleID: String) {
+        includedApps = includedApps.filter { $0.bundleId != bundleID }
+    }
+
+    func displayName(for bundleID: String) -> String {
+        NSWorkspace.shared.runningApplications
+            .first { $0.bundleIdentifier == bundleID }?
+            .localizedName ?? bundleID
     }
 
     var isLaunchAtLoginEnabled: Bool {

@@ -14,7 +14,6 @@ enum MenuRTL {
         let item = NSMenuItem(title: "", action: action, keyEquivalent: keyEquivalent)
         item.target = target
         item.attributedTitle = attributedTitle(title)
-        item.userInterfaceLayoutDirection = .rightToLeft
         return item
     }
 

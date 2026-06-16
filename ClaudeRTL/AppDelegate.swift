@@ -10,8 +10,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         DebugLog.print("✅ applicationDidFinishLaunching CALLED")
 
-        NSApp.userInterfaceLayoutDirection = .rightToLeft
-
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
             object: nil,
@@ -165,7 +163,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func excludeFrontmostAlways() {
         guard let bundleID = frontmostBundleIDForMenu else { return }
-        Settings.shared.excludePermanently(bundleID: bundleID)
+        let name = lastExternalApp?.localizedName
+            ?? NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == bundleID }?.localizedName
+            ?? bundleID
+        Settings.shared.excludePermanently(bundleID: bundleID, name: name)
     }
 
     @objc private func quit() {
