@@ -18,12 +18,14 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 760),
-            styleMask: [.titled, .closable, .miniaturizable],
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 520),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
         window.title = "إعدادات Claude RTL"
+        window.minSize = NSSize(width: 480, height: 380)
+        window.maxSize = NSSize(width: 640, height: 960)
         window.center()
         window.isReleasedWhenClosed = false
 
@@ -136,16 +138,43 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
                 let enabled = body["enabled"] as? Bool ?? false
                 Settings.shared.setLaunchAtLogin(enabled)
                 self.pushStateToWebView()
+            case "setAutoCheckUpdates":
+                let enabled = body["enabled"] as? Bool ?? true
+                SparkleUpdater.shared.automaticallyChecksForUpdates = enabled
+                self.pushStateToWebView()
+            case "checkForUpdates":
+                SparkleUpdater.shared.checkForUpdates()
             case "showOnboarding":
                 OnboardingWindowController.show()
             case "openWebsite":
                 if let url = URL(string: "https://grwlab.net") {
                     NSWorkspace.shared.open(url)
                 }
+            case "resizeWindow":
+                if let height = body["height"] as? Double {
+                    self.resizeToContentHeight(height)
+                } else if let height = body["height"] as? Int {
+                    self.resizeToContentHeight(Double(height))
+                }
             default:
                 break
             }
         }
+    }
+
+    private func resizeToContentHeight(_ contentHeight: CGFloat) {
+        guard let window, let screen = window.screen ?? NSScreen.main else { return }
+        let chrome = window.frame.height - window.contentView!.frame.height
+        let maxContent = min(screen.visibleFrame.height * 0.92, 920) - chrome
+        let minContent: CGFloat = 320
+        let clamped = max(minContent, min(maxContent, contentHeight))
+        let newFrameHeight = clamped + chrome
+        guard abs(window.frame.height - newFrameHeight) > 2 else { return }
+        var frame = window.frame
+        let delta = newFrameHeight - frame.height
+        frame.size.height = newFrameHeight
+        frame.origin.y -= delta
+        window.setFrame(frame, display: true, animate: true)
     }
 
     private func pickApplication(completion: @escaping (AppRecord) -> Void) {

@@ -36,6 +36,7 @@ struct SettingsSnapshot: Encodable {
     let themeMode: String
     let effectiveTheme: String
     let launchAtLogin: Bool
+    let autoCheckUpdates: Bool
     let version: String
 }
 
@@ -153,6 +154,7 @@ final class Settings {
             themeMode: themeMode.rawValue,
             effectiveTheme: ThemeManager.shared.effectiveTheme(),
             launchAtLogin: isLaunchAtLoginEnabled,
+            autoCheckUpdates: SparkleUpdater.shared.automaticallyChecksForUpdates,
             version: Self.versionLabel()
         )
     }

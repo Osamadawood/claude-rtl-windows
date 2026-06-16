@@ -6,9 +6,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var excludeAppMenuItem: NSMenuItem!
     private var frontmostBundleIDForMenu: String?
     private var lastExternalApp: NSRunningApplication?
+    private var sparkleUpdater: SparkleUpdater!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         DebugLog.print("✅ applicationDidFinishLaunching CALLED")
+
+        sparkleUpdater = SparkleUpdater.shared
+        _ = sparkleUpdater.controller
 
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
@@ -74,6 +78,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(excludeAppMenuItem)
 
         menu.addItem(.separator())
+
+        let checkUpdates = MenuRTL.item("تحقق من التحديثات…", action: #selector(checkForUpdates), target: self)
+        menu.addItem(checkUpdates)
 
         let quit = MenuRTL.item("خروج", action: #selector(quit), target: self, keyEquivalent: "q")
         menu.addItem(quit)
@@ -156,6 +163,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func showPreferences() {
         PreferencesWindowController.show()
+    }
+
+    @objc private func checkForUpdates() {
+        SparkleUpdater.shared.checkForUpdates()
     }
 
     @objc private func excludeFrontmostSession() {

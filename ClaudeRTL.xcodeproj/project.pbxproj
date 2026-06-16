@@ -35,6 +35,8 @@
 		A10000010000000000000024 /* IBMPlexSansArabic-Bold.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000026 /* IBMPlexSansArabic-Bold.woff2 */; };
 		A10000010000000000000025 /* IBMPlexMono-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000027 /* IBMPlexMono-Regular.woff2 */; };
 		A10000010000000000000026 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000028 /* OFL.txt */; };
+		A10000010000000000000029 /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000031 /* SparkleUpdater.swift */; };
+		A10000010000000000000030 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A90000010000000000000002 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +61,7 @@
 		A20000010000000000000019 /* MenuRTL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuRTL.swift; sourceTree = "<group>"; };
 		A20000010000000000000029 /* AppIconHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconHelper.swift; sourceTree = "<group>"; };
 		A20000010000000000000030 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		A20000010000000000000031 /* SparkleUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdater.swift; sourceTree = "<group>"; };
 		A20000010000000000000020 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A20000010000000000000021 /* settings.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = settings.html; sourceTree = "<group>"; };
 		A20000010000000000000022 /* fonts.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = fonts.css; sourceTree = "<group>"; };
@@ -75,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10000010000000000000030 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +109,7 @@
 				A20000010000000000000019 /* MenuRTL.swift */,
 				A20000010000000000000029 /* AppIconHelper.swift */,
 				A20000010000000000000030 /* ThemeManager.swift */,
+				A20000010000000000000031 /* SparkleUpdater.swift */,
 				A20000010000000000000016 /* DebugLog.swift */,
 				A20000010000000000000020 /* Localizable.strings */,
 				A40000010000000000000004 /* Resources */,
@@ -166,6 +171,9 @@
 			dependencies = (
 			);
 			name = ClaudeRTL;
+			packageProductDependencies = (
+				A90000010000000000000002 /* Sparkle */,
+			);
 			productName = ClaudeRTL;
 			productReference = A20000010000000000000008 /* ClaudeRTL.app */;
 			productType = "com.apple.product-type.application";
@@ -195,6 +203,9 @@
 				Base,
 			);
 			mainGroup = A40000010000000000000001;
+			packageReferences = (
+				A90000010000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			productRefGroup = A40000010000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -267,6 +278,7 @@
 				A10000010000000000000017 /* MenuRTL.swift in Sources */,
 				A10000010000000000000027 /* AppIconHelper.swift in Sources */,
 				A10000010000000000000028 /* ThemeManager.swift in Sources */,
+				A10000010000000000000029 /* SparkleUpdater.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +400,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = AJ8X3Y4JUR;
 				ENABLE_APP_SANDBOX = NO;
@@ -430,7 +442,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = AJ8X3Y4JUR;
 				ENABLE_APP_SANDBOX = NO;
@@ -483,6 +495,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A90000010000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A90000010000000000000002 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A90000010000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A60000010000000000000001 /* Project object */;
 }

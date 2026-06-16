@@ -38,7 +38,7 @@
   }
   * { box-sizing: border-box; }
   html, body {
-    margin: 0; min-height: 100%;
+    margin: 0;
     background: var(--bg); color: var(--ink);
     font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
     font-size: 14px; line-height: 1.7;
@@ -72,15 +72,18 @@
     transition: accent-color 160ms var(--ease);
   }
   .context-panels {
-    display: grid; grid-template-columns: 1fr; margin-top: 12px;
+    position: relative;
+    margin-top: 12px;
   }
   .context-panels > * {
-    grid-area: 1 / 1;
+    position: absolute;
+    top: 0; left: 0; right: 0;
     opacity: 0; visibility: hidden;
     transition: opacity 120ms var(--ease), visibility 120ms var(--ease);
     pointer-events: none;
   }
   .context-panels > *.active {
+    position: relative;
     opacity: 1; visibility: visible; pointer-events: auto;
   }
   .list { list-style: none; margin: 0; padding: 0; }
@@ -275,6 +278,13 @@
       <span>تشغيل عند بدء النظام</span>
       <input type="checkbox" id="launchToggle">
     </div>
+    <div class="toggle-row">
+      <span>التحقق التلقائي من التحديثات</span>
+      <input type="checkbox" id="autoUpdateToggle">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btnCheckUpdates" type="button">تحقق الآن</button>
+    </div>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn btn-primary" id="btnOnboarding" type="button">إعادة عرض الشرح</button>
       <button class="btn btn-secondary" id="btnResetAll" type="button">إعادة تعيين كل الإعدادات</button>
@@ -320,10 +330,18 @@
     });
   }
 
+  function reportContentHeight() {
+    requestAnimationFrame(function() {
+      var h = Math.ceil(document.documentElement.scrollHeight);
+      bridge({ action: "resizeWindow", height: h });
+    });
+  }
+
   function updateModeUI(mode) {
     document.querySelectorAll(".ctx-panel").forEach(function(panel) {
       panel.classList.toggle("active", panel.dataset.mode === mode);
     });
+    reportContentHeight();
   }
 
   function updateSegIndicator() {
@@ -364,6 +382,7 @@
     document.getElementById("fontVal").textContent = data.fontSize;
     updateSliderFill();
     document.getElementById("launchToggle").checked = !!data.launchAtLogin;
+    document.getElementById("autoUpdateToggle").checked = data.autoCheckUpdates !== false;
     document.getElementById("versionLabel").textContent = data.version;
 
     document.querySelectorAll("#themeMode button").forEach(function(btn) {
@@ -372,6 +391,7 @@
     requestAnimationFrame(updateSegIndicator);
     if (data.effectiveTheme)
       document.documentElement.setAttribute("data-theme", data.effectiveTheme);
+    reportContentHeight();
   };
 
   document.getElementById("enabledToggle").onchange = function() {
@@ -409,6 +429,14 @@
     bridge({ action: "setLaunchAtLogin", enabled: this.checked });
   };
 
+  document.getElementById("autoUpdateToggle").onchange = function() {
+    bridge({ action: "setAutoCheckUpdates", enabled: this.checked });
+  };
+
+  document.getElementById("btnCheckUpdates").onclick = function() {
+    bridge({ action: "checkForUpdates" });
+  };
+
   document.getElementById("btnOnboarding").onclick = function() {
     bridge({ action: "showOnboarding" });
   };
@@ -428,7 +456,10 @@
     };
   });
 
-  window.addEventListener("resize", updateSegIndicator);
+  window.addEventListener("resize", function() {
+    updateSegIndicator();
+    reportContentHeight();
+  });
 
   document.getElementById("grwLink").onclick = function(e) {
     e.preventDefault();
