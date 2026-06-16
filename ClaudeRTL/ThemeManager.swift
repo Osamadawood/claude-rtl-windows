@@ -45,7 +45,6 @@ final class ThemeManager {
     func applyToAllWebViews() {
         let theme = effectiveTheme()
         BubbleRenderer.shared.applyTheme(theme)
-        PreferencesWindowController.applyThemeIfOpen(theme)
         OnboardingWindowController.applyThemeIfVisible(theme)
     }
 }
