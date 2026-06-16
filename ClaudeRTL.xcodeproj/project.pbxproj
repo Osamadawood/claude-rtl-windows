@@ -24,6 +24,7 @@
 		A10000010000000000000015 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000017 /* AboutWindowController.swift */; };
 		A10000010000000000000016 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000018 /* PreferencesWindowController.swift */; };
 		A10000010000000000000017 /* MenuRTL.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000019 /* MenuRTL.swift */; };
+		A10000010000000000000027 /* AppIconHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000029 /* AppIconHelper.swift */; };
 		A10000010000000000000018 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000020 /* Localizable.strings */; };
 		A10000010000000000000019 /* settings.html in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000021 /* settings.html */; };
 		A10000010000000000000020 /* fonts.css in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000022 /* fonts.css */; };
@@ -55,6 +56,7 @@
 		A20000010000000000000017 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		A20000010000000000000018 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		A20000010000000000000019 /* MenuRTL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuRTL.swift; sourceTree = "<group>"; };
+		A20000010000000000000029 /* AppIconHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconHelper.swift; sourceTree = "<group>"; };
 		A20000010000000000000020 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A20000010000000000000021 /* settings.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = settings.html; sourceTree = "<group>"; };
 		A20000010000000000000022 /* fonts.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = fonts.css; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				A20000010000000000000017 /* AboutWindowController.swift */,
 				A20000010000000000000018 /* PreferencesWindowController.swift */,
 				A20000010000000000000019 /* MenuRTL.swift */,
+				A20000010000000000000029 /* AppIconHelper.swift */,
 				A20000010000000000000016 /* DebugLog.swift */,
 				A20000010000000000000020 /* Localizable.strings */,
 				A40000010000000000000004 /* Resources */,
@@ -259,6 +262,7 @@
 				A10000010000000000000015 /* AboutWindowController.swift in Sources */,
 				A10000010000000000000016 /* PreferencesWindowController.swift in Sources */,
 				A10000010000000000000017 /* MenuRTL.swift in Sources */,
+				A10000010000000000000027 /* AppIconHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

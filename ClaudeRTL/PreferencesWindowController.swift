@@ -18,7 +18,7 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 720),
+            contentRect: NSRect(x: 0, y: 0, width: 560, height: 760),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -53,7 +53,7 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
         pushStateToWebView()
     }
 
-    private func pushStateToWebView() {
+    func pushStateToWebView() {
         guard let webView else { return }
         let snapshot = Settings.shared.snapshot()
         guard let data = try? JSONEncoder().encode(snapshot),
@@ -72,6 +72,9 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             switch action {
+            case "setEnabled":
+                Settings.shared.isEnabled = body["enabled"] as? Bool ?? true
+                self.pushStateToWebView()
             case "setMode":
                 if let raw = body["mode"] as? String, let mode = TriggerMode(rawValue: raw) {
                     Settings.shared.triggerMode = mode
@@ -103,6 +106,12 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
                 } else if let size = body["size"] as? Int {
                     Settings.shared.fontSize = Double(size)
                 }
+            case "resetFontSize":
+                Settings.shared.resetFontSize()
+                self.pushStateToWebView()
+            case "resetAllSettings":
+                Settings.shared.resetAllSettingsExceptLaunchAtLogin()
+                self.pushStateToWebView()
             case "setLaunchAtLogin":
                 let enabled = body["enabled"] as? Bool ?? false
                 Settings.shared.setLaunchAtLogin(enabled)

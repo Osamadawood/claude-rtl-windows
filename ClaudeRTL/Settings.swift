@@ -21,10 +21,17 @@ struct AppRecord: Codable, Equatable {
     var name: String
 }
 
+struct AppRecordDTO: Encodable {
+    let bundleId: String
+    let name: String
+    let icon: String?
+}
+
 struct SettingsSnapshot: Encodable {
+    let enabled: Bool
     let mode: String
-    let excluded: [AppRecord]
-    let included: [AppRecord]
+    let excluded: [AppRecordDTO]
+    let included: [AppRecordDTO]
     let fontSize: Int
     let launchAtLogin: Bool
     let version: String
@@ -126,13 +133,34 @@ final class Settings {
 
     func snapshot() -> SettingsSnapshot {
         SettingsSnapshot(
+            enabled: isEnabled,
             mode: triggerMode.rawValue,
-            excluded: excludedAppsAlways,
-            included: includedApps,
+            excluded: excludedAppsAlways.map(appDTO),
+            included: includedApps.map(appDTO),
             fontSize: Int(fontSize),
             launchAtLogin: isLaunchAtLoginEnabled,
             version: Self.versionLabel()
         )
+    }
+
+    private func appDTO(_ app: AppRecord) -> AppRecordDTO {
+        AppRecordDTO(
+            bundleId: app.bundleId,
+            name: app.name,
+            icon: AppIconHelper.dataURL(forBundleIdentifier: app.bundleId)
+        )
+    }
+
+    func resetFontSize() {
+        fontSize = 16
+    }
+
+    func resetAllSettingsExceptLaunchAtLogin() {
+        triggerMode = .allApps
+        excludedAppsAlways = []
+        includedApps = []
+        excludedBundleIDsSession = []
+        fontSize = 16
     }
 
     static func versionLabel() -> String {
