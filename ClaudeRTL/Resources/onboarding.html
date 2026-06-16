@@ -31,19 +31,14 @@
   button{font:inherit;border:none;border-radius:10px;padding:12px 16px;cursor:pointer;transition:.15s}
   .primary{background:var(--accent);color:#fff;font-weight:700}
   .primary:hover{filter:brightness(1.08)}
-  .secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-  .secondary:hover{background:var(--surface)}
   .foot{margin-top:22px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
     text-align:center;font-size:11px;line-height:1.75;color:var(--muted)}
   .foot b{color:var(--accent)}
-  .ax-status{margin-top:12px;font-size:13px;line-height:1.7;color:var(--muted)}
-  .ax-status.ready{color:var(--accent);font-weight:600}
-  .ax-relaunch{font-size:13px;opacity:.85}
 </style></head><body>
   <div class="wrap">
     <div class="logo">Claude RTL</div>
     <h1>مرحبًا بك</h1>
-    <p class="lead">يُظهر Claude RTL فقاعةً صغيرة بجوار المؤشّر عند تحديد نصٍّ عربي داخل Claude، فيعرضه بالاتجاه الصحيح مع تنسيق Markdown، ويُبقي الشيفرة البرمجية من اليسار إلى اليمين، مع إمكانية الاستماع إلى النص وتمييز الكلمات أثناء القراءة.</p>
+    <p class="lead">يُظهر Claude RTL فقاعةً صغيرة بجوار المؤشّر عند نسخ نصٍّ عربي داخل Claude، فيعرضه بالاتجاه الصحيح مع تنسيق Markdown، ويُبقي الشيفرة البرمجية من اليسار إلى اليمين، مع إمكانية الاستماع إلى النص وتمييز الكلمات أثناء القراءة.</p>
 
     <div class="card">
       <h2>الخصوصية</h2>
@@ -51,15 +46,12 @@
     </div>
 
     <div class="card">
-      <h2>الصلاحيات</h2>
-      <p>يحتاج التطبيق إلى إذن Accessibility لاكتشاف التحديد تلقائيًا. بعد تفعيل الإذن في إعدادات النظام، سيعمل التطبيق <strong>فورًا دون إعادة تشغيل</strong>. وبدون هذا الإذن يمكنك نسخ النص بالضغط على ⌘C.</p>
-      <p id="axStatus" class="ax-status">جاري التحقق من الصلاحيات…</p>
+      <h2>طريقة الاستخدام</h2>
+      <p>حدّد النص العربي في Claude ثم انسخه بالضغط على <strong>⌘C</strong> لتظهر الفقاعة. لا يحتاج التطبيق إلى أي أذونات خاصة من النظام.</p>
     </div>
 
     <div class="actions">
-      <button class="secondary" id="btnSettings">فتح إعدادات Accessibility</button>
       <button class="primary" id="btnStart">ابدأ الآن</button>
-      <button class="secondary ax-relaunch" id="btnRelaunch" hidden>إعادة تشغيل التطبيق (احتياطي)</button>
     </div>
 
     <div class="foot">Claude RTL أداة مستقلة من <b>GRW Lab</b>، غير تابعة لشركة Anthropic ولا مُعتمَدة منها. ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</div>
@@ -69,25 +61,5 @@
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
       window.webkit.messageHandlers.bridge.postMessage(msg);
   }
-  document.getElementById("btnSettings").onclick = function(){ bridge({action:"openAccessibility"}); };
   document.getElementById("btnStart").onclick = function(){ bridge({action:"finish"}); };
-  document.getElementById("btnRelaunch").onclick = function(){ bridge({action:"relaunch"}); };
-
-  window.setAxStatus = function(trusted, armed) {
-    var el = document.getElementById("axStatus");
-    var relaunch = document.getElementById("btnRelaunch");
-    if (!el) return;
-    el.classList.remove("ready");
-    if (armed) {
-      el.textContent = "✓ جاهز — حدّد نصًا عربيًا في Claude";
-      el.classList.add("ready");
-      relaunch.hidden = true;
-    } else if (trusted) {
-      el.textContent = "تم منح الإذن — جاري تفعيل الاكتشاف التلقائي…";
-      relaunch.hidden = false;
-    } else {
-      el.textContent = "لم يُفعَّل إذن Accessibility بعد — فعّله من الإعدادات";
-      relaunch.hidden = true;
-    }
-  };
 </script></body></html>

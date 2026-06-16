@@ -16,16 +16,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupSelectionHandler()
         setupMenuBar()
 
-        if !SelectionMonitor.isAccessibilityTrusted {
-            _ = SelectionMonitor.requestAccessibilityPermission()
-        }
         SelectionMonitor.shared.start()
 
         OnboardingWindowController.showIfNeeded()
-    }
-
-    func applicationDidBecomeActive(_ notification: Notification) {
-        SelectionMonitor.shared.refreshAccessibilityStatus()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
