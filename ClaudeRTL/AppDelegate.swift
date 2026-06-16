@@ -1,12 +1,25 @@
 import AppKit
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
     private var bubblePanel: BubblePanel!
     private var launchAtLoginMenuItem: NSMenuItem!
+    private var excludeAppMenuItem: NSMenuItem!
+    private var frontmostBundleIDForMenu: String?
+    private var lastExternalApp: NSRunningApplication?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         DebugLog.print("✅ applicationDidFinishLaunching CALLED")
+
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                  app.bundleIdentifier != Bundle.main.bundleIdentifier else { return }
+            self?.lastExternalApp = app
+        }
 
         if let appIcon = NSImage(named: "AppIcon") ?? loadBundledIcon(named: "AppIcon", ext: "icns") {
             NSApplication.shared.applicationIconImage = appIcon
@@ -45,6 +58,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
+        menu.delegate = self
 
         let about = NSMenuItem(title: "حول Claude RTL", action: #selector(showAbout), keyEquivalent: "")
         about.target = self
@@ -53,6 +67,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let onboarding = NSMenuItem(title: "إعادة الشرح", action: #selector(showOnboarding), keyEquivalent: "")
         onboarding.target = self
         menu.addItem(onboarding)
+
+        let preferences = NSMenuItem(title: "الإعدادات…", action: #selector(showPreferences), keyEquivalent: ",")
+        preferences.target = self
+        menu.addItem(preferences)
+
+        excludeAppMenuItem = NSMenuItem(title: "إيقاف على …", action: nil, keyEquivalent: "")
+        let excludeSubmenu = NSMenu()
+        let sessionItem = NSMenuItem(title: "هذه الجلسة", action: #selector(excludeFrontmostSession), keyEquivalent: "")
+        sessionItem.target = self
+        excludeSubmenu.addItem(sessionItem)
+        let alwaysItem = NSMenuItem(title: "دائمًا", action: #selector(excludeFrontmostAlways), keyEquivalent: "")
+        alwaysItem.target = self
+        excludeSubmenu.addItem(alwaysItem)
+        excludeAppMenuItem.submenu = excludeSubmenu
+        menu.addItem(excludeAppMenuItem)
 
         launchAtLoginMenuItem = NSMenuItem(
             title: "تشغيل عند بدء النظام",
@@ -72,6 +101,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
 
         DebugLog.print("STATUS ITEM created, button=\(statusItem.button != nil)")
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        updateExcludeMenuTitle()
+    }
+
+    private func updateExcludeMenuTitle() {
+        let front = NSWorkspace.shared.frontmostApplication
+        let targetApp: NSRunningApplication?
+        if front?.bundleIdentifier == Bundle.main.bundleIdentifier {
+            targetApp = lastExternalApp
+        } else {
+            targetApp = front
+        }
+
+        frontmostBundleIDForMenu = targetApp?.bundleIdentifier
+        let name = targetApp?.localizedName ?? "التطبيق"
+        excludeAppMenuItem.title = "إيقاف على \(name)"
+        excludeAppMenuItem.isEnabled = targetApp?.bundleIdentifier != nil
     }
 
     private func configureStatusBarButton(_ button: NSStatusBarButton) {
@@ -108,7 +156,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return img
     }
 
-    /// Custom menu-bar icon: black + alpha PNG rendered as template (18pt).
     private func menuBarTemplateImage() -> NSImage? {
         guard let source = NSImage(named: "MenuBarIcon"), source.isValid else { return nil }
 
@@ -131,6 +178,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let newValue = !Settings.shared.isLaunchAtLoginEnabled
         Settings.shared.setLaunchAtLogin(newValue)
         sender.state = Settings.shared.isLaunchAtLoginEnabled ? .on : .off
+    }
+
+    @objc private func showPreferences() {
+        PreferencesWindowController.show()
+    }
+
+    @objc private func excludeFrontmostSession() {
+        guard let bundleID = frontmostBundleIDForMenu ?? NSWorkspace.shared.frontmostApplication?.bundleIdentifier else { return }
+        Settings.shared.excludeForSession(bundleID: bundleID)
+    }
+
+    @objc private func excludeFrontmostAlways() {
+        guard let bundleID = frontmostBundleIDForMenu ?? NSWorkspace.shared.frontmostApplication?.bundleIdentifier else { return }
+        Settings.shared.excludePermanently(bundleID: bundleID)
     }
 
     @objc private func showAbout() {

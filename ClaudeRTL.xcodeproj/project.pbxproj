@@ -22,6 +22,7 @@
 		A10000010000000000000013 /* MenuBarIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000015 /* MenuBarIcon@2x.png */; };
 		A10000010000000000000014 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000016 /* DebugLog.swift */; };
 		A10000010000000000000015 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000017 /* AboutWindowController.swift */; };
+		A10000010000000000000016 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000018 /* PreferencesWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		A20000010000000000000015 /* MenuBarIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MenuBarIcon@2x.png"; sourceTree = "<group>"; };
 		A20000010000000000000016 /* DebugLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLog.swift; sourceTree = "<group>"; };
 		A20000010000000000000017 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
+		A20000010000000000000018 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				A20000010000000000000006 /* Settings.swift */,
 				A20000010000000000000011 /* OnboardingWindowController.swift */,
 				A20000010000000000000017 /* AboutWindowController.swift */,
+				A20000010000000000000018 /* PreferencesWindowController.swift */,
 				A20000010000000000000016 /* DebugLog.swift */,
 				A40000010000000000000004 /* Resources */,
 				A20000010000000000000013 /* Assets.xcassets */,
@@ -207,6 +210,7 @@
 				A10000010000000000000009 /* OnboardingWindowController.swift in Sources */,
 				A10000010000000000000014 /* DebugLog.swift in Sources */,
 				A10000010000000000000015 /* AboutWindowController.swift in Sources */,
+				A10000010000000000000016 /* PreferencesWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

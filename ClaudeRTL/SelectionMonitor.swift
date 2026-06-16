@@ -39,23 +39,28 @@ final class SelectionMonitor {
         DebugLog.print("CLIP tick: changeCount=\(changeCount), frontmost=\(NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "nil")")
 
         let current = NSPasteboard.general.string(forType: .string) ?? ""
-        guard !current.isEmpty, containsArabic(current) else { return }
-        guard isFrontmostClaudeApp() else { return }
+        guard !current.isEmpty, ArabicDetector.containsArabic(current) else { return }
+        guard shouldShowForFrontmostApp() else { return }
 
-        DebugLog.print("ARABIC detected in Claude, showing bubble")
+        DebugLog.print("ARABIC detected, showing bubble")
         let point = NSEvent.mouseLocation
         onArabicSelection?(current, point)
     }
 
-    private func containsArabic(_ text: String) -> Bool {
-        text.unicodeScalars.contains { (0x0600...0x06FF).contains($0.value) }
-    }
-
-    /// True when the frontmost app is Claude desktop (heuristic).
-    private func isFrontmostClaudeApp() -> Bool {
+    private func shouldShowForFrontmostApp() -> Bool {
         let front = NSWorkspace.shared.frontmostApplication
-        let bid = front?.bundleIdentifier?.lowercased() ?? ""
-        let name = front?.localizedName?.lowercased() ?? ""
-        return bid.contains("claude") || bid.contains("anthropic") || name == "claude"
+        let bundleID = front?.bundleIdentifier ?? ""
+
+        if Settings.shared.excludedBundleIDsSession.contains(bundleID) { return false }
+        if Settings.shared.excludedBundleIDsAlways.contains(bundleID) { return false }
+
+        switch Settings.shared.triggerMode {
+        case .allApps:
+            return true
+        case .claudeOnly:
+            return Settings.isClaudeApp(bundleID: bundleID, localizedName: front?.localizedName)
+        case .customList:
+            return Settings.shared.includedBundleIDs.contains(bundleID)
+        }
     }
 }

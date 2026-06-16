@@ -1,6 +1,20 @@
 import Foundation
 import ServiceManagement
 
+enum TriggerMode: String, CaseIterable {
+    case allApps
+    case claudeOnly
+    case customList
+
+    var label: String {
+        switch self {
+        case .allApps: return "كل التطبيقات"
+        case .claudeOnly: return "Claude فقط"
+        case .customList: return "قائمة مخصّصة"
+        }
+    }
+}
+
 final class Settings {
     static let shared = Settings()
 
@@ -11,7 +25,13 @@ final class Settings {
         static let fontSize = "fontSize"
         static let launchAtLogin = "launchAtLogin"
         static let didOnboard = "didOnboard"
+        static let triggerMode = "triggerMode"
+        static let includedBundleIDs = "includedBundleIDs"
+        static let excludedBundleIDsAlways = "excludedBundleIDsAlways"
     }
+
+    /// Session-only exclusions; cleared on each launch.
+    private(set) var excludedBundleIDsSession = Set<String>()
 
     var isEnabled: Bool {
         get {
@@ -34,6 +54,51 @@ final class Settings {
         set { defaults.set(newValue, forKey: Keys.didOnboard) }
     }
 
+    var triggerMode: TriggerMode {
+        get {
+            guard let raw = defaults.string(forKey: Keys.triggerMode),
+                  let mode = TriggerMode(rawValue: raw) else { return .allApps }
+            return mode
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.triggerMode) }
+    }
+
+    var includedBundleIDs: [String] {
+        get { defaults.stringArray(forKey: Keys.includedBundleIDs) ?? [] }
+        set { defaults.set(newValue, forKey: Keys.includedBundleIDs) }
+    }
+
+    var excludedBundleIDsAlways: [String] {
+        get { defaults.stringArray(forKey: Keys.excludedBundleIDsAlways) ?? [] }
+        set { defaults.set(newValue, forKey: Keys.excludedBundleIDsAlways) }
+    }
+
+    func excludeForSession(bundleID: String) {
+        guard !bundleID.isEmpty else { return }
+        excludedBundleIDsSession.insert(bundleID)
+    }
+
+    func excludePermanently(bundleID: String) {
+        guard !bundleID.isEmpty else { return }
+        var list = excludedBundleIDsAlways
+        guard !list.contains(bundleID) else { return }
+        list.append(bundleID)
+        excludedBundleIDsAlways = list
+    }
+
+    func removeIncludedBundleID(_ bundleID: String) {
+        includedBundleIDs = includedBundleIDs.filter { $0 != bundleID }
+    }
+
+    func addIncludedBundleID(_ bundleID: String) {
+        guard !bundleID.isEmpty, !includedBundleIDs.contains(bundleID) else { return }
+        includedBundleIDs = includedBundleIDs + [bundleID]
+    }
+
+    func removeExcludedPermanently(_ bundleID: String) {
+        excludedBundleIDsAlways = excludedBundleIDsAlways.filter { $0 != bundleID }
+    }
+
     var isLaunchAtLoginEnabled: Bool {
         if #available(macOS 13.0, *) {
             switch SMAppService.mainApp.status {
@@ -54,6 +119,12 @@ final class Settings {
         } else {
             try? SMAppService.mainApp.unregister()
         }
+    }
+
+    static func isClaudeApp(bundleID: String, localizedName: String?) -> Bool {
+        let bid = bundleID.lowercased()
+        let name = localizedName?.lowercased() ?? ""
+        return bid.contains("claude") || bid.contains("anthropic") || name == "claude"
     }
 }
 
