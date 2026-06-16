@@ -16,72 +16,64 @@ enum SettingsSection: Hashable {
     var icon: String {
         switch self {
         case .whereItWorks: return "square.grid.2x2"
-        case .appearance: return "paintbrush"
+        case .appearance: return "paintpalette"
         case .general: return "gearshape"
         }
     }
 }
 
 struct SettingsSidebar: View {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.palette) private var palette
     @Binding var selection: SettingsSection
 
     var body: some View {
-        ZStack {
-            SidebarVisualEffect()
-            VStack(alignment: .trailing, spacing: 20) {
-                sidebarHeader
-                VStack(spacing: 6) {
-                    ForEach([SettingsSection.whereItWorks, .appearance, .general], id: \.self) { section in
-                        SidebarNavButton(
-                            title: section.title,
-                            icon: section.icon,
-                            isSelected: selection == section
-                        ) {
-                            withAnimation(.easeInOut(duration: 0.18)) {
-                                selection = section
-                            }
+        VStack(alignment: .trailing, spacing: 0) {
+            sidebarHeader
+            VStack(spacing: SettingsMetrics.navGap) {
+                ForEach([SettingsSection.whereItWorks, .appearance, .general], id: \.self) { section in
+                    SidebarNavButton(
+                        title: section.title,
+                        icon: section.icon,
+                        isSelected: selection == section
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            selection = section
                         }
                     }
                 }
-                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 20)
+            Spacer(minLength: 0)
         }
+        .padding(.top, SettingsMetrics.sidebarTopPadding)
+        .padding(.horizontal, SettingsMetrics.sidebarHorizontalPadding)
         .frame(width: SettingsMetrics.sidebarWidth)
+        .background(palette.sidebarBg)
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(palette.sidebarDivider)
+                .frame(width: 1)
+        }
     }
 
     private var sidebarHeader: some View {
         HStack(spacing: 10) {
-            appIcon
+            SettingsAppIcon.view(size: 38, radius: 10)
             VStack(alignment: .trailing, spacing: 2) {
                 Text("Claude RTL")
-                    .font(.settingsSidebarBrand())
-                    .foregroundStyle(SettingsSemantic.primaryText(colorScheme))
-                Text("v\(Settings.versionLabel())")
-                    .font(.settingsCaption())
-                    .foregroundStyle(SettingsSemantic.secondaryText(colorScheme))
+                    .font(.settingsAppName())
+                    .foregroundStyle(palette.textPrimary)
+                Text("الإصدار \(Settings.versionLabel())")
+                    .font(.settingsVersion())
+                    .foregroundStyle(palette.textMuted)
             }
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.bottom, 8)
-    }
-
-    @ViewBuilder
-    private var appIcon: some View {
-        if let image = NSApp.applicationIconImage ?? NSImage(named: "AppIcon") {
-            Image(nsImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 40, height: 40)
-                .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.appIconSidebarRadius, style: .continuous))
-        }
+        .padding(.bottom, SettingsMetrics.sidebarHeaderBottom)
     }
 }
 
 private struct SidebarNavButton: View {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.palette) private var palette
     let title: String
     let icon: String
     let isSelected: Bool
@@ -92,24 +84,25 @@ private struct SidebarNavButton: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 18, weight: .medium))
                 Text(title)
-                    .font(.settingsLabel())
+                    .font(.settingsNav())
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, 12)
-            .frame(height: SettingsMetrics.navButtonHeight)
-            .foregroundStyle(isSelected ? Color.white : SettingsSemantic.primaryText(colorScheme))
+            .padding(.horizontal, 11)
+            .padding(.vertical, 9)
+            .foregroundStyle(isSelected ? palette.coralTextSelected : palette.navUnselected)
             .background(backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.navButtonRadius, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
         .buttonStyle(.plain)
         .onHover { isHovered = $0 }
     }
 
     private var backgroundColor: Color {
-        if isSelected { return ClaudeRTLColors.coral }
-        if isHovered { return SettingsSemantic.hoverFill(colorScheme) }
+        if isSelected { return palette.navSelectedBg }
+        if isHovered { return palette.navHoverBg }
         return .clear
     }
 }
