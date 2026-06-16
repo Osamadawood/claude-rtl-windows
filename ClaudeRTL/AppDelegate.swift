@@ -3,7 +3,6 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem!
     private var bubblePanel: BubblePanel!
-    private var launchAtLoginMenuItem: NSMenuItem!
     private var excludeAppMenuItem: NSMenuItem!
     private var frontmostBundleIDForMenu: String?
     private var lastExternalApp: NSRunningApplication?
@@ -63,42 +62,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.delegate = self
         MenuRTL.configure(menu)
 
-        let about = NSMenuItem(title: "حول Claude RTL", action: #selector(showAbout), keyEquivalent: "")
-        about.target = self
-        menu.addItem(about)
-
-        let onboarding = NSMenuItem(title: "إعادة الشرح", action: #selector(showOnboarding), keyEquivalent: "")
-        onboarding.target = self
-        menu.addItem(onboarding)
-
-        let preferences = NSMenuItem(title: "الإعدادات…", action: #selector(showPreferences), keyEquivalent: ",")
-        preferences.target = self
+        let preferences = MenuRTL.item("الإعدادات…", action: #selector(showPreferences), target: self, keyEquivalent: ",")
         menu.addItem(preferences)
 
-        excludeAppMenuItem = NSMenuItem(title: "إيقاف على …", action: nil, keyEquivalent: "")
+        excludeAppMenuItem = MenuRTL.item("إيقاف على …", action: nil, target: nil)
         let excludeSubmenu = NSMenu()
-        let sessionItem = NSMenuItem(title: "هذه الجلسة", action: #selector(excludeFrontmostSession), keyEquivalent: "")
-        sessionItem.target = self
-        excludeSubmenu.addItem(sessionItem)
-        let alwaysItem = NSMenuItem(title: "دائمًا", action: #selector(excludeFrontmostAlways), keyEquivalent: "")
-        alwaysItem.target = self
-        excludeSubmenu.addItem(alwaysItem)
+        MenuRTL.configure(excludeSubmenu)
+        excludeSubmenu.addItem(MenuRTL.submenuItem("هذه الجلسة", action: #selector(excludeFrontmostSession), target: self))
+        excludeSubmenu.addItem(MenuRTL.submenuItem("دائمًا", action: #selector(excludeFrontmostAlways), target: self))
         excludeAppMenuItem.submenu = excludeSubmenu
         menu.addItem(excludeAppMenuItem)
 
-        launchAtLoginMenuItem = NSMenuItem(
-            title: "تشغيل عند بدء النظام",
-            action: #selector(toggleLaunchAtLogin),
-            keyEquivalent: ""
-        )
-        launchAtLoginMenuItem.target = self
-        launchAtLoginMenuItem.state = Settings.shared.isLaunchAtLoginEnabled ? .on : .off
-        menu.addItem(launchAtLoginMenuItem)
-
         menu.addItem(.separator())
 
-        let quit = NSMenuItem(title: "خروج", action: #selector(quit), keyEquivalent: "q")
-        quit.target = self
+        let quit = MenuRTL.item("خروج", action: #selector(quit), target: self, keyEquivalent: "q")
         menu.addItem(quit)
 
         statusItem.menu = menu
@@ -121,7 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         frontmostBundleIDForMenu = targetApp?.bundleIdentifier
         let name = targetApp?.localizedName ?? "التطبيق"
-        excludeAppMenuItem.title = "إيقاف على \(name)"
+        MenuRTL.setTitle(excludeAppMenuItem, "إيقاف على \(name)")
         excludeAppMenuItem.isEnabled = targetApp?.bundleIdentifier != nil
     }
 
@@ -177,12 +154,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         return NSImage(contentsOf: url)
     }
 
-    @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
-        let newValue = !Settings.shared.isLaunchAtLoginEnabled
-        Settings.shared.setLaunchAtLogin(newValue)
-        sender.state = Settings.shared.isLaunchAtLoginEnabled ? .on : .off
-    }
-
     @objc private func showPreferences() {
         PreferencesWindowController.show()
     }
@@ -193,16 +164,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc private func excludeFrontmostAlways() {
-        guard let bundleID = frontmostBundleIDForMenu ?? NSWorkspace.shared.frontmostApplication?.bundleIdentifier else { return }
+        guard let bundleID = frontmostBundleIDForMenu else { return }
         Settings.shared.excludePermanently(bundleID: bundleID)
-    }
-
-    @objc private func showAbout() {
-        AboutWindowController.show()
-    }
-
-    @objc private func showOnboarding() {
-        OnboardingWindowController.show()
     }
 
     @objc private func quit() {
