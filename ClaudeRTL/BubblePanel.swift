@@ -88,13 +88,18 @@ final class BubblePanel: NSPanel {
         dragHandle.autoresizingMask = [.width, .minYMargin]
     }
 
-    func show(at point: NSPoint, text: String) {
+    func show(at point: NSPoint, text: String, appName: String, bundleId: String) {
         anchorPoint = Self.appKitPoint(from: point)
         let origin = clampedOrigin(for: frame.size, anchor: anchorPoint, arrowBelow: &arrowPointsDown)
         setFrameOrigin(origin)
         DebugLog.print("SHOW bubble at \(anchorPoint), panel frame \(frame)")
 
-        BubbleRenderer.shared.show(text: text, arrowBelow: arrowPointsDown) { [weak self] in
+        BubbleRenderer.shared.show(
+            text: text,
+            appName: appName,
+            bundleId: bundleId,
+            arrowBelow: arrowPointsDown
+        ) { [weak self] in
             guard let self else { return }
             self.orderFrontRegardless()
             self.installMonitors()
@@ -210,19 +215,32 @@ final class BubbleRenderer: NSObject, WKScriptMessageHandler, WKNavigationDelega
         DebugLog.print("bubble.html loaded")
     }
 
-    func show(text: String, arrowBelow: Bool, completion: @escaping () -> Void) {
+    func show(
+        text: String,
+        appName: String,
+        bundleId: String,
+        arrowBelow: Bool,
+        completion: @escaping () -> Void
+    ) {
         currentText = text
         guard let webView else { return }
-        guard let json = try? JSONEncoder().encode(text),
-              let jsonString = String(data: json, encoding: .utf8) else { return }
+        guard let textJSON = jsonLiteral(text),
+              let nameJSON = jsonLiteral(appName),
+              let bundleJSON = jsonLiteral(bundleId) else { return }
 
-        let js = "window.showBubble(\(jsonString), \(Int(Settings.shared.fontSize)), \(arrowBelow))"
+        let js = "window.showBubble(\(textJSON), \(Int(Settings.shared.fontSize)), \(arrowBelow), \(nameJSON), \(bundleJSON))"
         webView.evaluateJavaScript(js) { _, error in
             if let error {
                 NSLog("ClaudeRTL: showBubble error: \(error.localizedDescription)")
             }
             DispatchQueue.main.async { completion() }
         }
+    }
+
+    private func jsonLiteral(_ value: String) -> String? {
+        guard let data = try? JSONEncoder().encode(value),
+              let str = String(data: data, encoding: .utf8) else { return nil }
+        return str
     }
 
     func setSpeaking(_ speaking: Bool) {
@@ -251,16 +269,23 @@ final class BubbleRenderer: NSObject, WKScriptMessageHandler, WKNavigationDelega
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             switch action {
-            case "copy":
-                if let text = body["text"] as? String {
-                    Clipboard.write(text)
-                }
             case "speak":
                 if let text = body["text"] as? String {
                     Speech.shared.toggle(text)
                 } else {
                     Speech.shared.toggle(self.currentText)
                 }
+            case "disableApp":
+                if let bundleId = body["bundleId"] as? String, !bundleId.isEmpty {
+                    let name = body["name"] as? String ?? bundleId
+                    let scope = body["scope"] as? String ?? "session"
+                    if scope == "always" {
+                        Settings.shared.excludePermanently(bundleID: bundleId, name: name)
+                    } else {
+                        Settings.shared.excludeForSession(bundleID: bundleId)
+                    }
+                }
+                self.panel?.hide()
             case "close":
                 self.panel?.hide()
             case "resize":

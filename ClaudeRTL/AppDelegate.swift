@@ -40,9 +40,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // MARK: - Selection → bubble
 
     private func setupSelectionHandler() {
-        SelectionMonitor.shared.onArabicSelection = { [weak self] text, point in
+        SelectionMonitor.shared.onArabicSelection = { [weak self] text, point, appName, bundleId in
             guard Settings.shared.isEnabled else { return }
-            self?.bubblePanel.show(at: point, text: text)
+            self?.bubblePanel.show(at: point, text: text, appName: appName, bundleId: bundleId)
         }
     }
 

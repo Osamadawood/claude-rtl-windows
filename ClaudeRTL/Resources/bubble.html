@@ -322,6 +322,55 @@
         .toast.show {
             opacity: 1
         }
+
+        .gear-wrap {
+            position: relative
+        }
+
+        .gear-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            inset-inline-start: 0;
+            min-width: 190px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 6px;
+            z-index: 20;
+            display: none
+        }
+
+        .gear-menu.open {
+            display: block
+        }
+
+        .gear-menu .gear-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            padding: 6px 8px 4px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 4px
+        }
+
+        .gear-menu button {
+            display: block;
+            width: 100%;
+            text-align: start;
+            font: inherit;
+            font-size: 12px;
+            border: none;
+            background: transparent;
+            color: var(--ink);
+            padding: 7px 8px;
+            border-radius: 6px;
+            cursor: pointer
+        }
+
+        .gear-menu button:hover {
+            background: color-mix(in srgb, var(--accent) 14%, transparent)
+        }
     </style>
 </head>
 
@@ -342,21 +391,28 @@
                         <rect x="6" y="5" width="4" height="14" rx="1" />
                         <rect x="14" y="5" width="4" height="14" rx="1" /></svg>
                 </button>
-                <button class="ic" id="bCopy" title="نسخ"><svg viewBox="0 0 24 24">
-                        <rect x="9" y="9" width="11" height="11" rx="2" />
-                        <path d="M5 15V5a2 2 0 0 1 2-2h10" /></svg></button>
+                <div class="gear-wrap">
+                    <button class="ic" id="bGear" title="إعدادات"><svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg></button>
+                    <div class="gear-menu" id="gearMenu">
+                        <div class="gear-title" id="gearTitle">إيقاف على …</div>
+                        <button type="button" data-scope="session">هذه الجلسة</button>
+                        <button type="button" data-scope="always">دائمًا</button>
+                    </div>
+                </div>
                 <span class="brand"><span class="sp"></span>Claude RTL</span>
             </div>
             <div class="body" id="body"></div>
             <div class="foot" dir="ltr">by <b>GRW&nbsp;Lab</b> &mdash; grwlab.net</div>
-            <div class="toast" id="toast">تم النسخ ✓</div>
         </div>
     </div>
 
     <script>
         var RAW = "",
             PLAIN = "",
-            toastT;
+            APP_NAME = "",
+            APP_BUNDLE = "";
 
         function bridge(msg) {
             if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
@@ -542,8 +598,12 @@
             });
         }
 
-        function showBubble(text, fontSize, arrowBelow) {
+        function showBubble(text, fontSize, arrowBelow, appName, bundleId) {
             RAW = text;
+            APP_NAME = appName || "";
+            APP_BUNDLE = bundleId || "";
+            document.getElementById("gearTitle").textContent = "إيقاف على " + (APP_NAME || "التطبيق");
+            document.getElementById("gearMenu").classList.remove("open");
             clearHighlight();
             var body = document.getElementById("body");
             if (fontSize) body.style.fontSize = fontSize + "px";
@@ -586,18 +646,24 @@
                 text: PLAIN || RAW
             });
         };
-        document.getElementById("bCopy").onclick = function() {
-            bridge({
-                action: "copy",
-                text: RAW
-            });
-            var t = document.getElementById("toast");
-            t.classList.add("show");
-            clearTimeout(toastT);
-            toastT = setTimeout(function() {
-                t.classList.remove("show");
-            }, 1400);
+        document.getElementById("bGear").onclick = function(e) {
+            e.stopPropagation();
+            document.getElementById("gearMenu").classList.toggle("open");
         };
+        document.querySelectorAll("#gearMenu button[data-scope]").forEach(function(btn) {
+            btn.onclick = function(e) {
+                e.stopPropagation();
+                bridge({
+                    action: "disableApp",
+                    scope: btn.getAttribute("data-scope"),
+                    bundleId: APP_BUNDLE,
+                    name: APP_NAME
+                });
+            };
+        });
+        document.addEventListener("click", function() {
+            document.getElementById("gearMenu").classList.remove("open");
+        });
         document.addEventListener("keydown", function(e) {
             if (e.key === "Escape") hide();
         });

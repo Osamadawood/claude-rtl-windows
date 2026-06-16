@@ -3,7 +3,7 @@ import AppKit
 final class SelectionMonitor {
     static let shared = SelectionMonitor()
 
-    var onArabicSelection: ((String, NSPoint) -> Void)?
+    var onArabicSelection: ((String, NSPoint, String, String) -> Void)?
 
     private var clipboardTimer: Timer?
     private var lastChangeCount = NSPasteboard.general.changeCount
@@ -44,7 +44,10 @@ final class SelectionMonitor {
 
         DebugLog.print("ARABIC detected, showing bubble")
         let point = NSEvent.mouseLocation
-        onArabicSelection?(current, point)
+        let front = NSWorkspace.shared.frontmostApplication
+        let appName = front?.localizedName ?? ""
+        let bundleId = front?.bundleIdentifier ?? ""
+        onArabicSelection?(current, point, appName, bundleId)
     }
 
     private func shouldShowForFrontmostApp() -> Bool {
