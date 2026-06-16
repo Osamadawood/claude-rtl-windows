@@ -1,6 +1,7 @@
 import AppKit
 
 UserDefaults.standard.set(["ar"], forKey: "AppleLanguages")
+SettingsFontRegistrar.register()
 
 let app = NSApplication.shared
 let delegate = AppDelegate()

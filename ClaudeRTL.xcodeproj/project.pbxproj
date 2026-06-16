@@ -37,7 +37,8 @@
 		A10000010000000000000029 /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000031 /* SparkleUpdater.swift */; };
 		A10000010000000000000031 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000032 /* SettingsView.swift */; };
 		A10000010000000000000032 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000033 /* SettingsModel.swift */; };
-		A10000010000000000000033 /* ClaudeRTLColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000034 /* ClaudeRTLColors.swift */; };
+		A10000010000000000000033 /* SettingsDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000034 /* SettingsDesign.swift */; };
+		A10000010000000000000034 /* SettingsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000035 /* SettingsSidebar.swift */; };
 		A10000010000000000000030 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A90000010000000000000002 /* Sparkle */; };
 /* End PBXBuildFile section */
 
@@ -68,7 +69,8 @@
 		A20000010000000000000022 /* fonts.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = fonts.css; sourceTree = "<group>"; };
 		A20000010000000000000032 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A20000010000000000000033 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
-		A20000010000000000000034 /* ClaudeRTLColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeRTLColors.swift; sourceTree = "<group>"; };
+		A20000010000000000000034 /* SettingsDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDesign.swift; sourceTree = "<group>"; };
+		A20000010000000000000035 /* SettingsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebar.swift; sourceTree = "<group>"; };
 		A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Regular.woff2; sourceTree = "<group>"; };
 		A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Medium.woff2; sourceTree = "<group>"; };
 		A20000010000000000000025 /* IBMPlexSansArabic-SemiBold.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-SemiBold.woff2; sourceTree = "<group>"; };
@@ -116,7 +118,8 @@
 				A20000010000000000000031 /* SparkleUpdater.swift */,
 				A20000010000000000000032 /* SettingsView.swift */,
 				A20000010000000000000033 /* SettingsModel.swift */,
-				A20000010000000000000034 /* ClaudeRTLColors.swift */,
+				A20000010000000000000034 /* SettingsDesign.swift */,
+				A20000010000000000000035 /* SettingsSidebar.swift */,
 				A20000010000000000000016 /* DebugLog.swift */,
 				A20000010000000000000020 /* Localizable.strings */,
 				A40000010000000000000004 /* Resources */,
@@ -286,7 +289,8 @@
 				A10000010000000000000029 /* SparkleUpdater.swift in Sources */,
 				A10000010000000000000031 /* SettingsView.swift in Sources */,
 				A10000010000000000000032 /* SettingsModel.swift in Sources */,
-				A10000010000000000000033 /* ClaudeRTLColors.swift in Sources */,
+				A10000010000000000000033 /* SettingsDesign.swift in Sources */,
+				A10000010000000000000034 /* SettingsSidebar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
