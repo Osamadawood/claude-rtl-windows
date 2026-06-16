@@ -2,7 +2,7 @@
     "use strict";
 
     var DOWNLOAD_URL = "/download/ClaudeRTL.dmg";
-    var APP_VERSION = "1.0.0";
+    var APP_VERSION = "1.1.0";
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     var yearEl = document.getElementById("year");

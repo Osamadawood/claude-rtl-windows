@@ -1,7 +1,7 @@
 <?php
 // ===== Config =====
-$FILE   = __DIR__ . '/download/ClaudeRTL-1.0.0.dmg'; // مسار الملف الحقيقي
-$NAME   = 'ClaudeRTL-1.0.0.dmg';                      // اسم الملف عند التحميل
+$FILE   = __DIR__ . '/download/ClaudeRTL-1.1.0.dmg'; // مسار الملف الحقيقي
+$NAME   = 'ClaudeRTL-1.1.0.dmg';                      // اسم الملف عند التحميل
 $LOGDIR = __DIR__ . '/data';
 $LOG    = $LOGDIR . '/downloads.ndjson';
 

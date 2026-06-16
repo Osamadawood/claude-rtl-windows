@@ -66,7 +66,7 @@
             "operatingSystem": "macOS 13.0+",
             "applicationCategory": "UtilitiesApplication",
             "description": "أداة مجانية لنظام macOS تُصلِح اتجاه النص العربي داخل تطبيق Claude لسطح المكتب، مع تنسيق Markdown وقراءة صوتية وتمييز للكلمات. تعمل محليًا بالكامل.",
-            "softwareVersion": "1.0.0",
+            "softwareVersion": "1.1.0",
             "url": "https://claude-rtl.grwlab.net/",
             "downloadUrl": "https://claude-rtl.grwlab.net/download/ClaudeRTL.dmg",
             "inLanguage": "ar",
@@ -174,7 +174,7 @@
                     <a class="btn btn-primary btn-download" data-download href="/download/ClaudeRTL.dmg">نزّل لـ <span class="en">macOS</span> <span class="tag">DMG</span></a>
                     <a class="btn btn-ghost" href="#how">كيف يعمل</a>
                 </div>
-                <div class="meta">مجاني · macOS 13+ · Universal · v<span id="app-version">1.0.0</span></div>
+                <div class="meta">مجاني · macOS 13+ · Universal · v<span id="app-version">1.1.0</span></div>
             </div>
             <div class="hero-shot" data-shot>
                 <div class="shot">

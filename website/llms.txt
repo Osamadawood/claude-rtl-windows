@@ -8,7 +8,7 @@ Claude RTL is a free macOS menu-bar utility that fixes right-to-left (RTL) rende
 - [الصفحة الرئيسية](https://claude-rtl.grwlab.net/): نظرة عامة، المميزات، طريقة التثبيت، والأسئلة الشائعة.
 - [سياسة الخصوصية](https://claude-rtl.grwlab.net/privacy): التطبيق يعمل محليًا ولا يجمع أو يُرسِل أي بيانات.
 - [شروط الاستخدام](https://claude-rtl.grwlab.net/terms): أداة مجانية تُقدَّم كما هي.
-- [تنزيل التطبيق](https://claude-rtl.grwlab.net/download/ClaudeRTL.dmg): النسخة 1.0.0، Universal، تتطلب macOS 13 أو أحدث.
+- [تنزيل التطبيق](https://claude-rtl.grwlab.net/download/ClaudeRTL.dmg): النسخة 1.1.0، Universal، تتطلب macOS 13 أو أحدث.
 
 ## حقائق أساسية
 - الاسم: Claude RTL
