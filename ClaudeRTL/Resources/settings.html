@@ -13,6 +13,7 @@
     --ink: #F3EEE2;
     --muted: #B1ADA1;
     --line: #3A3531;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   html[data-theme="light"] {
     --accent: #C15F3C;
@@ -24,30 +25,69 @@
     --muted: #6B675F;
     --line: #E7E3D8;
   }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @keyframes section-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; min-height: 100%;
     background: var(--bg); color: var(--ink);
     font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
     font-size: 14px; line-height: 1.7;
+    transition: background-color .25s var(--ease), color .25s var(--ease);
   }
   .wrap { max-width: 520px; margin: 0 auto; padding: 28px 24px 32px; }
-  .logo { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
-  h1 { font-size: 22px; margin: 0 0 20px; font-weight: 700; }
+  .logo { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 6px; transition: color .25s var(--ease); }
+  h1 { font-size: 22px; margin: 0 0 20px; font-weight: 700; transition: color .25s var(--ease); }
   .section {
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
     padding: 16px 18px; margin-bottom: 14px;
     border-inline-start: 3px solid var(--accent-dark);
+    animation: section-in 220ms var(--ease) both;
+    transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
   }
+  .wrap > .section:nth-child(3) { animation-delay: 0ms; }
+  .wrap > .section:nth-child(4) { animation-delay: 40ms; }
+  .wrap > .section:nth-child(5) { animation-delay: 80ms; }
+  .wrap > .section:nth-child(6) { animation-delay: 120ms; }
   .section h2 { font-size: 14px; margin: 0 0 12px; font-weight: 700; }
   .section h3 { font-size: 13px; margin: 14px 0 8px; font-weight: 600; color: var(--muted); }
   .radio { display: flex; flex-direction: column; gap: 8px; }
-  .radio label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .radio input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .radio label {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    padding: 4px 6px; border-radius: 8px;
+    transition: background-color 160ms var(--ease), color 160ms var(--ease);
+  }
+  .radio label:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .radio input {
+    accent-color: var(--accent); width: 16px; height: 16px;
+    transition: accent-color 160ms var(--ease);
+  }
+  .context-panels {
+    display: grid; grid-template-columns: 1fr; margin-top: 12px;
+  }
+  .context-panels > * {
+    grid-area: 1 / 1;
+    opacity: 0; visibility: hidden;
+    transition: opacity 120ms var(--ease), visibility 120ms var(--ease);
+    pointer-events: none;
+  }
+  .context-panels > *.active {
+    opacity: 1; visibility: visible; pointer-events: auto;
+  }
   .list { list-style: none; margin: 0; padding: 0; }
   .list li {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line);
+    transition: border-color .25s var(--ease);
   }
   .list li:last-child { border-bottom: none; }
   .app-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -57,8 +97,11 @@
   .app-row .bid { font-size: 11px; color: var(--muted); direction: ltr; text-align: left; overflow: hidden; text-overflow: ellipsis; }
   .btn {
     font: inherit; border: none; border-radius: 8px; padding: 8px 14px;
-    cursor: pointer; transition: .15s;
+    cursor: pointer;
+    transition: background-color 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease), transform 160ms var(--ease), filter 160ms var(--ease);
   }
+  .btn:hover { transform: scale(1.02); }
+  .btn:active { transform: scale(0.98); }
   .btn-primary { background: var(--accent); color: #fff; font-weight: 600; }
   .btn-primary:hover { filter: brightness(1.08); }
   .btn-secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
@@ -67,24 +110,42 @@
   .btn-ghost:hover { background: var(--line); }
   .btn-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
   .hidden { display: none !important; }
-  .hint { margin: 12px 0 0; padding: 10px 12px; background: var(--surface); border-radius: 8px; color: var(--muted); font-size: 13px; }
+  .hint { margin: 0; padding: 10px 12px; background: var(--surface); border-radius: 8px; color: var(--muted); font-size: 13px; transition: background-color .25s var(--ease), color .25s var(--ease); }
   .slider-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .slider-row input[type=range] { flex: 1; min-width: 120px; accent-color: var(--accent); }
-  .slider-val { min-width: 42px; text-align: center; color: var(--accent); font-weight: 700; }
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; }
-  .toggle-row input { accent-color: var(--accent); width: 18px; height: 18px; }
-  .foot { margin-top: 8px; text-align: center; font-size: 12px; color: var(--muted); line-height: 1.8; }
-  .foot a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .slider-val { min-width: 42px; text-align: center; color: var(--accent); font-weight: 700; transition: color .25s var(--ease); }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0;
+    border-radius: 8px; transition: background-color 160ms var(--ease);
+  }
+  .toggle-row input {
+    accent-color: var(--accent); width: 18px; height: 18px;
+    transition: accent-color 160ms var(--ease);
+  }
+  .foot { margin-top: 8px; text-align: center; font-size: 12px; color: var(--muted); line-height: 1.8; transition: color .25s var(--ease); }
+  .foot a { color: var(--accent); text-decoration: none; font-weight: 600; transition: color .25s var(--ease); }
   .empty { color: var(--muted); font-size: 13px; padding: 6px 0; }
   .master-toggle { font-size: 15px; font-weight: 600; }
   .theme-row { margin-top: 14px; }
   .theme-row > span { display: block; margin-bottom: 8px; font-weight: 500; }
-  .segmented { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
-  .segmented button {
-    flex: 1; font: inherit; border: none; background: transparent; color: var(--muted);
-    padding: 8px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; transition: .15s;
+  .segmented {
+    position: relative; display: flex; gap: 4px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px;
+    transition: background-color .25s var(--ease), border-color .25s var(--ease);
   }
-  .segmented button.active { background: var(--accent); color: #fff; font-weight: 600; }
+  .seg-indicator {
+    position: absolute; top: 4px; left: 4px;
+    background: var(--accent); border-radius: 7px;
+    transition: transform 160ms var(--ease), width 160ms var(--ease), height 160ms var(--ease), background-color .25s var(--ease);
+    pointer-events: none; z-index: 0;
+  }
+  .segmented button {
+    position: relative; z-index: 1;
+    flex: 1; font: inherit; border: none; background: transparent; color: var(--muted);
+    padding: 8px 10px; border-radius: 7px; cursor: pointer; font-size: 13px;
+    transition: color 160ms var(--ease);
+  }
+  .segmented button.active { color: #fff; font-weight: 600; }
   .segmented button:hover:not(.active) { color: var(--ink); }
 </style>
 </head>
@@ -108,23 +169,25 @@
       <label><input type="radio" name="mode" value="customList"> قائمة مخصّصة</label>
     </div>
 
-    <p class="hint hidden" id="claudeOnlyHint">يعمل في Claude فقط — لا حاجة لإدارة قائمة.</p>
+    <div class="context-panels" id="contextPanels">
+      <p class="hint ctx-panel" id="claudeOnlyHint" data-mode="claudeOnly">يعمل في Claude فقط — لا حاجة لإدارة قائمة.</p>
 
-    <div id="excludedBlock" class="hidden">
-      <h3>التطبيقات المستثناة</h3>
-      <ul class="list" id="excludedList"></ul>
-      <p class="empty hidden" id="excludedEmpty">لا توجد تطبيقات مستثناة.</p>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btnAddExcluded">إضافة تطبيق…</button>
+      <div id="excludedBlock" class="ctx-panel" data-mode="allApps">
+        <h3>التطبيقات المستثناة</h3>
+        <ul class="list" id="excludedList"></ul>
+        <p class="empty hidden" id="excludedEmpty">لا توجد تطبيقات مستثناة.</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnAddExcluded">إضافة تطبيق…</button>
+        </div>
       </div>
-    </div>
 
-    <div id="includedBlock" class="hidden">
-      <h3>التطبيقات المسموح بها</h3>
-      <ul class="list" id="includedList"></ul>
-      <p class="empty hidden" id="includedEmpty">لا توجد تطبيقات في القائمة.</p>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btnAddIncluded">إضافة تطبيق…</button>
+      <div id="includedBlock" class="ctx-panel" data-mode="customList">
+        <h3>التطبيقات المسموح بها</h3>
+        <ul class="list" id="includedList"></ul>
+        <p class="empty hidden" id="includedEmpty">لا توجد تطبيقات في القائمة.</p>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btnAddIncluded">إضافة تطبيق…</button>
+        </div>
       </div>
     </div>
   </div>
@@ -140,6 +203,7 @@
     <div class="theme-row">
       <span>المظهر</span>
       <div class="segmented" id="themeMode">
+        <span class="seg-indicator" aria-hidden="true"></span>
         <button type="button" data-mode="auto">تلقائي</button>
         <button type="button" data-mode="light">فاتح</button>
         <button type="button" data-mode="dark">داكن</button>
@@ -199,9 +263,21 @@
   }
 
   function updateModeUI(mode) {
-    document.getElementById("claudeOnlyHint").classList.toggle("hidden", mode !== "claudeOnly");
-    document.getElementById("excludedBlock").classList.toggle("hidden", mode !== "allApps");
-    document.getElementById("includedBlock").classList.toggle("hidden", mode !== "customList");
+    document.querySelectorAll(".ctx-panel").forEach(function(panel) {
+      panel.classList.toggle("active", panel.dataset.mode === mode);
+    });
+  }
+
+  function updateSegIndicator() {
+    var seg = document.getElementById("themeMode");
+    if (!seg) return;
+    var active = seg.querySelector("button.active");
+    var ind = seg.querySelector(".seg-indicator");
+    if (!active || !ind) return;
+    var pad = 4;
+    ind.style.width = active.offsetWidth + "px";
+    ind.style.height = active.offsetHeight + "px";
+    ind.style.transform = "translate(" + (active.offsetLeft - pad) + "px, " + (active.offsetTop - pad) + "px)";
   }
 
   window.loadSettings = function(data) {
@@ -227,6 +303,7 @@
     document.querySelectorAll("#themeMode button").forEach(function(btn) {
       btn.classList.toggle("active", btn.dataset.mode === (data.themeMode || "auto"));
     });
+    requestAnimationFrame(updateSegIndicator);
     if (data.effectiveTheme)
       document.documentElement.setAttribute("data-theme", data.effectiveTheme);
   };
@@ -274,9 +351,15 @@
 
   document.querySelectorAll("#themeMode button").forEach(function(btn) {
     btn.onclick = function() {
+      document.querySelectorAll("#themeMode button").forEach(function(b) {
+        b.classList.toggle("active", b === btn);
+      });
+      updateSegIndicator();
       bridge({ action: "setThemeMode", mode: btn.dataset.mode });
     };
   });
+
+  window.addEventListener("resize", updateSegIndicator);
 
   document.getElementById("grwLink").onclick = function(e) {
     e.preventDefault();

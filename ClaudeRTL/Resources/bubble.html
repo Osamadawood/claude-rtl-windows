@@ -31,6 +31,21 @@
             --shadow: 0 16px 40px rgba(23, 17, 9, .12), 0 2px 8px rgba(23, 17, 9, .08);
         }
 
+        :root {
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         * {
             box-sizing: border-box
         }
@@ -42,7 +57,8 @@
             background: transparent;
             overflow: hidden;
             font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
-            color: var(--ink)
+            color: var(--ink);
+            transition: color .25s var(--ease);
         }
 
         .wrap {
@@ -58,13 +74,24 @@
             border-radius: 18px;
             box-shadow: var(--shadow);
             opacity: 0;
-            transform: translateY(-8px) scale(.96);
-            transition: opacity .16s cubic-bezier(.2, .8, .2, 1), transform .16s cubic-bezier(.2, .8, .2, 1)
+            transform: translateY(4px) scale(.96);
+            transition:
+                opacity 160ms var(--ease),
+                transform 160ms var(--ease),
+                background-color .25s var(--ease),
+                border-color .25s var(--ease),
+                box-shadow .25s var(--ease);
         }
 
         .bubble.show {
             opacity: 1;
             transform: none
+        }
+
+        .bubble.hiding {
+            opacity: 0;
+            transform: translateY(4px) scale(.96);
+            transition-duration: 120ms
         }
 
         .arrow {
@@ -77,7 +104,8 @@
             border-inline-start: 1px solid var(--line);
             border-block-start: 1px solid var(--line);
             transform: rotate(45deg);
-            border-radius: 4px 0 0 0
+            border-radius: 4px 0 0 0;
+            transition: background-color .25s var(--ease), border-color .25s var(--ease);
         }
 
         .arrow.bottom {
@@ -94,7 +122,8 @@
             align-items: center;
             gap: 6px;
             padding: 10px 14px 9px;
-            border-bottom: 1px solid var(--line)
+            border-bottom: 1px solid var(--line);
+            transition: border-color .25s var(--ease);
         }
 
         .brand {
@@ -127,12 +156,20 @@
             color: var(--muted);
             border-radius: 8px;
             cursor: pointer;
-            transition: .13s
+            transition:
+                background-color 160ms var(--ease),
+                color 160ms var(--ease),
+                transform 160ms var(--ease);
         }
 
         .ic:hover {
             background: var(--surface);
-            color: var(--ink)
+            color: var(--ink);
+            transform: scale(1.02);
+        }
+
+        .ic:active {
+            transform: scale(0.98);
         }
 
         .ic.play:hover {
@@ -161,7 +198,8 @@
             font-size: 16px;
             line-height: 1.85;
             color: var(--ink);
-            unicode-bidi: plaintext
+            unicode-bidi: plaintext;
+            transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
         }
 
         .body::-webkit-scrollbar {
@@ -606,14 +644,16 @@
             PLAIN = body.innerText.replace(/\u00a0/g, " ");
             body.scrollTop = 0;
             var bubble = document.getElementById("bubble");
+            bubble.classList.remove("hiding");
             var arrow = bubble.querySelector(".arrow");
             if (arrowBelow) arrow.classList.add("bottom");
             else arrow.classList.remove("bottom");
-            bubble.classList.add("show");
-            setSpeaking(false);
+            bubble.classList.remove("show");
             requestAnimationFrame(function() {
+                bubble.classList.add("show");
                 requestAnimationFrame(fit);
             });
+            setSpeaking(false);
         }
 
         function setSpeaking(on) {
@@ -626,12 +666,13 @@
 
         function hide() {
             clearHighlight();
-            document.getElementById("bubble").classList.remove("show");
+            var bubble = document.getElementById("bubble");
+            bubble.classList.add("hiding");
+            bubble.classList.remove("show");
             setTimeout(function() {
-                bridge({
-                    action: "close"
-                });
-            }, 160);
+                bubble.classList.remove("hiding");
+                bridge({ action: "close" });
+            }, 120);
         }
         document.getElementById("bClose").onclick = hide;
         document.getElementById("bPlay").onclick = function() {
