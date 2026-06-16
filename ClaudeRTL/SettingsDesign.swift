@@ -336,16 +336,16 @@ struct CoralSliderRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Button("إعادة تعيين", action: onReset)
-                .font(.settingsRowDesc())
-                .foregroundStyle(palette.textMuted)
-                .buttonStyle(.plain)
+            Slider(value: $value, in: 12 ... 22, step: 1).tint(ClaudeRTLColors.coral)
             Text("\(Int(value))")
                 .font(.settingsRowLabel())
                 .foregroundStyle(ClaudeRTLColors.coral)
                 .monospacedDigit()
                 .frame(minWidth: 24)
-            Slider(value: $value, in: 12 ... 22, step: 1).tint(ClaudeRTLColors.coral)
+            Button("إعادة تعيين", action: onReset)
+                .font(.settingsRowDesc())
+                .foregroundStyle(palette.textMuted)
+                .buttonStyle(.plain)
         }
     }
 }
