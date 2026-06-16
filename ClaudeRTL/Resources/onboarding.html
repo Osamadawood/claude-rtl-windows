@@ -1,20 +1,16 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="fonts.css"><style>
-  :root{
+  html[data-theme="dark"], :root{
     --accent:#D9774E;
     --accent-dark:#C15F3C;
     --bg:#171109; --card:#211E1C; --surface:#262220;
     --ink:#F3EEE2; --muted:#B1ADA1; --line:#3A3531;
   }
-  @media (prefers-color-scheme: light){
-    :root{
-      --accent:#C15F3C;
-      --bg:#FAF9F5; --card:#FFFFFF; --surface:#F4F3EE;
-      --ink:#191919; --muted:#6B675F; --line:#E7E3D8;
-    }
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --accent:#D9774E; }
+  html[data-theme="light"]{
+    --accent:#C15F3C;
+    --accent-dark:#A84F2E;
+    --bg:#F3EEE2; --card:#FFFFFF; --surface:#FAF9F5;
+    --ink:#171109; --muted:#6B675F; --line:#E7E3D8;
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);

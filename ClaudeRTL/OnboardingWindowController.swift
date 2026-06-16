@@ -18,6 +18,8 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
         NSApp.activate(ignoringOtherApps: true)
     }
 
+    private weak var webView: WKWebView?
+
     private init() {
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 520, height: 580),
@@ -37,6 +39,7 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
         webView.autoresizingMask = [.width, .height]
         webView.navigationDelegate = self
         window.contentView?.addSubview(webView)
+        self.webView = webView
 
         guard let url = Bundle.main.url(forResource: "onboarding", withExtension: "html") else {
             DebugLog.print("ERROR: onboarding.html not found in bundle")
@@ -52,6 +55,19 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         DebugLog.print("onboarding.html loaded")
+        applyTheme(ThemeManager.shared.effectiveTheme())
+    }
+
+    static func applyThemeIfVisible(_ theme: String) {
+        sharedInstance?.applyTheme(theme)
+    }
+
+    private func applyTheme(_ theme: String) {
+        let safe = theme == "light" ? "light" : "dark"
+        webView?.evaluateJavaScript(
+            "document.documentElement.setAttribute('data-theme', '\(safe)')",
+            completionHandler: nil
+        )
     }
 
     func userContentController(

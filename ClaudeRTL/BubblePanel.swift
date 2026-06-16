@@ -213,6 +213,15 @@ final class BubbleRenderer: NSObject, WKScriptMessageHandler, WKNavigationDelega
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         DebugLog.print("bubble.html loaded")
+        applyTheme(ThemeManager.shared.effectiveTheme())
+    }
+
+    func applyTheme(_ theme: String) {
+        let safe = theme == "light" ? "light" : "dark"
+        webView?.evaluateJavaScript(
+            "document.documentElement.setAttribute('data-theme', '\(safe)')",
+            completionHandler: nil
+        )
     }
 
     func show(
@@ -224,6 +233,7 @@ final class BubbleRenderer: NSObject, WKScriptMessageHandler, WKNavigationDelega
     ) {
         currentText = text
         guard let webView else { return }
+        applyTheme(ThemeManager.shared.effectiveTheme())
         guard let textJSON = jsonLiteral(text),
               let nameJSON = jsonLiteral(appName),
               let bundleJSON = jsonLiteral(bundleId) else { return }

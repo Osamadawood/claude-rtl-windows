@@ -28,6 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setupSelectionHandler()
         setupMenuBar()
 
+        ThemeManager.shared.start()
+
         SelectionMonitor.shared.start()
 
         OnboardingWindowController.showIfNeeded()

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="fonts.css">
     <style>
-        :root {
+        html[data-theme="dark"], :root {
             --accent: #D9774E;
             --accent-soft: #C15F3C;
             --bg: #171109;
@@ -18,24 +18,17 @@
             --shadow: 0 18px 50px rgba(0, 0, 0, .45), 0 3px 10px rgba(0, 0, 0, .3);
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                --accent: #C15F3C;
-                --bg: #FAF9F5;
-                --card: #FFFFFF;
-                --surface: #F4F3EE;
-                --ink: #191919;
-                --muted: #6B675F;
-                --line: #E7E3D8;
-                --code-bg: #F4F3EE;
-                --shadow: 0 16px 40px rgba(25, 25, 25, .12), 0 2px 8px rgba(25, 25, 25, .08);
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --accent: #D9774E;
-            }
+        html[data-theme="light"] {
+            --accent: #C15F3C;
+            --accent-soft: #A84F2E;
+            --bg: #F3EEE2;
+            --card: #FFFFFF;
+            --surface: #FAF9F5;
+            --ink: #171109;
+            --muted: #6B675F;
+            --line: #E7E3D8;
+            --code-bg: #F4F3EE;
+            --shadow: 0 16px 40px rgba(23, 17, 9, .12), 0 2px 8px rgba(23, 17, 9, .08);
         }
 
         * {

@@ -50,7 +50,20 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        applyTheme(ThemeManager.shared.effectiveTheme())
         pushStateToWebView()
+    }
+
+    static func applyThemeIfOpen(_ theme: String) {
+        sharedInstance?.applyTheme(theme)
+    }
+
+    func applyTheme(_ theme: String) {
+        let safe = theme == "light" ? "light" : "dark"
+        webView?.evaluateJavaScript(
+            "document.documentElement.setAttribute('data-theme', '\(safe)')",
+            completionHandler: nil
+        )
     }
 
     func pushStateToWebView() {
@@ -111,7 +124,14 @@ final class PreferencesWindowController: NSWindowController, WKNavigationDelegat
                 self.pushStateToWebView()
             case "resetAllSettings":
                 Settings.shared.resetAllSettingsExceptLaunchAtLogin()
+                ThemeManager.shared.applyToAllWebViews()
                 self.pushStateToWebView()
+            case "setThemeMode":
+                if let raw = body["mode"] as? String, let mode = ThemeMode(rawValue: raw) {
+                    Settings.shared.themeMode = mode
+                    ThemeManager.shared.applyToAllWebViews()
+                    self.pushStateToWebView()
+                }
             case "setLaunchAtLogin":
                 let enabled = body["enabled"] as? Bool ?? false
                 Settings.shared.setLaunchAtLogin(enabled)

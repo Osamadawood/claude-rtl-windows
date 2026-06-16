@@ -33,6 +33,8 @@ struct SettingsSnapshot: Encodable {
     let excluded: [AppRecordDTO]
     let included: [AppRecordDTO]
     let fontSize: Int
+    let themeMode: String
+    let effectiveTheme: String
     let launchAtLogin: Bool
     let version: String
 }
@@ -52,6 +54,7 @@ final class Settings {
         static let excludedBundleIDsAlways = "excludedBundleIDsAlways"
         static let excludedAppsAlways = "excludedAppsAlways"
         static let includedApps = "includedApps"
+        static let themeMode = "themeMode"
     }
 
     /// Session-only exclusions; cleared on each launch.
@@ -85,6 +88,15 @@ final class Settings {
             return mode
         }
         set { defaults.set(newValue.rawValue, forKey: Keys.triggerMode) }
+    }
+
+    var themeMode: ThemeMode {
+        get {
+            guard let raw = defaults.string(forKey: Keys.themeMode),
+                  let mode = ThemeMode(rawValue: raw) else { return .auto }
+            return mode
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.themeMode) }
     }
 
     var excludedAppsAlways: [AppRecord] {
@@ -138,6 +150,8 @@ final class Settings {
             excluded: excludedAppsAlways.map(appDTO),
             included: includedApps.map(appDTO),
             fontSize: Int(fontSize),
+            themeMode: themeMode.rawValue,
+            effectiveTheme: ThemeManager.shared.effectiveTheme(),
             launchAtLogin: isLaunchAtLoginEnabled,
             version: Self.versionLabel()
         )
@@ -161,6 +175,7 @@ final class Settings {
         includedApps = []
         excludedBundleIDsSession = []
         fontSize = 16
+        themeMode = .auto
     }
 
     static func versionLabel() -> String {
