@@ -25,7 +25,12 @@ final class PreferencesWindowController: NSWindowController {
             width: SettingsMetrics.windowMinWidth,
             height: SettingsMetrics.windowMinHeight
         )
-        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .visible
+        window.isMovableByWindowBackground = true
+        window.backgroundColor = .clear
+        window.isOpaque = false
         window.center()
         window.isReleasedWhenClosed = false
 
