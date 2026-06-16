@@ -21,25 +21,6 @@ struct AppRecord: Codable, Equatable {
     var name: String
 }
 
-struct AppRecordDTO: Encodable {
-    let bundleId: String
-    let name: String
-    let icon: String?
-}
-
-struct SettingsSnapshot: Encodable {
-    let enabled: Bool
-    let mode: String
-    let excluded: [AppRecordDTO]
-    let included: [AppRecordDTO]
-    let fontSize: Int
-    let themeMode: String
-    let effectiveTheme: String
-    let launchAtLogin: Bool
-    let autoCheckUpdates: Bool
-    let version: String
-}
-
 final class Settings {
     static let shared = Settings()
 
@@ -142,29 +123,6 @@ final class Settings {
     var excludedBundleIDsAlways: [String] {
         get { defaults.stringArray(forKey: Keys.excludedBundleIDsAlways) ?? [] }
         set { defaults.set(newValue, forKey: Keys.excludedBundleIDsAlways) }
-    }
-
-    func snapshot() -> SettingsSnapshot {
-        SettingsSnapshot(
-            enabled: isEnabled,
-            mode: triggerMode.rawValue,
-            excluded: excludedAppsAlways.map(appDTO),
-            included: includedApps.map(appDTO),
-            fontSize: Int(fontSize),
-            themeMode: themeMode.rawValue,
-            effectiveTheme: ThemeManager.shared.effectiveTheme(),
-            launchAtLogin: isLaunchAtLoginEnabled,
-            autoCheckUpdates: SparkleUpdater.shared.automaticallyChecksForUpdates,
-            version: Self.versionLabel()
-        )
-    }
-
-    private func appDTO(_ app: AppRecord) -> AppRecordDTO {
-        AppRecordDTO(
-            bundleId: app.bundleId,
-            name: app.name,
-            icon: AppIconHelper.dataURL(forBundleIdentifier: app.bundleId)
-        )
     }
 
     func resetFontSize() {

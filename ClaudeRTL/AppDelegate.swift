@@ -36,7 +36,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         SelectionMonitor.shared.start()
 
-        OnboardingWindowController.showIfNeeded()
+        if Settings.shared.didOnboard {
+            if shouldOpenSettingsOnLaunch() {
+                PreferencesWindowController.show()
+            }
+        } else {
+            OnboardingWindowController.showIfNeeded()
+        }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        PreferencesWindowController.show()
+        return true
+    }
+
+    private func shouldOpenSettingsOnLaunch() -> Bool {
+        !Settings.shared.isLaunchAtLoginEnabled
     }
 
     func applicationWillTerminate(_ notification: Notification) {

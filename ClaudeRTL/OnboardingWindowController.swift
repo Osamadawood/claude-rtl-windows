@@ -83,6 +83,7 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
             case "finish":
                 Settings.shared.didOnboard = true
                 self.window?.close()
+                PreferencesWindowController.show()
             default:
                 break
             }

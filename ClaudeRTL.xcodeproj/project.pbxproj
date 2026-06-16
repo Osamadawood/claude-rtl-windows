@@ -27,7 +27,6 @@
 		A10000010000000000000027 /* AppIconHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000029 /* AppIconHelper.swift */; };
 		A10000010000000000000028 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000030 /* ThemeManager.swift */; };
 		A10000010000000000000018 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000020 /* Localizable.strings */; };
-		A10000010000000000000019 /* settings.html in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000021 /* settings.html */; };
 		A10000010000000000000020 /* fonts.css in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000022 /* fonts.css */; };
 		A10000010000000000000021 /* IBMPlexSansArabic-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */; };
 		A10000010000000000000022 /* IBMPlexSansArabic-Medium.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */; };
@@ -36,6 +35,9 @@
 		A10000010000000000000025 /* IBMPlexMono-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000027 /* IBMPlexMono-Regular.woff2 */; };
 		A10000010000000000000026 /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000028 /* OFL.txt */; };
 		A10000010000000000000029 /* SparkleUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000031 /* SparkleUpdater.swift */; };
+		A10000010000000000000031 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000032 /* SettingsView.swift */; };
+		A10000010000000000000032 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000033 /* SettingsModel.swift */; };
+		A10000010000000000000033 /* ClaudeRTLColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000034 /* ClaudeRTLColors.swift */; };
 		A10000010000000000000030 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A90000010000000000000002 /* Sparkle */; };
 /* End PBXBuildFile section */
 
@@ -63,8 +65,10 @@
 		A20000010000000000000030 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		A20000010000000000000031 /* SparkleUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdater.swift; sourceTree = "<group>"; };
 		A20000010000000000000020 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A20000010000000000000021 /* settings.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = settings.html; sourceTree = "<group>"; };
 		A20000010000000000000022 /* fonts.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = fonts.css; sourceTree = "<group>"; };
+		A20000010000000000000032 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A20000010000000000000033 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
+		A20000010000000000000034 /* ClaudeRTLColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeRTLColors.swift; sourceTree = "<group>"; };
 		A20000010000000000000023 /* IBMPlexSansArabic-Regular.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Regular.woff2; sourceTree = "<group>"; };
 		A20000010000000000000024 /* IBMPlexSansArabic-Medium.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-Medium.woff2; sourceTree = "<group>"; };
 		A20000010000000000000025 /* IBMPlexSansArabic-SemiBold.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IBMPlexSansArabic-SemiBold.woff2; sourceTree = "<group>"; };
@@ -110,6 +114,9 @@
 				A20000010000000000000029 /* AppIconHelper.swift */,
 				A20000010000000000000030 /* ThemeManager.swift */,
 				A20000010000000000000031 /* SparkleUpdater.swift */,
+				A20000010000000000000032 /* SettingsView.swift */,
+				A20000010000000000000033 /* SettingsModel.swift */,
+				A20000010000000000000034 /* ClaudeRTLColors.swift */,
 				A20000010000000000000016 /* DebugLog.swift */,
 				A20000010000000000000020 /* Localizable.strings */,
 				A40000010000000000000004 /* Resources */,
@@ -132,7 +139,6 @@
 			children = (
 				A20000010000000000000007 /* bubble.html */,
 				A20000010000000000000012 /* onboarding.html */,
-				A20000010000000000000021 /* settings.html */,
 				A20000010000000000000022 /* fonts.css */,
 				A40000010000000000000005 /* Fonts */,
 				A20000010000000000000014 /* MenuBarIcon.png */,
@@ -226,7 +232,6 @@
 				A10000010000000000000012 /* MenuBarIcon.png in Resources */,
 				A10000010000000000000013 /* MenuBarIcon@2x.png in Resources */,
 				A10000010000000000000018 /* Localizable.strings in Resources */,
-				A10000010000000000000019 /* settings.html in Resources */,
 				A10000010000000000000020 /* fonts.css in Resources */,
 				A10000010000000000000021 /* IBMPlexSansArabic-Regular.woff2 in Resources */,
 				A10000010000000000000022 /* IBMPlexSansArabic-Medium.woff2 in Resources */,
@@ -279,6 +284,9 @@
 				A10000010000000000000027 /* AppIconHelper.swift in Sources */,
 				A10000010000000000000028 /* ThemeManager.swift in Sources */,
 				A10000010000000000000029 /* SparkleUpdater.swift in Sources */,
+				A10000010000000000000031 /* SettingsView.swift in Sources */,
+				A10000010000000000000032 /* SettingsModel.swift in Sources */,
+				A10000010000000000000033 /* ClaudeRTLColors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,7 +408,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = AJ8X3Y4JUR;
 				ENABLE_APP_SANDBOX = NO;
@@ -442,7 +450,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = AJ8X3Y4JUR;
 				ENABLE_APP_SANDBOX = NO;
