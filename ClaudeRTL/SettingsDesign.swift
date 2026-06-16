@@ -29,7 +29,9 @@ struct SettingsPalette {
         scheme == .dark ? Color(hex: 0xF3EEE2).opacity(0.62) : Color(hex: 0x171109).opacity(0.62)
     }
     var coralTextSelected: Color { scheme == .dark ? Color(hex: 0xE88A60) : Color(hex: 0xC15F3C) }
-    var navSelectedBg: Color { ClaudeRTLColors.coral.opacity(0.16) }
+    var navSelectedBg: Color {
+        scheme == .dark ? Color(hex: 0x342118) : Color(hex: 0xE8D3C0)
+    }
     var optionSelectedBg: Color { ClaudeRTLColors.coral.opacity(0.09) }
     var radioOffBorder: Color {
         scheme == .dark ? Color.white.opacity(0.22) : Color(hex: 0x171109).opacity(0.25)
@@ -104,6 +106,18 @@ enum SettingsMetrics {
     static let addButtonRadius: CGFloat = 9
 }
 
+/// Physical-right alignment under `.rightToLeft` layout (SwiftUI `.leading`).
+enum SettingsAlign {
+    static let horizontal: HorizontalAlignment = .leading
+    static let frame: Alignment = .leading
+}
+
+extension View {
+    func settingsContentWidth() -> some View {
+        frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
+    }
+}
+
 enum SettingsFontRegistrar {
     static func register() {
         for name in [
@@ -136,10 +150,10 @@ struct SettingsCard<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 0) { content }
+        VStack(alignment: SettingsAlign.horizontal, spacing: 0) { content }
             .padding(.horizontal, SettingsMetrics.cardPaddingH)
             .padding(.vertical, SettingsMetrics.cardPaddingV)
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .settingsContentWidth()
             .background(palette.cardBg)
             .clipShape(RoundedRectangle(cornerRadius: SettingsMetrics.cardRadius, style: .continuous))
             .overlay(
@@ -157,7 +171,7 @@ struct SettingsCardLabel: View {
         Text(text)
             .font(.settingsCardLabel())
             .foregroundStyle(palette.textSecondary)
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
             .padding(.bottom, SettingsMetrics.lblBottom)
     }
 }
@@ -213,7 +227,7 @@ struct SettingsOptionRow: View {
     var body: some View {
         Button(action: action) {
             HStack(alignment: .center, spacing: 12) {
-                VStack(alignment: .trailing, spacing: 3) {
+                VStack(alignment: SettingsAlign.horizontal, spacing: 3) {
                     Text(title).font(.settingsRowLabel()).foregroundStyle(palette.textPrimary)
                     Text(subtitle).font(.settingsRowDesc()).foregroundStyle(palette.textSecondary)
                 }
@@ -356,7 +370,7 @@ struct SettingsPreviewBox<Content: View>: View {
 
     var body: some View {
         content
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(palette.segmentTrackBg)

@@ -15,11 +15,11 @@ struct SettingsView: View {
 
     private var contentArea: some View {
         ScrollView {
-            VStack(alignment: .trailing, spacing: 0) {
+            VStack(alignment: SettingsAlign.horizontal, spacing: 0) {
                 Text(selection.title)
                     .font(.settingsSectionTitle())
                     .foregroundStyle(palette.textPrimary)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .settingsContentWidth()
                     .padding(.bottom, SettingsMetrics.sectionTitleBottom)
 
                 Group {
@@ -32,10 +32,12 @@ struct SettingsView: View {
                         SettingsGeneralView()
                     }
                 }
+                .settingsContentWidth()
                 .transition(.opacity.combined(with: .move(edge: .leading)))
             }
             .padding(.horizontal, SettingsMetrics.contentPaddingH)
             .padding(.vertical, SettingsMetrics.contentPaddingV)
+            .settingsContentWidth()
             .animation(.easeInOut(duration: 0.2), value: selection)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -5,10 +5,10 @@ struct SettingsWhereItWorksView: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: SettingsMetrics.cardSpacing) {
+        VStack(alignment: SettingsAlign.horizontal, spacing: SettingsMetrics.cardSpacing) {
             SettingsCard {
                 HStack(alignment: .center, spacing: 16) {
-                    VStack(alignment: .trailing, spacing: 3) {
+                    VStack(alignment: SettingsAlign.horizontal, spacing: 3) {
                         Text("تفعيل Claude RTL")
                             .font(.settingsRowLabel())
                             .foregroundStyle(palette.textPrimary)
@@ -72,8 +72,8 @@ struct SettingsWhereItWorksView: View {
                 Text("يعمل Claude RTL داخل تطبيق Claude فقط — لا حاجة لإدارة قائمة تطبيقات.")
                     .font(.settingsRowDesc())
                     .foregroundStyle(palette.textSecondary)
-                    .multilineTextAlignment(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .multilineTextAlignment(.leading)
+                    .settingsContentWidth()
             }
         }
     }
@@ -109,7 +109,7 @@ struct SettingsAppListCard: View {
             }
 
             BorderedAddButton(title: "إضافة تطبيق", action: onAdd)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
                 .padding(.top, apps.isEmpty ? 4 : 12)
         }
     }

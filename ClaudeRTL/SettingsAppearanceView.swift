@@ -5,7 +5,7 @@ struct SettingsAppearanceView: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: SettingsMetrics.cardSpacing) {
+        VStack(alignment: SettingsAlign.horizontal, spacing: SettingsMetrics.cardSpacing) {
             SettingsCard {
                 SettingsCardLabel(text: "السمة")
                 CoralSegmentedControl(selection: $model.themeMode)

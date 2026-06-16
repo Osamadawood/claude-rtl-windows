@@ -27,7 +27,7 @@ struct SettingsSidebar: View {
     @Binding var selection: SettingsSection
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 0) {
+        VStack(alignment: SettingsAlign.horizontal, spacing: 0) {
             sidebarHeader
             VStack(spacing: SettingsMetrics.navGap) {
                 ForEach([SettingsSection.whereItWorks, .appearance, .general], id: \.self) { section in
@@ -58,7 +58,7 @@ struct SettingsSidebar: View {
     private var sidebarHeader: some View {
         HStack(spacing: 10) {
             SettingsAppIcon.view(size: 38, radius: 10)
-            VStack(alignment: .trailing, spacing: 2) {
+            VStack(alignment: SettingsAlign.horizontal, spacing: 2) {
                 Text("Claude RTL")
                     .font(.settingsAppName())
                     .foregroundStyle(palette.textPrimary)
@@ -67,7 +67,7 @@ struct SettingsSidebar: View {
                     .foregroundStyle(palette.textMuted)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
         .padding(.bottom, SettingsMetrics.sidebarHeaderBottom)
     }
 }
@@ -92,8 +92,10 @@ private struct SidebarNavButton: View {
             .padding(.horizontal, 11)
             .padding(.vertical, 9)
             .foregroundStyle(isSelected ? palette.coralTextSelected : palette.navUnselected)
-            .background(backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(backgroundColor)
+            )
             .contentShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
         .buttonStyle(.plain)

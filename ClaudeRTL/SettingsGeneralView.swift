@@ -6,7 +6,7 @@ struct SettingsGeneralView: View {
     @State private var showResetConfirm = false
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: SettingsMetrics.cardSpacing) {
+        VStack(alignment: SettingsAlign.horizontal, spacing: SettingsMetrics.cardSpacing) {
             SettingsCard {
                 HStack {
                     Text("تشغيل عند بدء النظام")
@@ -53,19 +53,19 @@ struct SettingsGeneralView: View {
     private var aboutSection: some View {
         HStack(alignment: .top, spacing: 12) {
             SettingsAppIcon.view(size: 34, radius: 9)
-            VStack(alignment: .trailing, spacing: 6) {
+            VStack(alignment: SettingsAlign.horizontal, spacing: 6) {
                 Text("Claude RTL — الإصدار \(Settings.versionLabel())")
                     .font(.settingsAboutTitle())
                     .foregroundStyle(palette.textPrimary)
                 Text("أداة مستقلة من GRW Lab، غير تابعة لـ Anthropic")
                     .font(.settingsRowDesc())
                     .foregroundStyle(palette.textMuted)
-                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(.leading)
                 Link("grwlab.net", destination: URL(string: "https://grwlab.net")!)
                     .font(.settingsRowDesc())
                     .tint(ClaudeRTLColors.coral)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .settingsContentWidth()
     }
 }
