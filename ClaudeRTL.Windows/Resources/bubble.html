@@ -483,21 +483,15 @@
         window.measureBubble = function() {
             var wrap = document.querySelector(".wrap");
             if (!wrap) return { w: 0, h: 0 };
-            // Measure the NATURAL size: the .body max-height is tied to 100vh, which would
-            // otherwise create a feedback loop (window height -> body cap -> measured height).
-            var body = document.getElementById("body");
-            var prevMax = "", prevOverflow = "";
-            if (body) {
-                prevMax = body.style.maxHeight;
-                prevOverflow = body.style.overflowY;
-                body.style.maxHeight = "none";
-                body.style.overflowY = "visible";
-            }
+            // Measure the NATURAL size WITHOUT mutating the DOM (mutating overflow/max-height
+            // would reset the scroll position on every pump tick). The .body max-height is tied
+            // to 100vh, so add its hidden overflow to reconstruct the uncapped height.
             var w = Math.ceil(wrap.scrollWidth);
             var h = Math.ceil(wrap.scrollHeight);
+            var body = document.getElementById("body");
             if (body) {
-                body.style.maxHeight = prevMax;
-                body.style.overflowY = prevOverflow;
+                var hidden = body.scrollHeight - body.clientHeight;
+                if (hidden > 0) h += hidden;
             }
             return { w: w, h: h };
         };
