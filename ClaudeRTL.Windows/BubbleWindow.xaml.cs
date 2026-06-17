@@ -82,7 +82,8 @@ public partial class BubbleWindow : Window
                     "WebView2"));
 
             await WebView.EnsureCoreWebView2Async(environment);
-            WebView.DefaultBackgroundColor = System.Drawing.Color.FromArgb(1, 0, 0, 0);
+            // Do not set DefaultBackgroundColor with alpha < 255 — crashes some WebView2 Runtime builds.
+            // Bubble transparency: WPF AllowsTransparency + bubble.html (body/wrap transparent, .bubble opaque).
 
             _bridge = new WebBridge(WebView);
             _bridge.MessageReceived += OnBridgeMessage;

@@ -56,6 +56,7 @@
             height: 100%;
             background: transparent;
             overflow: hidden;
+            pointer-events: none;
             font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
             color: var(--ink);
             transition: color .25s var(--ease);
@@ -65,12 +66,15 @@
             padding: 14px;
             width: max-content;
             max-width: calc(100vw - 4px);
+            background: transparent;
+            pointer-events: none;
         }
 
         .bubble {
             position: relative;
             width: max-content;
             max-width: 492px;
+            pointer-events: auto;
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 18px;
