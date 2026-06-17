@@ -60,14 +60,13 @@ public partial class BubbleWindow : Window
                 "WebView2"));
 
         await WebView.EnsureCoreWebView2Async(environment);
-        WebView.DefaultBackgroundColor = System.Drawing.Color.Transparent;
+        WebView.DefaultBackgroundColor = System.Drawing.Color.FromArgb(1, 0, 0, 0);
 
         _bridge = new WebBridge(WebView);
         _bridge.MessageReceived += OnBridgeMessage;
         _bridge.Attach();
 
         var bubblePath = Path.Combine(resourcesDir, "bubble.html");
-        WebView.CoreWebView2.Navigate(new Uri(bubblePath).AbsoluteUri);
         WebView.CoreWebView2.NavigationCompleted += async (_, e) =>
         {
             if (!e.IsSuccess)
@@ -86,6 +85,8 @@ public partial class BubbleWindow : Window
                 _pendingText = null;
             }
         };
+
+        WebView.CoreWebView2.Navigate(new Uri(bubblePath).AbsoluteUri);
     }
 
     public void ShowAt(System.Drawing.Point cursor, string text, string appName, string processName)
@@ -105,11 +106,13 @@ public partial class BubbleWindow : Window
             _pendingText = text;
             Show();
             Activate();
+            WebView.Focus();
             return;
         }
 
         Show();
         Activate();
+        WebView.Focus();
         _ = ShowBubbleContentAsync(text, appName, processName);
     }
 
@@ -143,6 +146,12 @@ public partial class BubbleWindow : Window
 
     private void OnBridgeMessage(BridgeMessage message)
     {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.Invoke(() => OnBridgeMessage(message));
+            return;
+        }
+
         switch (message.Action)
         {
             case "copy":

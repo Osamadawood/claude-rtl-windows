@@ -158,6 +158,8 @@
             color: var(--muted);
             border-radius: 8px;
             cursor: pointer;
+            pointer-events: auto;
+            -webkit-app-region: no-drag;
             transition:
                 background-color 160ms var(--ease),
                 color 160ms var(--ease),
@@ -401,7 +403,8 @@
             color: var(--ink);
             padding: 7px 8px;
             border-radius: 6px;
-            cursor: pointer
+            cursor: pointer;
+            pointer-events: auto;
         }
 
         .ic:focus-visible {
@@ -738,29 +741,40 @@
                 bridge({ action: "close" });
             }, 120);
         }
-        document.getElementById("bClose").onclick = hide;
-        document.getElementById("bPlay").onclick = function() {
-            bridge({
+        document.getElementById("bClose").onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            hide();
+        };
+        document.getElementById("bPlay").onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            sendToHost({
                 action: "speak",
                 text: PLAIN || RAW
             });
         };
         document.getElementById("bGear").onclick = function(e) {
+            e.preventDefault();
             e.stopPropagation();
             document.getElementById("gearMenu").classList.toggle("open");
         };
         document.querySelectorAll("#gearMenu button[data-scope]").forEach(function(btn) {
             btn.onclick = function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                bridge({
+                sendToHost({
                     action: "disableApp",
                     scope: btn.getAttribute("data-scope"),
+                    process: APP_BUNDLE,
                     bundleId: APP_BUNDLE,
                     name: APP_NAME
                 });
+                document.getElementById("gearMenu").classList.remove("open");
             };
         });
-        document.addEventListener("click", function() {
+        document.addEventListener("click", function(e) {
+            if (e.target.closest(".gear-wrap")) return;
             document.getElementById("gearMenu").classList.remove("open");
         });
         document.addEventListener("keydown", function(e) {

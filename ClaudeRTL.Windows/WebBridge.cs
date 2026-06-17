@@ -58,7 +58,13 @@ internal sealed class WebBridge
                 e.WebMessageAsJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (message?.Action is not null)
-                MessageReceived?.Invoke(message);
+            {
+                var dispatcher = System.Windows.Application.Current?.Dispatcher;
+                if (dispatcher is not null && !dispatcher.CheckAccess())
+                    dispatcher.Invoke(() => MessageReceived?.Invoke(message));
+                else
+                    MessageReceived?.Invoke(message);
+            }
         }
         catch
         {
