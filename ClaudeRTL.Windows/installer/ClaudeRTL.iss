@@ -12,6 +12,7 @@ SetupIconFile=..\Resources\AppIcon.ico
 
 [Files]
 Source: "..\publish\ClaudeRTL.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\publish\WinSparkle.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\publish\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]

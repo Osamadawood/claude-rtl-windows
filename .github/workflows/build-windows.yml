@@ -24,6 +24,10 @@ jobs:
           if (-not (Test-Path "publish\Resources\bubble.html")) { throw "publish\Resources\bubble.html missing" }
           if (-not (Test-Path "publish\Resources\onboarding.html")) { throw "publish\Resources\onboarding.html missing" }
           if (-not (Test-Path "publish\Resources\fonts.css")) { throw "publish\Resources\fonts.css missing" }
+      - name: Verify WinSparkle.dll in publish output
+        working-directory: ClaudeRTL.Windows
+        run: |
+          if (-not (Test-Path "publish\WinSparkle.dll")) { throw "publish\WinSparkle.dll missing" }
       - name: Install Inno Setup
         run: choco install innosetup -y
       - name: Build installer
@@ -35,4 +39,5 @@ jobs:
           name: ClaudeRTL-Windows
           path: |
             ClaudeRTL.Windows/publish/ClaudeRTL.exe
+            ClaudeRTL.Windows/publish/WinSparkle.dll
             ClaudeRTL.Windows/installer/Output/*.exe
