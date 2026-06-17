@@ -9,6 +9,9 @@ public partial class App : System.Windows.Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        CrashLogger.Initialize();
+        CrashLogger.AttachDispatcher(Dispatcher);
+
         base.OnStartup(e);
 
         if (!SingleInstanceManager.TryBecomeSingleInstance())

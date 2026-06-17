@@ -48,7 +48,16 @@ public sealed class ApplicationCoordinator : IDisposable
         var processName = app?.ProcessName ?? string.Empty;
         var cursor = Win32Interop.GetCursorPosition();
         System.Windows.Application.Current.Dispatcher.Invoke(() =>
-            _bubbleWindow.ShowAt(cursor, text, appName, processName));
+        {
+            try
+            {
+                _bubbleWindow.ShowAt(cursor, text, appName, processName);
+            }
+            catch (Exception ex)
+            {
+                CrashLogger.Log("ApplicationCoordinator.ShowBubble", ex);
+            }
+        });
     }
 
     public void SuppressClipboard(TimeSpan duration) =>
