@@ -56,7 +56,6 @@
             height: 100%;
             background: transparent;
             overflow: hidden;
-            pointer-events: none;
             font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
             color: var(--ink);
             transition: color .25s var(--ease);
@@ -67,7 +66,6 @@
             width: max-content;
             max-width: calc(100vw - 4px);
             background: transparent;
-            pointer-events: none;
         }
 
         .bubble {
@@ -485,7 +483,23 @@
         window.measureBubble = function() {
             var wrap = document.querySelector(".wrap");
             if (!wrap) return { w: 0, h: 0 };
-            return { w: Math.ceil(wrap.scrollWidth), h: Math.ceil(wrap.scrollHeight) };
+            // Measure the NATURAL size: the .body max-height is tied to 100vh, which would
+            // otherwise create a feedback loop (window height -> body cap -> measured height).
+            var body = document.getElementById("body");
+            var prevMax = "", prevOverflow = "";
+            if (body) {
+                prevMax = body.style.maxHeight;
+                prevOverflow = body.style.overflowY;
+                body.style.maxHeight = "none";
+                body.style.overflowY = "visible";
+            }
+            var w = Math.ceil(wrap.scrollWidth);
+            var h = Math.ceil(wrap.scrollHeight);
+            if (body) {
+                body.style.maxHeight = prevMax;
+                body.style.overflowY = prevOverflow;
+            }
+            return { w: w, h: h };
         };
 
         function bridge(msg) {

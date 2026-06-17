@@ -293,6 +293,7 @@ public partial class BubbleWindow : Window
 
         _lastMeasuredWidth = measure.W;
         _lastMeasuredHeight = measure.H;
+        CrashLogger.Log("Bubble.Measure", $"natural {measure.W}x{measure.H}");
         ApplyResize(measure.W, measure.H);
     }
 
@@ -379,6 +380,7 @@ public partial class BubbleWindow : Window
     {
         try
         {
+            CrashLogger.Log("Bubble.Action", message.Action ?? "(null)");
             switch (message.Action)
             {
                 case "copy":
