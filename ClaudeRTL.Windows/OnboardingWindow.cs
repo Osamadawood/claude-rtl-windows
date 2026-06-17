@@ -85,14 +85,21 @@ public sealed class OnboardingWindow : Window
             if (!doc.RootElement.TryGetProperty("action", out var actionProp))
                 return;
 
-            if (actionProp.GetString() != "finish")
-                return;
-
+            var action = actionProp.GetString();
             Dispatcher.Invoke(() =>
             {
-                Settings.Instance.DidOnboard = true;
-                Settings.Instance.Save();
-                Close();
+                switch (action)
+                {
+                    case "finish":
+                        Settings.Instance.DidOnboard = true;
+                        Settings.Instance.Save();
+                        Close();
+                        SettingsWindow.Open();
+                        break;
+                    case "settings":
+                        SettingsWindow.Open();
+                        break;
+                }
             });
         }
         catch

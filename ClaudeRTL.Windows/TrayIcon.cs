@@ -9,35 +9,41 @@ namespace ClaudeRTL;
 public sealed class TrayIcon : IDisposable
 {
     private readonly TaskbarIcon _taskbarIcon;
-    private readonly MenuItem _launchAtLoginItem;
+    private readonly MenuItem _excludeAppItem;
+    private readonly MenuItem _excludeSessionItem;
+    private readonly MenuItem _excludeAlwaysItem;
+    private ForegroundAppInfo? _menuTargetApp;
 
     public TrayIcon()
     {
-        _launchAtLoginItem = new MenuItem
+        _excludeSessionItem = new MenuItem { Header = "هذه الجلسة" };
+        _excludeSessionItem.Click += OnExcludeSession;
+
+        _excludeAlwaysItem = new MenuItem { Header = "دائمًا" };
+        _excludeAlwaysItem.Click += OnExcludeAlways;
+
+        var excludeSubmenu = new MenuItem
         {
-            Header = "تشغيل عند بدء النظام",
-            IsCheckable = true,
-            IsChecked = Settings.Instance.LaunchAtLogin
+            Header = "إيقاف على …",
+            Items = { _excludeSessionItem, _excludeAlwaysItem }
         };
-        _launchAtLoginItem.Click += OnToggleLaunchAtLogin;
+
+        _excludeAppItem = excludeSubmenu;
 
         var contextMenu = new ContextMenu
         {
             FlowDirection = FlowDirection.RightToLeft
         };
+        contextMenu.Opened += OnContextMenuOpened;
 
-        var aboutItem = new MenuItem { Header = "حول Claude RTL" };
-        aboutItem.Click += OnShowAbout;
-
-        var onboardingItem = new MenuItem { Header = "إعادة الشرح" };
-        onboardingItem.Click += OnShowOnboarding;
+        var settingsItem = new MenuItem { Header = "الإعدادات…" };
+        settingsItem.Click += (_, _) => SettingsWindow.Open();
 
         var quitItem = new MenuItem { Header = "خروج" };
-        quitItem.Click += OnQuit;
+        quitItem.Click += (_, _) => System.Windows.Application.Current.Shutdown();
 
-        contextMenu.Items.Add(aboutItem);
-        contextMenu.Items.Add(onboardingItem);
-        contextMenu.Items.Add(_launchAtLoginItem);
+        contextMenu.Items.Add(settingsItem);
+        contextMenu.Items.Add(_excludeAppItem);
         contextMenu.Items.Add(new Separator());
         contextMenu.Items.Add(quitItem);
 
@@ -57,20 +63,38 @@ public sealed class TrayIcon : IDisposable
             : SystemIcons.Application;
     }
 
-    private void OnShowAbout(object sender, RoutedEventArgs e)
+    private void OnContextMenuOpened(object? sender, RoutedEventArgs e)
     {
-        var about = new AboutWindow();
-        about.ShowDialog();
+        _menuTargetApp = ForegroundAppWatcher.GetForegroundApp();
+        if (_menuTargetApp is { } app && !string.IsNullOrEmpty(app.ProcessName))
+        {
+            _excludeAppItem.Header = $"إيقاف على {app.DisplayName}";
+            _excludeAppItem.IsEnabled = true;
+        }
+        else
+        {
+            _excludeAppItem.Header = "إيقاف على …";
+            _excludeAppItem.IsEnabled = false;
+        }
     }
 
-    private void OnShowOnboarding(object sender, RoutedEventArgs e) => OnboardingWindow.Open();
-
-    private void OnToggleLaunchAtLogin(object sender, RoutedEventArgs e)
+    private void OnExcludeSession(object sender, RoutedEventArgs e)
     {
-        Settings.Instance.SetLaunchAtLogin(_launchAtLoginItem.IsChecked);
+        if (_menuTargetApp is not { ProcessName: var processName })
+            return;
+
+        Settings.Instance.ExcludeForSession(processName);
+        SettingsWindow.ReloadIfOpen();
     }
 
-    private void OnQuit(object sender, RoutedEventArgs e) => System.Windows.Application.Current.Shutdown();
+    private void OnExcludeAlways(object sender, RoutedEventArgs e)
+    {
+        if (_menuTargetApp is not { ProcessName: var processName, DisplayName: var displayName })
+            return;
+
+        Settings.Instance.ExcludePermanently(processName, displayName);
+        SettingsWindow.ReloadIfOpen();
+    }
 
     public void Dispose() => _taskbarIcon.Dispose();
 }

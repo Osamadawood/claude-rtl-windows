@@ -157,7 +157,26 @@ public partial class BubbleWindow : Window
                 if (message.W is > 0 && message.H is > 0)
                     HandleResize(message.W.Value, message.H.Value);
                 break;
+            case "disableApp":
+                HandleDisableApp(message);
+                break;
         }
+    }
+
+    private void HandleDisableApp(BridgeMessage message)
+    {
+        var processName = message.BundleId ?? message.Process ?? string.Empty;
+        var displayName = message.Name ?? processName;
+        if (string.IsNullOrWhiteSpace(processName))
+            return;
+
+        if (string.Equals(message.Scope, "always", StringComparison.OrdinalIgnoreCase))
+            Settings.Instance.ExcludePermanently(processName, displayName);
+        else
+            Settings.Instance.ExcludeForSession(processName);
+
+        SettingsWindow.ReloadIfOpen();
+        HideBubble();
     }
 
     private void HandleResize(double width, double height)

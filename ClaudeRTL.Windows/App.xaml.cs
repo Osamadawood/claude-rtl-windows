@@ -11,6 +11,14 @@ public partial class App : System.Windows.Application
     {
         base.OnStartup(e);
 
+        if (!SingleInstanceManager.TryBecomeSingleInstance())
+        {
+            Shutdown();
+            return;
+        }
+
+        SingleInstanceManager.SettingsRequested += () => SettingsWindow.Open();
+
         if (!WebView2RuntimeCheck.IsInstalled())
         {
             WebView2RuntimeCheck.PromptInstall();
@@ -18,12 +26,22 @@ public partial class App : System.Windows.Application
             return;
         }
 
+        var trayOnly = e.Args.Contains("--tray-only", StringComparer.OrdinalIgnoreCase);
+
         Settings.Instance.Load();
         ThemeManager.Instance.Start();
         _coordinator = new ApplicationCoordinator();
         _coordinator.Start();
         _trayIcon = new TrayIcon();
-        OnboardingWindow.ShowIfNeeded();
+
+        if (!Settings.Instance.DidOnboard)
+        {
+            OnboardingWindow.ShowIfNeeded();
+        }
+        else if (!trayOnly)
+        {
+            SettingsWindow.Open();
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -31,6 +49,7 @@ public partial class App : System.Windows.Application
         Settings.Instance.Save();
         _coordinator?.Dispose();
         ThemeManager.Instance.Dispose();
+        SingleInstanceManager.Dispose();
         _trayIcon?.Dispose();
         base.OnExit(e);
     }
