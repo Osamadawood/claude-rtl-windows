@@ -50,11 +50,11 @@
            SourceFiles="$(WinSparkleZipPath)"
            DestinationFolder="$(WinSparkleNativeDir)\unzipped" />
     <ItemGroup Condition="!Exists('$(WinSparkleDll)')">
-      <_WinSparkleX64 Include="$(WinSparkleNativeDir)\unzipped\**\x64\WinSparkle.dll" />
+      <_WinSparkleX64 Include="$(WinSparkleNativeDir)\unzipped\**\x64\Release\WinSparkle.dll" />
     </ItemGroup>
     <Copy Condition="!Exists('$(WinSparkleDll)') and '@(_WinSparkleX64)' != ''"
           SourceFiles="@(_WinSparkleX64)"
-          DestinationFiles="$(WinSparkleDll)" />
+          DestinationFolder="$(WinSparkleNativeDir)" />
   </Target>
 
   <Target Name="CopyWinSparkleToOutput" AfterTargets="Build" DependsOnTargets="FetchWinSparkle">
