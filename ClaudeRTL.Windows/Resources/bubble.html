@@ -62,13 +62,15 @@
         }
 
         .wrap {
-            padding: 14px
+            padding: 14px;
+            width: max-content;
+            max-width: calc(100vw - 4px);
         }
 
         .bubble {
             position: relative;
             width: max-content;
-            max-width: 410px;
+            max-width: 492px;
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 18px;
@@ -193,7 +195,7 @@
             border-inline-start: 3px solid var(--accent);
             background: var(--surface);
             border-radius: 10px;
-            max-height: 290px;
+            max-height: calc(100vh - 118px);
             overflow-y: auto;
             font-size: 16px;
             line-height: 1.85;
@@ -472,7 +474,33 @@
 
         window.setTheme = function(theme) {
             document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+            scheduleMeasureAndResize();
         };
+
+        function scheduleMeasureAndResize() {
+            var ready = document.fonts && document.fonts.ready ?
+                document.fonts.ready :
+                Promise.resolve();
+            ready.then(function() {
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(measureAndResize);
+                });
+            });
+        }
+
+        function measureAndResize() {
+            var wrap = document.querySelector(".wrap");
+            if (!wrap) return;
+            var width = Math.ceil(wrap.scrollWidth);
+            var height = Math.ceil(wrap.scrollHeight);
+            sendToHost({
+                action: "resize",
+                width: width,
+                height: height,
+                w: width,
+                h: height
+            });
+        }
 
         function esc(s) {
             return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -659,15 +687,12 @@
         window.highlightRange = highlightRange;
         window.clearHighlight = clearHighlight;
 
-        function fit() {
-            var b = document.getElementById("bubble");
-            var r = b.getBoundingClientRect();
-            bridge({
-                action: "resize",
-                w: Math.ceil(r.width) + 28,
-                h: Math.ceil(r.height) + 28
-            });
-        }
+        window.setArrowBelow = function(arrowBelow) {
+            var arrow = document.querySelector("#bubble .arrow");
+            if (!arrow) return;
+            if (arrowBelow) arrow.classList.add("bottom");
+            else arrow.classList.remove("bottom");
+        };
 
         function showBubble(text, fontSize, arrowBelow, appName, bundleId) {
             RAW = text;
@@ -690,7 +715,7 @@
             bubble.classList.remove("show");
             requestAnimationFrame(function() {
                 bubble.classList.add("show");
-                requestAnimationFrame(fit);
+                scheduleMeasureAndResize();
             });
             setSpeaking(false);
         }

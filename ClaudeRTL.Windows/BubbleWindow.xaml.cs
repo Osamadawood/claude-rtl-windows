@@ -11,6 +11,10 @@ public partial class BubbleWindow : Window
     private const double EdgeMargin = 12;
     private const double OffsetX = 20;
     private const double OffsetY = 14;
+    private const double MinBubbleWidth = 220;
+    private const double MaxBubbleWidth = 520;
+    private const double MinBubbleHeight = 64;
+    private const double MaxHeightScreenFraction = 0.70;
 
     private readonly ApplicationCoordinator _coordinator;
     private readonly SpeechService _speech = new();
@@ -92,8 +96,9 @@ public partial class BubbleWindow : Window
         _pendingAppName = appName;
         _pendingProcessName = processName;
 
-        var preliminary = new System.Windows.Size(440, 420);
-        SetWindowPosition(preliminary);
+        Width = MinBubbleWidth;
+        Height = MinBubbleHeight;
+        SetWindowPosition(new System.Windows.Size(Width, Height));
 
         if (!_isReady || _bridge is null)
         {
@@ -154,8 +159,10 @@ public partial class BubbleWindow : Window
                 HideBubble();
                 break;
             case "resize":
-                if (message.W is > 0 && message.H is > 0)
-                    HandleResize(message.W.Value, message.H.Value);
+                var resizeWidth = message.Width ?? message.W;
+                var resizeHeight = message.Height ?? message.H;
+                if (resizeWidth is > 0 && resizeHeight is > 0)
+                    HandleResize(resizeWidth.Value, resizeHeight.Value);
                 break;
             case "disableApp":
                 HandleDisableApp(message);
@@ -181,10 +188,20 @@ public partial class BubbleWindow : Window
 
     private void HandleResize(double width, double height)
     {
-        var dipSize = PhysicalToDipSize(width, height);
-        Width = Math.Max(dipSize.Width, 120);
-        Height = Math.Max(dipSize.Height, 80);
+        var scale = GetDpiScale();
+        var workArea = Win32Interop.GetWorkAreaForPoint(_anchorPoint);
+        var maxHeightDip = (workArea.Height / scale) * MaxHeightScreenFraction;
+
+        var widthDip = Math.Clamp(width / scale, MinBubbleWidth, MaxBubbleWidth);
+        var heightDip = Math.Clamp(height / scale, MinBubbleHeight, maxHeightDip);
+
+        var previousArrowBelow = _arrowBelow;
+        Width = widthDip;
+        Height = heightDip;
         SetWindowPosition(new System.Windows.Size(Width, Height));
+
+        if (_arrowBelow != previousArrowBelow && _bridge is not null)
+            _ = _bridge.SetArrowBelowAsync(_arrowBelow);
     }
 
     private void SetWindowPosition(System.Windows.Size size)

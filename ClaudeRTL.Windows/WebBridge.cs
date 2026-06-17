@@ -46,6 +46,10 @@ internal sealed class WebBridge
         await _webView.CoreWebView2.ExecuteScriptAsync(
             $"window.setTheme({JsonSerializer.Serialize(theme)})");
 
+    public async Task SetArrowBelowAsync(bool arrowBelow) =>
+        await _webView.CoreWebView2.ExecuteScriptAsync(
+            $"window.setArrowBelow({(arrowBelow ? "true" : "false")})");
+
     private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
         try
@@ -74,8 +78,14 @@ internal sealed class BridgeMessage
     [JsonPropertyName("w")]
     public double? W { get; set; }
 
+    [JsonPropertyName("width")]
+    public double? Width { get; set; }
+
     [JsonPropertyName("h")]
     public double? H { get; set; }
+
+    [JsonPropertyName("height")]
+    public double? Height { get; set; }
 
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
