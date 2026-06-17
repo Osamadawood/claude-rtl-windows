@@ -15,10 +15,12 @@ internal static class WinSparkleInterop
     [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void win_sparkle_set_appcast_url([MarshalAs(UnmanagedType.LPStr)] string url);
 
-    /// <summary>Sets the EdDSA (Ed25519) public key used to verify update signatures (base64).</summary>
+    /// <summary>
+    /// Sets the DSA public key (PEM) used to verify update signatures. This is the
+    /// correct API for WinSparkle 0.8.1. Returns 1 if the PEM is a valid DSA key, 0 otherwise.
+    /// </summary>
     [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern void win_sparkle_set_eddsa_public_key(
-        [MarshalAs(UnmanagedType.LPStr)] string edDsaPublicKeyBase64);
+    internal static extern int win_sparkle_set_dsa_pub_pem([MarshalAs(UnmanagedType.LPStr)] string dsaPubPem);
 
     /// <summary>Sets the company, application name and version (wide strings).</summary>
     [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
