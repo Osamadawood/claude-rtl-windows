@@ -24,11 +24,13 @@ internal sealed class WebBridge
             _webView.CoreWebView2.WebMessageReceived -= OnWebMessageReceived;
     }
 
-    public async Task ShowBubbleAsync(string text, double fontSize, bool arrowBelow)
+    public async Task ShowBubbleAsync(string text, double fontSize, bool arrowBelow, string appName, string appId)
     {
         var json = JsonSerializer.Serialize(text);
+        var appNameJson = JsonSerializer.Serialize(appName);
+        var appIdJson = JsonSerializer.Serialize(appId);
         await _webView.CoreWebView2.ExecuteScriptAsync(
-            $"window.showBubble({json}, {fontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {(arrowBelow ? "true" : "false")})");
+            $"window.showBubble({json}, {fontSize.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {(arrowBelow ? "true" : "false")}, {appNameJson}, {appIdJson})");
     }
 
     public async Task SetSpeakingAsync(bool speaking) =>
@@ -70,4 +72,16 @@ internal sealed class BridgeMessage
 
     [JsonPropertyName("h")]
     public double? H { get; set; }
+
+    [JsonPropertyName("scope")]
+    public string? Scope { get; set; }
+
+    [JsonPropertyName("process")]
+    public string? Process { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("bundleId")]
+    public string? BundleId { get; set; }
 }

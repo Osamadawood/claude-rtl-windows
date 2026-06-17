@@ -27,7 +27,7 @@ public sealed class ApplicationCoordinator : IDisposable
         if (DateTime.UtcNow < _suppressClipboardUntil)
             return;
 
-        if (!ForegroundAppWatcher.IsClaudeForeground())
+        if (!ForegroundAppWatcher.ShouldShowForForegroundApp())
             return;
 
         string text;
@@ -43,8 +43,12 @@ public sealed class ApplicationCoordinator : IDisposable
         if (string.IsNullOrWhiteSpace(text) || !ArabicDetector.ContainsArabic(text))
             return;
 
+        var app = ForegroundAppWatcher.GetForegroundApp();
+        var appName = app?.DisplayName ?? string.Empty;
+        var processName = app?.ProcessName ?? string.Empty;
         var cursor = Win32Interop.GetCursorPosition();
-        System.Windows.Application.Current.Dispatcher.Invoke(() => _bubbleWindow.ShowAt(cursor, text));
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            _bubbleWindow.ShowAt(cursor, text, appName, processName));
     }
 
     public void SuppressClipboard(TimeSpan duration) =>

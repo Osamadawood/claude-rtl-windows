@@ -19,6 +19,8 @@ public partial class BubbleWindow : Window
     private bool _arrowBelow;
     private bool _isReady;
     private string? _pendingText;
+    private string _pendingAppName = string.Empty;
+    private string _pendingProcessName = string.Empty;
     private bool _isHiding;
 
     public BubbleWindow(ApplicationCoordinator coordinator)
@@ -70,17 +72,19 @@ public partial class BubbleWindow : Window
             _isReady = true;
             if (_pendingText is not null)
             {
-                await ShowBubbleContentAsync(_pendingText);
+                await ShowBubbleContentAsync(_pendingText, _pendingAppName, _pendingProcessName);
                 _pendingText = null;
             }
         };
     }
 
-    public void ShowAt(System.Drawing.Point cursor, string text)
+    public void ShowAt(System.Drawing.Point cursor, string text, string appName, string processName)
     {
         _anchorPoint = cursor;
         _arrowBelow = false;
         _isHiding = false;
+        _pendingAppName = appName;
+        _pendingProcessName = processName;
 
         var preliminary = new System.Windows.Size(440, 420);
         SetWindowPosition(preliminary);
@@ -95,16 +99,16 @@ public partial class BubbleWindow : Window
 
         Show();
         Activate();
-        _ = ShowBubbleContentAsync(text);
+        _ = ShowBubbleContentAsync(text, appName, processName);
     }
 
-    private async Task ShowBubbleContentAsync(string text)
+    private async Task ShowBubbleContentAsync(string text, string appName, string processName)
     {
         if (_bridge is null)
             return;
 
         _speech.Stop();
-        await _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, _arrowBelow);
+        await _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, _arrowBelow, appName, processName);
     }
 
     public void HideBubble()
