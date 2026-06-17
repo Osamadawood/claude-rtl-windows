@@ -9,7 +9,7 @@
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
     <AssemblyName>ClaudeRTL</AssemblyName>
     <RootNamespace>ClaudeRTL</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -26,6 +26,7 @@
   <ItemGroup>
     <Content Include="Resources\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>
 

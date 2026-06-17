@@ -1,10 +1,10 @@
 [Setup]
 AppName=Claude RTL
-AppVersion=1.1.0
+AppVersion=1.1.1
 AppPublisher=GRW Lab
 DefaultDirName={autopf}\Claude RTL
 DefaultGroupName=Claude RTL
-OutputBaseFilename=ClaudeRTL-Setup-1.1.0
+OutputBaseFilename=ClaudeRTL-Setup-1.1.1
 Compression=lzma2
 SolidCompression=yes
 PrivilegesRequired=lowest
@@ -12,6 +12,7 @@ SetupIconFile=..\Resources\AppIcon.ico
 
 [Files]
 Source: "..\publish\ClaudeRTL.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\publish\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\Claude RTL"; Filename: "{app}\ClaudeRTL.exe"

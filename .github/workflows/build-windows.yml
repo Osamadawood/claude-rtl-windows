@@ -17,6 +17,13 @@ jobs:
       - name: Publish
         working-directory: ClaudeRTL.Windows
         run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+      - name: Verify Resources in publish output
+        working-directory: ClaudeRTL.Windows
+        run: |
+          if (-not (Test-Path "publish\Resources\settings.html")) { throw "publish\Resources\settings.html missing" }
+          if (-not (Test-Path "publish\Resources\bubble.html")) { throw "publish\Resources\bubble.html missing" }
+          if (-not (Test-Path "publish\Resources\onboarding.html")) { throw "publish\Resources\onboarding.html missing" }
+          if (-not (Test-Path "publish\Resources\fonts.css")) { throw "publish\Resources\fonts.css missing" }
       - name: Install Inno Setup
         run: choco install innosetup -y
       - name: Build installer
