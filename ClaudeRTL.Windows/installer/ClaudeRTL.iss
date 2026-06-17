@@ -1,10 +1,10 @@
 [Setup]
 AppName=Claude RTL
-AppVersion=1.1.1
+AppVersion=1.1.2
 AppPublisher=GRW Lab
 DefaultDirName={autopf}\Claude RTL
 DefaultGroupName=Claude RTL
-OutputBaseFilename=ClaudeRTL-Setup-1.1.1
+OutputBaseFilename=ClaudeRTL-Setup-1.1.2
 Compression=lzma2
 SolidCompression=yes
 PrivilegesRequired=lowest

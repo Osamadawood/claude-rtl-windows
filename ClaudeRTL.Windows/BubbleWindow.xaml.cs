@@ -19,7 +19,6 @@ public partial class BubbleWindow : Window
     private const double MaxBubbleWidth = 520;
     private const double MinBubbleHeight = 64;
     private const double MaxHeightScreenFraction = 0.70;
-    private const double BubbleCornerRadius = 18;
 
     private readonly ApplicationCoordinator _coordinator;
     private readonly SpeechService _speech = new();
@@ -105,7 +104,6 @@ public partial class BubbleWindow : Window
                     "WebView2"));
 
             await WebView.EnsureCoreWebView2Async(environment);
-            TryEnableTransparentWebViewBackgroundAfterInit();
             WebView.CoreWebView2.Settings.IsWebMessageEnabled = true;
 
             _bridge = new WebBridge(WebView);
@@ -166,6 +164,7 @@ public partial class BubbleWindow : Window
                 _lastMeasuredWidth = 0;
                 _lastMeasuredHeight = 0;
 
+                ApplyWindowBackgroundForTheme(ThemeManager.Instance.EffectiveTheme());
                 ApplyInitialWindowSize();
 
                 if (!_isReady || _bridge is null)
@@ -475,7 +474,6 @@ public partial class BubbleWindow : Window
         Width = MinBubbleWidth;
         Height = MinBubbleHeight;
         SetWindowPosition(new System.Windows.Size(Width, Height));
-        UpdateRoundedWindowClip();
     }
 
     private void ApplyResize(double width, double height)
@@ -499,7 +497,6 @@ public partial class BubbleWindow : Window
             Width = widthDip;
             Height = heightDip;
             SetWindowPosition(new System.Windows.Size(Width, Height));
-            UpdateRoundedWindowClip();
 
             if (_arrowBelow != previousArrowBelow && _bridge is not null)
                 _ = _bridge.SetArrowBelowAsync(_arrowBelow);
@@ -609,27 +606,11 @@ public partial class BubbleWindow : Window
         }
     }
 
-    private void TryEnableTransparentWebViewBackgroundAfterInit()
-    {
-        if (!WebView2Capabilities.SupportsTransparentBackground())
-            return;
-
-        try
-        {
-            WebView.DefaultBackgroundColor = System.Drawing.Color.FromArgb(0, 0, 0, 0);
-        }
-        catch (Exception ex)
-        {
-            CrashLogger.Log("BubbleWindow.DefaultBackgroundColor.Transparent", ex);
-        }
-    }
-
     private void TryUpdateWebViewBackgroundForTheme(string theme)
     {
-        if (WebView.CoreWebView2 is null)
-            return;
+        ApplyWindowBackgroundForTheme(theme);
 
-        if (WebView.DefaultBackgroundColor.A == 0)
+        if (WebView.CoreWebView2 is null)
             return;
 
         try
@@ -639,6 +620,19 @@ public partial class BubbleWindow : Window
         catch (Exception ex)
         {
             CrashLogger.Log("BubbleWindow.DefaultBackgroundColor.Theme", ex);
+        }
+    }
+
+    private void ApplyWindowBackgroundForTheme(string theme)
+    {
+        try
+        {
+            var c = GetOpaqueBackgroundForTheme(theme);
+            Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B));
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.WindowBackground", ex);
         }
     }
 
@@ -658,15 +652,28 @@ public partial class BubbleWindow : Window
 
     private static System.Drawing.Color GetOpaqueBackgroundForTheme(string theme) =>
         theme == "light"
-            ? System.Drawing.Color.FromArgb(255, 243, 238, 226)
-            : System.Drawing.Color.FromArgb(255, 23, 17, 9);
+            ? System.Drawing.Color.FromArgb(255, 255, 255, 255)
+            : System.Drawing.Color.FromArgb(255, 33, 30, 28);
 
-    private void UpdateRoundedWindowClip()
+    private void ApplyRoundedWindowCorners()
     {
-        if (Width <= 0 || Height <= 0)
-            return;
+        try
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd == IntPtr.Zero)
+                return;
 
-        Clip = new RectangleGeometry(new Rect(0, 0, Width, Height), BubbleCornerRadius, BubbleCornerRadius);
+            var preference = Win32Interop.DWMWCP_ROUND;
+            Win32Interop.DwmSetWindowAttribute(
+                hwnd,
+                Win32Interop.DWMWA_WINDOW_CORNER_PREFERENCE,
+                ref preference,
+                sizeof(int));
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.RoundedCorners", ex);
+        }
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -683,6 +690,8 @@ public partial class BubbleWindow : Window
                 hwnd,
                 Win32Interop.GWL_EXSTYLE,
                 exStyle | Win32Interop.WS_EX_TOOLWINDOW);
+
+            ApplyRoundedWindowCorners();
         }
         catch (Exception ex)
         {

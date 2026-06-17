@@ -10,6 +10,12 @@ internal static class Win32Interop
     internal const int WS_EX_NOACTIVATE = 0x08000000;
     internal const int WS_EX_TOOLWINDOW = 0x00000080;
 
+    internal const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+    internal const int DWMWCP_ROUND = 2;
+
+    [DllImport("dwmapi.dll")]
+    internal static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSLLHOOKSTRUCT
     {
