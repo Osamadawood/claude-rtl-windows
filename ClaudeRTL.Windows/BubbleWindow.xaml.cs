@@ -70,6 +70,12 @@ public partial class BubbleWindow : Window
                 return;
 
             _isReady = true;
+            ThemeManager.Instance.Register(async () =>
+            {
+                if (_bridge is not null)
+                    await _bridge.SetThemeAsync(ThemeManager.Instance.EffectiveTheme());
+            });
+            await ApplyThemeAsync();
             if (_pendingText is not null)
             {
                 await ShowBubbleContentAsync(_pendingText, _pendingAppName, _pendingProcessName);
@@ -109,6 +115,14 @@ public partial class BubbleWindow : Window
 
         _speech.Stop();
         await _bridge.ShowBubbleAsync(text, Settings.Instance.FontSize, _arrowBelow, appName, processName);
+    }
+
+    private async Task ApplyThemeAsync()
+    {
+        if (_bridge is null)
+            return;
+
+        await _bridge.SetThemeAsync(ThemeManager.Instance.EffectiveTheme());
     }
 
     public void HideBubble()

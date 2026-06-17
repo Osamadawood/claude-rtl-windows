@@ -19,6 +19,7 @@ public partial class App : System.Windows.Application
         }
 
         Settings.Instance.Load();
+        ThemeManager.Instance.Start();
         _coordinator = new ApplicationCoordinator();
         _coordinator.Start();
         _trayIcon = new TrayIcon();
@@ -29,6 +30,7 @@ public partial class App : System.Windows.Application
     {
         Settings.Instance.Save();
         _coordinator?.Dispose();
+        ThemeManager.Instance.Dispose();
         _trayIcon?.Dispose();
         base.OnExit(e);
     }

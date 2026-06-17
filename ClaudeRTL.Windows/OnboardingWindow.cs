@@ -57,6 +57,24 @@ public sealed class OnboardingWindow : Window
 
         var onboardingPath = Path.Combine(resourcesDir, "onboarding.html");
         _webView.CoreWebView2.Navigate(new Uri(onboardingPath).AbsoluteUri);
+        _webView.CoreWebView2.NavigationCompleted += async (_, e) =>
+        {
+            if (!e.IsSuccess)
+                return;
+
+            ThemeManager.Instance.Register(async () =>
+                await ApplyThemeAsync());
+            await ApplyThemeAsync();
+        };
+    }
+
+    private async Task ApplyThemeAsync()
+    {
+        if (_webView.CoreWebView2 is null)
+            return;
+
+        await _webView.CoreWebView2.ExecuteScriptAsync(
+            $"window.setTheme({System.Text.Json.JsonSerializer.Serialize(ThemeManager.Instance.EffectiveTheme())})");
     }
 
     private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)

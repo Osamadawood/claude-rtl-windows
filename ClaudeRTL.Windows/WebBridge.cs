@@ -42,6 +42,10 @@ internal sealed class WebBridge
     public async Task ClearHighlightAsync() =>
         await _webView.CoreWebView2.ExecuteScriptAsync("window.clearHighlight()");
 
+    public async Task SetThemeAsync(string theme) =>
+        await _webView.CoreWebView2.ExecuteScriptAsync(
+            $"window.setTheme({JsonSerializer.Serialize(theme)})");
+
     private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
         try

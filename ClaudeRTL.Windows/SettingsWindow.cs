@@ -73,8 +73,9 @@ public sealed class SettingsWindow : Window
                 return;
 
             _isReady = true;
-            await PushStateAsync();
+            ThemeManager.Instance.Register(ApplyThemeToWebViewAsync);
             await ApplyThemeToWebViewAsync();
+            await PushStateAsync();
         };
 
         _webView.CoreWebView2.Navigate(new Uri(settingsPath).AbsoluteUri);
@@ -135,7 +136,7 @@ public sealed class SettingsWindow : Window
                 {
                     Settings.Instance.ThemeMode = themeMode;
                     Settings.Instance.Save();
-                    await ApplyThemeToWebViewAsync();
+                    ThemeManager.Instance.ApplyToAllWebViews();
                     await PushStateAsync();
                 }
                 break;
@@ -149,8 +150,8 @@ public sealed class SettingsWindow : Window
                 break;
             case "resetAll":
                 Settings.Instance.ResetAllSettingsExceptLaunchAtLogin();
+                ThemeManager.Instance.ApplyToAllWebViews();
                 await PushStateAsync();
-                await ApplyThemeToWebViewAsync();
                 break;
             case "openUrl":
                 if (!string.IsNullOrEmpty(message.Url))
@@ -209,31 +210,9 @@ public sealed class SettingsWindow : Window
         if (_webView.CoreWebView2 is null)
             return;
 
-        var theme = ResolveEffectiveTheme(Settings.Instance.ThemeMode);
+        var theme = ThemeManager.Instance.EffectiveTheme();
         await _webView.CoreWebView2.ExecuteScriptAsync(
             $"window.setTheme({JsonSerializer.Serialize(theme)})");
-    }
-
-    internal static string ResolveEffectiveTheme(ThemeMode mode) => mode switch
-    {
-        ThemeMode.Light => "light",
-        ThemeMode.Dark => "dark",
-        _ => ReadSystemAppsUseLightTheme() ? "light" : "dark"
-    };
-
-    private static bool ReadSystemAppsUseLightTheme()
-    {
-        try
-        {
-            using var key = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", writable: false);
-            var value = key?.GetValue("AppsUseLightTheme");
-            return value is int i && i != 0;
-        }
-        catch
-        {
-            return true;
-        }
     }
 
     internal static object BuildStateObject()
