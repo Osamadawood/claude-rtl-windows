@@ -3,37 +3,46 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="fonts.css">
     <style>
-        :root {
-            --accent: #C15F3C;
-            --accent-soft: #D4A27F;
-            --bg: #262220;
-            --card: #2E2A27;
-            --surface: #211E1C;
-            --ink: #F4F3EE;
+        html[data-theme="dark"], :root {
+            --accent: #D9774E;
+            --accent-soft: #C15F3C;
+            --bg: #171109;
+            --card: #211E1C;
+            --surface: #262220;
+            --ink: #F3EEE2;
             --muted: #B1ADA1;
             --line: #3A3531;
             --code-bg: #1B1815;
             --shadow: 0 18px 50px rgba(0, 0, 0, .45), 0 3px 10px rgba(0, 0, 0, .3);
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                --accent: #C15F3C;
-                --bg: #FAF9F5;
-                --card: #FFFFFF;
-                --surface: #F4F3EE;
-                --ink: #191919;
-                --muted: #6B675F;
-                --line: #E7E3D8;
-                --code-bg: #F4F3EE;
-                --shadow: 0 16px 40px rgba(25, 25, 25, .12), 0 2px 8px rgba(25, 25, 25, .08);
-            }
+        html[data-theme="light"] {
+            --accent: #C15F3C;
+            --accent-soft: #A84F2E;
+            --bg: #F3EEE2;
+            --card: #FFFFFF;
+            --surface: #FAF9F5;
+            --ink: #171109;
+            --muted: #6B675F;
+            --line: #E7E3D8;
+            --code-bg: #F4F3EE;
+            --shadow: 0 16px 40px rgba(23, 17, 9, .12), 0 2px 8px rgba(23, 17, 9, .08);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --accent: #D97757;
+        :root {
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
 
@@ -47,8 +56,9 @@
             height: 100%;
             background: transparent;
             overflow: hidden;
-            font-family: -apple-system, "SF Arabic", "Geeza Pro", system-ui, sans-serif;
-            color: var(--ink)
+            font-family: "IBM Plex Sans Arabic", -apple-system, "SF Arabic", system-ui, sans-serif;
+            color: var(--ink);
+            transition: color .25s var(--ease);
         }
 
         .wrap {
@@ -64,13 +74,24 @@
             border-radius: 18px;
             box-shadow: var(--shadow);
             opacity: 0;
-            transform: translateY(-8px) scale(.96);
-            transition: opacity .16s cubic-bezier(.2, .8, .2, 1), transform .16s cubic-bezier(.2, .8, .2, 1)
+            transform: translateY(4px) scale(.96);
+            transition:
+                opacity 160ms var(--ease),
+                transform 160ms var(--ease),
+                background-color .25s var(--ease),
+                border-color .25s var(--ease),
+                box-shadow .25s var(--ease);
         }
 
         .bubble.show {
             opacity: 1;
             transform: none
+        }
+
+        .bubble.hiding {
+            opacity: 0;
+            transform: translateY(4px) scale(.96);
+            transition-duration: 120ms
         }
 
         .arrow {
@@ -83,7 +104,8 @@
             border-inline-start: 1px solid var(--line);
             border-block-start: 1px solid var(--line);
             transform: rotate(45deg);
-            border-radius: 4px 0 0 0
+            border-radius: 4px 0 0 0;
+            transition: background-color .25s var(--ease), border-color .25s var(--ease);
         }
 
         .arrow.bottom {
@@ -100,7 +122,8 @@
             align-items: center;
             gap: 6px;
             padding: 10px 14px 9px;
-            border-bottom: 1px solid var(--line)
+            border-bottom: 1px solid var(--line);
+            transition: border-color .25s var(--ease);
         }
 
         .brand {
@@ -133,12 +156,20 @@
             color: var(--muted);
             border-radius: 8px;
             cursor: pointer;
-            transition: .13s
+            transition:
+                background-color 160ms var(--ease),
+                color 160ms var(--ease),
+                transform 160ms var(--ease);
         }
 
         .ic:hover {
             background: var(--surface);
-            color: var(--ink)
+            color: var(--ink);
+            transform: scale(1.02);
+        }
+
+        .ic:active {
+            transform: scale(0.98);
         }
 
         .ic.play:hover {
@@ -167,7 +198,10 @@
             font-size: 16px;
             line-height: 1.85;
             color: var(--ink);
-            unicode-bidi: plaintext
+            direction: rtl;
+            text-align: start;
+            unicode-bidi: embed;
+            transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
         }
 
         .body::-webkit-scrollbar {
@@ -186,7 +220,7 @@
         .body h2,
         .body h3,
         .body h4 {
-            unicode-bidi: plaintext;
+            text-align: start;
             margin: .12em 0 .5em
         }
 
@@ -257,7 +291,7 @@
             border: 1px solid var(--line);
             border-radius: 6px;
             padding: 1px 6px;
-            font-family: "SF Mono", Menlo, monospace;
+            font-family: "IBM Plex Mono", "SF Mono", Menlo, monospace;
             font-size: .85em;
             direction: ltr;
             unicode-bidi: isolate
@@ -276,7 +310,7 @@
         }
 
         .body pre code {
-            font-family: "SF Mono", Menlo, monospace;
+            font-family: "IBM Plex Mono", "SF Mono", Menlo, monospace;
             font-size: 13px;
             line-height: 1.55;
             white-space: pre;
@@ -322,6 +356,66 @@
         .toast.show {
             opacity: 1
         }
+
+        .gear-wrap {
+            position: relative
+        }
+
+        .gear-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            inset-inline-start: 0;
+            min-width: 190px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 6px;
+            z-index: 20;
+            display: none
+        }
+
+        .gear-menu.open {
+            display: block
+        }
+
+        .gear-menu .gear-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            padding: 6px 8px 4px;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 4px
+        }
+
+        .gear-menu button {
+            display: block;
+            width: 100%;
+            text-align: start;
+            font: inherit;
+            font-size: 12px;
+            border: none;
+            background: transparent;
+            color: var(--ink);
+            padding: 7px 8px;
+            border-radius: 6px;
+            cursor: pointer
+        }
+
+        .ic:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .gear-menu button:hover {
+            background: color-mix(in srgb, var(--accent) 14%, transparent)
+        }
+
+        .gear-menu button:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+
     </style>
 </head>
 
@@ -342,21 +436,28 @@
                         <rect x="6" y="5" width="4" height="14" rx="1" />
                         <rect x="14" y="5" width="4" height="14" rx="1" /></svg>
                 </button>
-                <button class="ic" id="bCopy" title="نسخ"><svg viewBox="0 0 24 24">
-                        <rect x="9" y="9" width="11" height="11" rx="2" />
-                        <path d="M5 15V5a2 2 0 0 1 2-2h10" /></svg></button>
+                <div class="gear-wrap">
+                    <button class="ic" id="bGear" title="إيقاف على التطبيق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                    <div class="gear-menu" id="gearMenu">
+                        <div class="gear-title" id="gearTitle">إيقاف على …</div>
+                        <button type="button" data-scope="session">هذه الجلسة</button>
+                        <button type="button" data-scope="always">دائمًا</button>
+                    </div>
+                </div>
                 <span class="brand"><span class="sp"></span>Claude RTL</span>
             </div>
             <div class="body" id="body"></div>
             <div class="foot" dir="ltr">by <b>GRW&nbsp;Lab</b> &mdash; grwlab.net</div>
-            <div class="toast" id="toast">تم النسخ ✓</div>
         </div>
     </div>
 
     <script>
         var RAW = "",
             PLAIN = "",
-            toastT;
+            APP_NAME = "",
+            APP_BUNDLE = "";
 
         function sendToHost(msg) {
             if (window.chrome && window.chrome.webview)
@@ -369,8 +470,27 @@
             sendToHost(msg);
         }
 
+        window.setTheme = function(theme) {
+            document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+        };
+
         function esc(s) {
             return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        var ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+        function hasArabic(s) {
+            return ARABIC_RE.test(s);
+        }
+
+        function stripTags(s) {
+            return s.replace(/<[^>]+>/g, "");
+        }
+
+        /** فرض RTL عند وجود عربي — dir="auto" + plaintext يكسر السطر إذا بدأ بإنجليزي */
+        function blockDirAttr(text) {
+            return hasArabic(stripTags(text)) ? 'dir="rtl"' : 'dir="auto"';
         }
 
         function mdToHtml(src) {
@@ -411,7 +531,7 @@
                 if (h) {
                     close();
                     var l = h[1].length;
-                    out.push("<h" + l + ">" + h[2] + "</h" + l + ">");
+                    out.push("<h" + l + " " + blockDirAttr(h[2]) + ">" + h[2] + "</h" + l + ">");
                     i++;
                     continue;
                 }
@@ -423,7 +543,8 @@
                 }
                 if (/^\s*>\s?/.test(ln)) {
                     close();
-                    out.push("<blockquote>" + ln.replace(/^\s*>\s?/, "") + "</blockquote>");
+                    var bq = ln.replace(/^\s*>\s?/, "");
+                    out.push("<blockquote " + blockDirAttr(bq) + ">" + bq + "</blockquote>");
                     i++;
                     continue;
                 }
@@ -431,10 +552,10 @@
                 if (ul) {
                     if (list !== "ul") {
                         close();
-                        out.push("<ul>");
+                        out.push('<ul dir="rtl">');
                         list = "ul";
                     }
-                    out.push("<li>" + ul[1] + "</li>");
+                    out.push("<li " + blockDirAttr(ul[1]) + ">" + ul[1] + "</li>");
                     i++;
                     continue;
                 }
@@ -442,10 +563,10 @@
                 if (ol) {
                     if (list !== "ol") {
                         close();
-                        out.push("<ol>");
+                        out.push('<ol dir="rtl">');
                         list = "ol";
                     }
-                    out.push("<li>" + ol[1] + "</li>");
+                    out.push("<li " + blockDirAttr(ol[1]) + ">" + ol[1] + "</li>");
                     i++;
                     continue;
                 }
@@ -463,7 +584,7 @@
                     buf.push(lines[i]);
                     i++;
                 }
-                out.push('<p dir="auto">' + buf.join("<br>") + "</p>");
+                out.push("<p " + blockDirAttr(buf.join(" ")) + ">" + buf.join("<br>") + "</p>");
             }
             close();
             return out.join("");
@@ -548,8 +669,12 @@
             });
         }
 
-        function showBubble(text, fontSize, arrowBelow) {
+        function showBubble(text, fontSize, arrowBelow, appName, bundleId) {
             RAW = text;
+            APP_NAME = appName || "";
+            APP_BUNDLE = bundleId || "";
+            document.getElementById("gearTitle").textContent = "إيقاف على " + (APP_NAME || "التطبيق");
+            document.getElementById("gearMenu").classList.remove("open");
             clearHighlight();
             var body = document.getElementById("body");
             if (fontSize) body.style.fontSize = fontSize + "px";
@@ -558,14 +683,16 @@
             PLAIN = body.innerText.replace(/\u00a0/g, " ");
             body.scrollTop = 0;
             var bubble = document.getElementById("bubble");
+            bubble.classList.remove("hiding");
             var arrow = bubble.querySelector(".arrow");
             if (arrowBelow) arrow.classList.add("bottom");
             else arrow.classList.remove("bottom");
-            bubble.classList.add("show");
-            setSpeaking(false);
+            bubble.classList.remove("show");
             requestAnimationFrame(function() {
+                bubble.classList.add("show");
                 requestAnimationFrame(fit);
             });
+            setSpeaking(false);
         }
 
         function setSpeaking(on) {
@@ -578,12 +705,13 @@
 
         function hide() {
             clearHighlight();
-            document.getElementById("bubble").classList.remove("show");
+            var bubble = document.getElementById("bubble");
+            bubble.classList.add("hiding");
+            bubble.classList.remove("show");
             setTimeout(function() {
-                bridge({
-                    action: "close"
-                });
-            }, 160);
+                bubble.classList.remove("hiding");
+                bridge({ action: "close" });
+            }, 120);
         }
         document.getElementById("bClose").onclick = hide;
         document.getElementById("bPlay").onclick = function() {
@@ -592,18 +720,24 @@
                 text: PLAIN || RAW
             });
         };
-        document.getElementById("bCopy").onclick = function() {
-            bridge({
-                action: "copy",
-                text: RAW
-            });
-            var t = document.getElementById("toast");
-            t.classList.add("show");
-            clearTimeout(toastT);
-            toastT = setTimeout(function() {
-                t.classList.remove("show");
-            }, 1400);
+        document.getElementById("bGear").onclick = function(e) {
+            e.stopPropagation();
+            document.getElementById("gearMenu").classList.toggle("open");
         };
+        document.querySelectorAll("#gearMenu button[data-scope]").forEach(function(btn) {
+            btn.onclick = function(e) {
+                e.stopPropagation();
+                bridge({
+                    action: "disableApp",
+                    scope: btn.getAttribute("data-scope"),
+                    bundleId: APP_BUNDLE,
+                    name: APP_NAME
+                });
+            };
+        });
+        document.addEventListener("click", function() {
+            document.getElementById("gearMenu").classList.remove("open");
+        });
         document.addEventListener("keydown", function(e) {
             if (e.key === "Escape") hide();
         });

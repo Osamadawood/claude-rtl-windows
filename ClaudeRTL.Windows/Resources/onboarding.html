@@ -1,67 +1,88 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <style>
-    :root{
-      --accent:#C15F3C;
-      --accent-soft:#D4A27F;
-      --bg:#262220; --card:#2E2A27; --surface:#211E1C;
-      --ink:#F4F3EE; --muted:#B1ADA1; --line:#3A3531;
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --accent:#C15F3C;
-        --bg:#FAF9F5; --card:#FFFFFF; --surface:#F4F3EE;
-        --ink:#191919; --muted:#6B675F; --line:#E7E3D8;
-      }
-    }
-    @media (prefers-color-scheme: dark){
-      :root{ --accent:#D97757; }
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:var(--bg);
-      font-family:-apple-system,"Segoe UI","SF Arabic","Geeza Pro",system-ui,sans-serif;color:var(--ink)}
-    .wrap{max-width:460px;margin:0 auto;padding:36px 28px 28px}
-    .logo{font-family:Georgia,"Times New Roman",serif;font-size:13px;font-weight:700;letter-spacing:.4px;color:var(--accent);margin-bottom:8px}
-    h1{font-family:Georgia,"Times New Roman",serif;font-size:26px;margin:0 0 10px;line-height:1.35}
-    .lead{color:var(--muted);font-size:15px;line-height:1.85;margin:0 0 24px}
-    .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;
-      border-inline-start:3px solid var(--accent)}
-    .card h2{font-size:15px;margin:0 0 8px;color:var(--ink)}
-    .card p{margin:0;font-size:14px;line-height:1.85;color:var(--muted)}
-    .kbd{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:2px 8px;
-      font-family:"Segoe UI",system-ui,sans-serif;font-size:13px;color:var(--ink);direction:ltr;unicode-bidi:isolate}
-    .actions{display:flex;flex-direction:column;gap:10px;margin-top:28px}
-    button{font:inherit;border:none;border-radius:10px;padding:12px 16px;cursor:pointer;transition:.15s}
-    .primary{background:var(--accent);color:#fff;font-weight:700}
-    .primary:hover{filter:brightness(1.08)}
-    .foot{margin-top:22px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
-      text-align:center;font-size:11px;line-height:1.75;color:var(--muted)}
-    .foot b{color:var(--accent)}
-  </style>
-</head>
-<body>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><link rel="stylesheet" href="fonts.css"><style>
+  html[data-theme="dark"], :root{
+    --coral:#D9774E;
+    --coral-dark:#C15F3C;
+    --bg:#1A1512;
+    --card:#221C17;
+    --card-border:rgba(243,238,226,0.07);
+    --track:#15110E;
+    --ink:#F3EEE2;
+    --muted:rgba(243,238,226,0.50);
+    --muted-soft:rgba(243,238,226,0.45);
+    --border-btn:rgba(243,238,226,0.18);
+    --ease:cubic-bezier(0.2,0.8,0.2,1);
+  }
+  html[data-theme="light"]{
+    --coral:#D9774E;
+    --coral-dark:#C15F3C;
+    --bg:#F3EEE2;
+    --card:#FFFFFF;
+    --card-border:rgba(23,17,9,0.08);
+    --track:#EBE4D6;
+    --ink:#171109;
+    --muted:rgba(23,17,9,0.55);
+    --muted-soft:rgba(23,17,9,0.45);
+    --border-btn:rgba(23,17,9,0.18);
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+  }
+  @keyframes card-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);
+    font-family:"IBM Plex Sans Arabic",-apple-system,"SF Arabic",system-ui,sans-serif;color:var(--ink);
+    transition:background-color .2s var(--ease),color .2s var(--ease)}
+  .wrap{max-width:480px;margin:0 auto;padding:28px 26px 24px}
+  .logo{font-size:12px;font-weight:600;color:var(--coral);margin-bottom:6px}
+  h1{font-size:22px;font-weight:600;margin:0 0 8px;line-height:1.35}
+  .lead{color:var(--muted);font-size:13px;line-height:1.8;margin:0 0 18px}
+  .card{background:var(--card);border:1px solid var(--card-border);border-radius:13px;padding:16px 18px;margin-bottom:13px;
+    animation:card-in 200ms var(--ease) both}
+  .wrap>.card:nth-of-type(1){animation-delay:30ms}
+  .wrap>.card:nth-of-type(2){animation-delay:60ms}
+  .card h2{font-size:13px;font-weight:500;margin:0 0 6px;color:var(--ink)}
+  .card p{margin:0;font-size:12px;line-height:1.75;color:var(--muted)}
+  .actions{display:flex;flex-direction:row-reverse;gap:10px;margin-top:22px;
+    animation:card-in 200ms var(--ease) 90ms both}
+  .actions button{flex:1;font:inherit;border-radius:9px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:500;
+    transition:background-color 160ms var(--ease),color 160ms var(--ease),transform 160ms var(--ease),filter 160ms var(--ease),border-color 160ms var(--ease)}
+  button:hover{transform:scale(1.01)}
+  button:active{transform:scale(0.99)}
+  .primary{background:var(--coral);color:#fff;font-weight:600;border:1px solid transparent}
+  .primary:hover{filter:brightness(1.06)}
+  .secondary{background:transparent;color:var(--ink);border:1px solid var(--border-btn)}
+  .secondary:hover{background:rgba(255,255,255,0.05)}
+  html[data-theme="light"] .secondary:hover{background:rgba(23,17,9,0.04)}
+  .foot{margin-top:18px;padding:12px 14px;background:var(--track);border:1px solid var(--card-border);border-radius:9px;
+    font-size:10px;line-height:1.7;color:var(--muted-soft);text-align:right}
+  .foot .ltr{unicode-bidi:isolate;direction:ltr;display:inline}
+  button:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+</style></head><body>
   <div class="wrap">
     <div class="logo">Claude RTL</div>
     <h1>مرحبًا بك</h1>
-    <p class="lead">يُظهر Claude RTL فقاعةً صغيرة بجوار المؤشّر عند نسخ نصٍّ عربي داخل Claude، فيعرضه بالاتجاه الصحيح مع تنسيق Markdown، ويُبقي الشيفرة البرمجية من اليسار إلى اليمين، مع إمكانية الاستماع إلى النص وتمييز الكلمات أثناء القراءة.</p>
-
-    <div class="card">
-      <h2>كيفية الاستخدام</h2>
-      <p>حدّد نصًا عربيًا داخل تطبيق Claude، ثم اضغط <span class="kbd">Ctrl+C</span> لنسخه — ستظهر الفقاعة تلقائيًا بجوار المؤشّر.</p>
-    </div>
+    <p class="lead">يعمل Claude RTL في أي تطبيق — انسخ أي نص عربي (<strong>Ctrl+C</strong>) ليظهر التصحيح في فقاعة صغيرة بجوار المؤشّر، مع تنسيق Markdown واتجاه RTL صحيح، وإبقاء الشيفرة البرمجية من اليسار إلى اليمين.</p>
 
     <div class="card">
       <h2>الخصوصية</h2>
       <p>يعمل التطبيق بالكامل على جهازك، ولا يُرسِل أي بيانات إلى أي جهة.</p>
     </div>
 
-    <div class="actions">
-      <button class="primary" id="btnStart">ابدأ الآن</button>
+    <div class="card">
+      <h2>طريقة الاستخدام</h2>
+      <p>حدّد النص العربي في أي تطبيق ثم انسخه بالضغط على <strong>Ctrl+C</strong>. لا يحتاج التطبيق إلى أي أذونات خاصة. يمكنك تخصيص التطبيقات المسموح بها أو المستثناة من <strong>الإعدادات</strong>.</p>
     </div>
 
-    <div class="foot">Claude RTL أداة مستقلة من <b>GRW Lab</b>، غير تابعة لشركة Anthropic ولا مُعتمَدة منها. ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</div>
+    <div class="actions">
+      <button class="primary" id="btnStart" type="button">ابدأ الآن</button>
+      <button class="secondary" id="btnSettings" type="button">الإعدادات</button>
+    </div>
+
+    <div class="foot">
+      <span class="ltr">Claude RTL</span> أداة مستقلة من <span class="ltr">GRW Lab</span>، غير تابعة لشركة <span class="ltr">Anthropic</span> ولا مُعتمَدة منها.<br>
+      <span class="ltr">‹Claude›</span> علامة تجارية مملوكة لشركة <span class="ltr">Anthropic</span>.
+    </div>
   </div>
 <script>
   function sendToHost(msg) {
@@ -70,7 +91,10 @@
     else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
       window.webkit.messageHandlers.bridge.postMessage(msg);
   }
-  document.getElementById("btnStart").onclick = function(){ sendToHost({action:"finish"}); };
-</script>
-</body>
-</html>
+  function bridge(msg) { sendToHost(msg); }
+  window.setTheme = function(theme) {
+    document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+  };
+  document.getElementById("btnStart").onclick = function(){ bridge({action:"finish"}); };
+  document.getElementById("btnSettings").onclick = function(){ bridge({action:"settings"}); };
+</script></body></html>
