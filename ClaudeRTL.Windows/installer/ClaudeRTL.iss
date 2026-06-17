@@ -1,10 +1,10 @@
 [Setup]
 AppName=Claude RTL
-AppVersion=1.0.0
+AppVersion=1.1.0
 AppPublisher=GRW Lab
 DefaultDirName={autopf}\Claude RTL
 DefaultGroupName=Claude RTL
-OutputBaseFilename=ClaudeRTL-Setup-1.0.0
+OutputBaseFilename=ClaudeRTL-Setup-1.1.0
 Compression=lzma2
 SolidCompression=yes
 PrivilegesRequired=lowest
@@ -15,7 +15,7 @@ Source: "..\publish\ClaudeRTL.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Claude RTL"; Filename: "{app}\ClaudeRTL.exe"
-Name: "{userstartup}\Claude RTL"; Filename: "{app}\ClaudeRTL.exe"; Tasks: startupicon
+Name: "{userstartup}\Claude RTL"; Filename: "{app}\ClaudeRTL.exe"; Parameters: "--tray-only"; Tasks: startupicon
 
 [Tasks]
 Name: "startupicon"; Description: "تشغيل Claude RTL عند بدء النظام"; GroupDescription: "خيارات:"
