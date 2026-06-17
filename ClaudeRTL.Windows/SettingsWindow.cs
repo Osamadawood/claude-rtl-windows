@@ -41,9 +41,9 @@ public sealed class SettingsWindow : Window
     {
         Title = "Claude RTL — الإعدادات";
         Width = 640;
-        Height = 520;
-        MinWidth = 560;
-        MinHeight = 460;
+        Height = 540;
+        MinWidth = 620;
+        MinHeight = 500;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Content = _webView;
         Loaded += async (_, _) => await InitializeWebViewAsync();
