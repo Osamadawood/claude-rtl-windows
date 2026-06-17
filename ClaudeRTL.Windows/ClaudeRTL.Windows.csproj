@@ -30,4 +30,45 @@
     </Content>
   </ItemGroup>
 
+  <!-- WinSparkle native auto-updater. The x64 WinSparkle.dll is downloaded once into
+       native/ (gitignored) and copied next to the executable for DllImport to resolve. -->
+  <PropertyGroup>
+    <WinSparkleVersion>0.8.1</WinSparkleVersion>
+    <WinSparkleNativeDir>$(MSBuildProjectDirectory)\native</WinSparkleNativeDir>
+    <WinSparkleDll>$(WinSparkleNativeDir)\WinSparkle.dll</WinSparkleDll>
+  </PropertyGroup>
+
+  <Target Name="FetchWinSparkle" BeforeTargets="BeforeBuild;BeforePublish">
+    <MakeDir Directories="$(WinSparkleNativeDir)" />
+    <DownloadFile Condition="!Exists('$(WinSparkleDll)')"
+                  SourceUrl="https://github.com/vslavik/winsparkle/releases/download/v$(WinSparkleVersion)/WinSparkle-$(WinSparkleVersion).zip"
+                  DestinationFolder="$(WinSparkleNativeDir)"
+                  Retries="3">
+      <Output TaskParameter="DownloadedFile" PropertyName="WinSparkleZipPath" />
+    </DownloadFile>
+    <Unzip Condition="!Exists('$(WinSparkleDll)') and '$(WinSparkleZipPath)' != ''"
+           SourceFiles="$(WinSparkleZipPath)"
+           DestinationFolder="$(WinSparkleNativeDir)\unzipped" />
+    <ItemGroup Condition="!Exists('$(WinSparkleDll)')">
+      <_WinSparkleX64 Include="$(WinSparkleNativeDir)\unzipped\**\x64\WinSparkle.dll" />
+    </ItemGroup>
+    <Copy Condition="!Exists('$(WinSparkleDll)') and '@(_WinSparkleX64)' != ''"
+          SourceFiles="@(_WinSparkleX64)"
+          DestinationFiles="$(WinSparkleDll)" />
+  </Target>
+
+  <Target Name="CopyWinSparkleToOutput" AfterTargets="Build" DependsOnTargets="FetchWinSparkle">
+    <Copy Condition="Exists('$(WinSparkleDll)')"
+          SourceFiles="$(WinSparkleDll)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyWinSparkleToPublish" AfterTargets="Publish" DependsOnTargets="FetchWinSparkle">
+    <Copy Condition="Exists('$(WinSparkleDll)')"
+          SourceFiles="$(WinSparkleDll)"
+          DestinationFolder="$(PublishDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>

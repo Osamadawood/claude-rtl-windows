@@ -43,6 +43,7 @@ public sealed class Settings
     public bool LaunchAtLogin { get; set; }
     public bool DidOnboard { get; set; }
     public bool IsEnabled { get; set; } = true;
+    public bool AutoCheckForUpdates { get; set; } = true;
     public double FontSize { get; set; } = 16;
     public TriggerMode TriggerMode { get; set; } = TriggerMode.AllApps;
     public ThemeMode ThemeMode { get; set; } = ThemeMode.Auto;
@@ -75,6 +76,7 @@ public sealed class Settings
 
             DidOnboard = loaded.DidOnboard;
             IsEnabled = loaded.IsEnabled;
+            AutoCheckForUpdates = loaded.AutoCheckForUpdates;
             FontSize = loaded.FontSize > 0 ? loaded.FontSize : 16;
             LaunchAtLogin = loaded.LaunchAtLogin;
             TriggerMode = Enum.TryParse<TriggerMode>(loaded.TriggerMode, out var mode)
@@ -105,6 +107,7 @@ public sealed class Settings
         {
             DidOnboard = DidOnboard,
             IsEnabled = IsEnabled,
+            AutoCheckForUpdates = AutoCheckForUpdates,
             FontSize = FontSize,
             LaunchAtLogin = LaunchAtLogin,
             TriggerMode = TriggerMode.ToString(),
@@ -229,6 +232,7 @@ public sealed class Settings
     {
         public bool DidOnboard { get; set; }
         public bool IsEnabled { get; set; } = true;
+        public bool AutoCheckForUpdates { get; set; } = true;
         public double FontSize { get; set; } = 16;
         public bool LaunchAtLogin { get; set; }
         public string? TriggerMode { get; set; }
