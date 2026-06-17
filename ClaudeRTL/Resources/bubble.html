@@ -198,7 +198,9 @@
             font-size: 16px;
             line-height: 1.85;
             color: var(--ink);
-            unicode-bidi: plaintext;
+            direction: rtl;
+            text-align: start;
+            unicode-bidi: embed;
             transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
         }
 
@@ -218,7 +220,7 @@
         .body h2,
         .body h3,
         .body h4 {
-            unicode-bidi: plaintext;
+            text-align: start;
             margin: .12em 0 .5em
         }
 
@@ -466,6 +468,21 @@
             return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
+        var ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+        function hasArabic(s) {
+            return ARABIC_RE.test(s);
+        }
+
+        function stripTags(s) {
+            return s.replace(/<[^>]+>/g, "");
+        }
+
+        /** فرض RTL عند وجود عربي — dir="auto" + plaintext يكسر السطر إذا بدأ بإنجليزي */
+        function blockDirAttr(text) {
+            return hasArabic(stripTags(text)) ? 'dir="rtl"' : 'dir="auto"';
+        }
+
         function mdToHtml(src) {
             src = src.replace(/\r\n/g, "\n");
             var codes = [];
@@ -504,7 +521,7 @@
                 if (h) {
                     close();
                     var l = h[1].length;
-                    out.push("<h" + l + ">" + h[2] + "</h" + l + ">");
+                    out.push("<h" + l + " " + blockDirAttr(h[2]) + ">" + h[2] + "</h" + l + ">");
                     i++;
                     continue;
                 }
@@ -516,7 +533,8 @@
                 }
                 if (/^\s*>\s?/.test(ln)) {
                     close();
-                    out.push("<blockquote>" + ln.replace(/^\s*>\s?/, "") + "</blockquote>");
+                    var bq = ln.replace(/^\s*>\s?/, "");
+                    out.push("<blockquote " + blockDirAttr(bq) + ">" + bq + "</blockquote>");
                     i++;
                     continue;
                 }
@@ -524,10 +542,10 @@
                 if (ul) {
                     if (list !== "ul") {
                         close();
-                        out.push("<ul>");
+                        out.push('<ul dir="rtl">');
                         list = "ul";
                     }
-                    out.push("<li>" + ul[1] + "</li>");
+                    out.push("<li " + blockDirAttr(ul[1]) + ">" + ul[1] + "</li>");
                     i++;
                     continue;
                 }
@@ -535,10 +553,10 @@
                 if (ol) {
                     if (list !== "ol") {
                         close();
-                        out.push("<ol>");
+                        out.push('<ol dir="rtl">');
                         list = "ol";
                     }
-                    out.push("<li>" + ol[1] + "</li>");
+                    out.push("<li " + blockDirAttr(ol[1]) + ">" + ol[1] + "</li>");
                     i++;
                     continue;
                 }
@@ -556,7 +574,7 @@
                     buf.push(lines[i]);
                     i++;
                 }
-                out.push('<p dir="auto">' + buf.join("<br>") + "</p>");
+                out.push("<p " + blockDirAttr(buf.join(" ")) + ">" + buf.join("<br>") + "</p>");
             }
             close();
             return out.join("");

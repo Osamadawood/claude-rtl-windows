@@ -1,3 +1,4 @@
+<?php $navActive = 'home'; ?>
 <!doctype html>
 <html lang="ar" dir="rtl">
 
@@ -21,7 +22,7 @@
     </script>
 
     <title>Claude RTL — العربية كما يجب أن تُقرأ</title>
-    <meta name="description" content="أداة مجانية لـ macOS تُصلِح اتجاه النص العربي في تطبيق Claude لحظة تحديده: عرض صحيح، تنسيق Markdown، وقراءة صوتية مع تمييز الكلمات. كل شيء محلي.">
+    <meta name="description" content="أداة مجانية لـ macOS تُصلِح اتجاه النص العربي عند نسخه (⌘C) في أي تطبيق — المتصفح، Claude، المحررات، وغيرها. Markdown، قراءة صوتية، إعدادات أصلية. كل شيء محلي.">
     <link rel="canonical" href="https://claude-rtl.grwlab.net/">
     <meta name="theme-color" content="#0c0a08">
 
@@ -29,7 +30,7 @@
     <meta property="og:url" content="https://claude-rtl.grwlab.net/">
     <meta property="og:site_name" content="Claude RTL">
     <meta property="og:title" content="Claude RTL — العربية كما يجب أن تُقرأ">
-    <meta property="og:description" content="أداة macOS مجانية تُصلِح اتجاه النص العربي في تطبيق Claude فورًا.">
+    <meta property="og:description" content="أداة macOS مجانية تُصلِح اتجاه النص العربي في أي تطبيق — المتصفح، Claude، وأكثر — لحظة النسخ (⌘C).">
     <meta property="og:image" content="https://claude-rtl.grwlab.net/assets/screenshot.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -39,7 +40,7 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Claude RTL — العربية كما يجب أن تُقرأ">
-    <meta name="twitter:description" content="أداة macOS مجانية تُصلِح اتجاه النص العربي في تطبيق Claude فورًا.">
+    <meta name="twitter:description" content="أداة macOS مجانية تُصلِح اتجاه النص العربي في أي تطبيق — المتصفح، Claude، وأكثر — لحظة النسخ (⌘C).">
     <meta name="twitter:image" content="https://claude-rtl.grwlab.net/assets/screenshot.png">
 
     <link rel="icon" href="assets/favicon/favicon.ico" sizes="48x48">
@@ -65,7 +66,7 @@
             "name": "Claude RTL",
             "operatingSystem": "macOS 13.0+",
             "applicationCategory": "UtilitiesApplication",
-            "description": "أداة مجانية لنظام macOS تُصلِح اتجاه النص العربي داخل تطبيق Claude لسطح المكتب، مع تنسيق Markdown وقراءة صوتية وتمييز للكلمات. تعمل محليًا بالكامل.",
+            "description": "أداة مجانية لنظام macOS تُصلِح اتجاه النص العربي عند نسخه (⌘C) في أي تطبيق — المتصفح، Claude لسطح المكتب، المحررات، وغيرها. تنسيق Markdown، قراءة صوتية، إعدادات أصلية، وتحديثات تلقائية. تعمل محليًا بالكامل.",
             "softwareVersion": "1.1.0",
             "url": "https://claude-rtl.grwlab.net/",
             "downloadUrl": "https://claude-rtl.grwlab.net/download/ClaudeRTL.dmg",
@@ -104,18 +105,26 @@
                 },
                 {
                     "@type": "Question",
-                    "name": "هل يعمل داخل المتصفح على claude.ai؟",
+                    "name": "أين يعمل Claude RTL؟",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "لا، Claude RTL مصمّم لتطبيق Claude لسطح المكتب على macOS فقط."
+                        "text": "بشكل افتراضي في أي تطبيق على macOS: المتصفح (Safari وChrome وFirefox — بما فيها claude.ai)، تطبيق Claude لسطح المكتب، المحررات، وغيرها. انسخ نصًا عربيًا (⌘C) وستظهر الفقاعة. من الإعدادات يمكنك تقييد العمل على Claude فقط، أو قائمة تطبيقات محددة، أو استثناء تطبيقات معينة."
                     }
                 },
                 {
                     "@type": "Question",
-                    "name": "لماذا يحتاج إلى إذن Accessibility؟",
+                    "name": "هل يحتاج التطبيق إلى أذونات خاصة؟",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "يُستخدَم الإذن لاكتشاف تحديد النص داخل Claude تلقائيًا. وبدون الإذن يمكنك نسخ النص بالضغط على ⌘C وستظهر الفقاعة أيضًا."
+                        "text": "لا. انسخ أي نص عربي بالضغط على ⌘C في التطبيق الذي تستخدمه، وستظهر الفقاعة بجوار المؤشّر. يمكنك تحديد التطبيقات المسموح بها من الإعدادات."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "كيف أحصل على التحديثات؟",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "من الإصدار 1.1.0 يُحدِّث التطبيق نفسه تلقائيًا عبر Sparkle. يمكنك أيضًا تنزيل أحدث نسخة من الموقع."
                     }
                 },
                 {
@@ -150,26 +159,18 @@
 
     <div id="prog" aria-hidden="true"></div>
 
-    <nav>
-        <div class="wrap nav-in">
-            <a class="brand" href="/" aria-label="Claude RTL — الصفحة الرئيسية">
-                <img src="assets/img/logo.svg" width="26" height="26" alt="">
-                <span>Claude RTL</span>
-            </a>
-            <a class="btn btn-primary btn-download" data-download href="/download/ClaudeRTL.dmg">نزّل لـ <span class="en">macOS</span></a>
-        </div>
-    </nav>
+    <?php require __DIR__ . '/includes/site-nav.php'; ?>
 
     <header class="hero wrap">
         <div class="hero-bg" aria-hidden="true"></div>
         <div class="hero-grid">
             <div class="hero-copy">
-                <div class="kicker"><span class="dot"></span> قارئ العربية لتطبيق <span class="en">Claude</span></div>
+                <div class="kicker"><span class="dot"></span> قارئ العربية لـ <span class="en">macOS</span></div>
                 <h1>
-                    <span class="hero-line">العربية في <span class="en accent">Claude</span>،</span>
+                    <span class="hero-line">العربية في أي مكان،</span>
                     <span class="hero-line">كما يجب أن تُقرأ.</span>
                 </h1>
-                <p class="lead">أداةٌ مجانية لـ <span class="en">macOS</span> تُصلِح اتجاه النص العربي في تطبيق <span class="en">Claude</span> لحظة تحديده — عرضٌ صحيح، تنسيق <span class="en">Markdown</span> سليم، وقراءةٌ صوتية مع تمييز الكلمات. بلا انتظار، وبلا إرسال أي بيانات.</p>
+                <p class="lead">أداةٌ مجانية لـ <span class="en">macOS</span> تُصلِح اتجاه النص العربي لحظة نسخه (<span class="en">⌘C</span>) — في المتصفح، <span class="en">Claude</span>، المحررات، أو أي تطبيق. عرضٌ صحيح، تنسيق <span class="en">Markdown</span>، وقراءةٌ صوتية. بلا أذونات خاصة، وبلا إرسال أي بيانات.</p>
                 <div class="hero-cta">
                     <a class="btn btn-primary btn-download" data-download href="/download/ClaudeRTL.dmg">نزّل لـ <span class="en">macOS</span> <span class="tag">DMG</span></a>
                     <a class="btn btn-ghost" href="#how">كيف يعمل</a>
@@ -178,10 +179,10 @@
             </div>
             <div class="hero-shot" data-shot>
                 <div class="shot">
-                    <div class="bar"><i></i><i></i><i></i><span>Claude</span></div>
+                    <div class="bar"><i></i><i></i><i></i><span class="en">claude.ai</span></div>
                     <div class="body ba">
                         <div class="hero-panel hero-panel--before">
-                            <div class="tagline"><span>داخل Claude</span><span class="x">قبل ✕</span></div>
+                            <div class="tagline"><span>في المتصفح</span><span class="x">قبل ✕</span></div>
                             <div class="broken">هذا النص العربي يُقرأ بالاتجاه الصحيح، مع <span class="code">code</span> وتنسيق.</div>
                         </div>
                         <div class="hero-panel hero-panel--after">
@@ -218,8 +219,8 @@
     <div class="caps post-hero" aria-hidden="true">
         <div class="caps-track">
             <div class="row">
-                <span>اتجاه RTL سليم</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>خصوصية كاملة</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>Universal</span><b>·</b>
-                <span>اتجاه RTL سليم</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>خصوصية كاملة</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>Universal</span><b>·</b>
+                <span>اتجاه RTL سليم</span><b>·</b><span>أي تطبيق</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>إعدادات أصلية</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>تحديثات تلقائية</span><b>·</b><span>Universal</span><b>·</b>
+                <span>اتجاه RTL سليم</span><b>·</b><span>أي تطبيق</span><b>·</b><span>تنسيق Markdown</span><b>·</b><span>شيفرة LTR</span><b>·</b><span>قراءة صوتية</span><b>·</b><span>تمييز الكلمات</span><b>·</b><span>إعدادات أصلية</span><b>·</b><span>فاتح وداكن</span><b>·</b><span>تحديثات تلقائية</span><b>·</b><span>Universal</span><b>·</b>
             </div>
         </div>
     </div>
@@ -287,12 +288,39 @@
 
         <div class="row-f">
             <div class="copy" data-a>
-                <div class="kicker"><span class="dot"></span> الخصوصية</div>
-                <h2>داخل Claude وحده، ومحليًا تمامًا.</h2>
-                <p class="lead">يظهر فقط عند تحديد نصٍّ داخل تطبيق <span class="en">Claude</span>، ولا يقترب من أي تطبيق آخر. كل المعالجة تتم على جهازك.</p>
+                <div class="kicker"><span class="dot"></span> الإعدادات</div>
+                <h2>تحكّم كامل، بتصميم أصلي.</h2>
+                <p class="lead">إعدادات <span class="en">SwiftUI</span> أصلية بالعربية: افتراضيًا يعمل في <strong>كل التطبيقات</strong> — أو قيّده على <span class="en">Claude</span> فقط، أو قائمة مخصّصة. المظهر، حجم الخط، والتشغيل التلقائي، مع تحديثات تلقائية.</p>
                 <ul class="check">
                     <li><svg viewBox="0 0 24 24" aria-hidden="true">
-                            <polyline points="20 6 9 17 4 12" /></svg> يعمل داخل <span class="en">Claude</span> فقط</li>
+                            <polyline points="20 6 9 17 4 12" /></svg> افتراضيًا: أي تطبيق — متصفح، <span class="en">Claude</span>، محررات…</li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" /></svg> أو «<span class="en">Claude</span> فقط» / قائمة مخصّصة / استثناءات</li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" /></svg> مظهر تلقائي / فاتح / داكن وحجم خط الفقاعة</li>
+                </ul>
+            </div>
+            <div data-a>
+                <div class="shot">
+                    <div class="bar"><i></i><i></i><i></i><span>الإعدادات</span></div>
+                    <div class="body shot-center">
+                        <svg class="shot-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>
+                        <p class="shot-title">إعدادات أصلية<br><span class="shot-sub">RTL · فاتح/داكن · تحديثات تلقائية</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-f">
+            <div class="copy" data-a>
+                <div class="kicker"><span class="dot"></span> الخصوصية</div>
+                <h2>محليًا تمامًا، بلا أذونات خاصة.</h2>
+                <p class="lead">انسخ نصًا عربيًا (<span class="en">⌘C</span>) في أي تطبيق تختاره — الفقاعة تظهر بجوار المؤشّر. كل المعالجة على جهازك، دون إرسال أي بيانات.</p>
+                <ul class="check">
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true">
+                            <polyline points="20 6 9 17 4 12" /></svg> لا يحتاج إذن <span class="en">Accessibility</span> أو أي صلاحية نظام</li>
                     <li><svg viewBox="0 0 24 24" aria-hidden="true">
                             <polyline points="20 6 9 17 4 12" /></svg> كل شيء محلي على جهازك</li>
                     <li><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -331,8 +359,8 @@
             </div>
             <div class="step">
                 <div class="n">الخطوة</div>
-                <h3>فعّل <span class="en">Accessibility</span></h3>
-                <p>فعّل الإذن عند أول تشغيل، ثم حدّد نصًا عربيًا في <span class="en">Claude</span>.</p>
+                <h3>انسخ نصًا عربيًا</h3>
+                <p>حدّد النص في أي تطبيق واضغط <span class="en">⌘C</span> — ستظهر الفقاعة فورًا بجوار المؤشّر.</p>
             </div>
         </div>
     </section>
@@ -379,7 +407,7 @@
                 </details>
                 <details class="faq-item">
                     <summary>
-                        <span class="faq-q">هل يعمل داخل المتصفح على claude.ai؟</span>
+                        <span class="faq-q">أين يعمل Claude RTL؟</span>
                         <span class="faq-toggle" aria-hidden="true">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M12 5v14M5 12h14" /></svg>
@@ -387,13 +415,13 @@
                     </summary>
                     <div class="faq-body">
                         <div class="faq-body-inner">
-                            <p>لا، Claude RTL مصمّم لتطبيق Claude لسطح المكتب على macOS فقط.</p>
+                            <p>بشكل <strong>افتراضي في أي تطبيق</strong> على macOS: المتصفح (<span class="en">Safari</span>، <span class="en">Chrome</span>، <span class="en">Firefox</span> — بما فيها <span class="en">claude.ai</span>)، تطبيق <span class="en">Claude</span> لسطح المكتب، المحررات، وغيرها. انسخ نصًا عربيًا (<span class="en">⌘C</span>) وستظهر الفقاعة. من <strong>الإعدادات</strong> يمكنك تقييد العمل على <span class="en">Claude</span> فقط، أو قائمة تطبيقات محددة، أو استثناء تطبيقات معينة.</p>
                         </div>
                     </div>
                 </details>
                 <details class="faq-item">
                     <summary>
-                        <span class="faq-q">لماذا يحتاج إلى إذن Accessibility؟</span>
+                        <span class="faq-q">هل يحتاج التطبيق إلى أذونات خاصة؟</span>
                         <span class="faq-toggle" aria-hidden="true">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M12 5v14M5 12h14" /></svg>
@@ -401,7 +429,21 @@
                     </summary>
                     <div class="faq-body">
                         <div class="faq-body-inner">
-                            <p>يُستخدَم الإذن لاكتشاف تحديد النص داخل Claude تلقائيًا. وبدون الإذن يمكنك نسخ النص بالضغط على ⌘C وستظهر الفقاعة أيضًا.</p>
+                            <p>لا. انسخ أي نص عربي بالضغط على <span class="en">⌘C</span> في التطبيق الذي تستخدمه، وستظهر الفقاعة. يمكنك تحديد التطبيقات المسموح بها أو المستثناة من <strong>الإعدادات</strong>.</p>
+                        </div>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>
+                        <span class="faq-q">كيف أحصل على التحديثات؟</span>
+                        <span class="faq-toggle" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 5v14M5 12h14" /></svg>
+                        </span>
+                    </summary>
+                    <div class="faq-body">
+                        <div class="faq-body-inner">
+                            <p>من الإصدار <span class="en">1.1.0</span> يُحدِّث التطبيق نفسه تلقائيًا. يمكنك أيضًا مراجعة <a href="/releases">سجل الإصدارات</a> وتنزيل أحدث نسخة من الموقع.</p>
                         </div>
                     </div>
                 </details>
@@ -440,23 +482,12 @@
     <section class="cta wrap" id="download">
         <div class="kicker kicker--center" data-a><span class="dot"></span> ابدأ الآن</div>
         <h2 data-a>جرّبه الآن.</h2>
-        <p class="lead" data-a>حمّل <span class="en">Claude RTL</span> مجانًا، واقرأ العربية في <span class="en">Claude</span> بالاتجاه الصحيح.</p>
+        <p class="lead" data-a>حمّل <span class="en">Claude RTL</span> مجانًا — واقرأ العربية بالاتجاه الصحيح في أي تطبيق.</p>
         <a class="btn btn-primary btn-download" data-a data-download href="/download/ClaudeRTL.dmg">نزّل لـ <span class="en">macOS</span> <span class="tag">DMG · UNIVERSAL</span></a>
         <div class="meta" data-a>macOS 13+ · Apple Silicon · Intel</div>
     </section>
 
-    <footer class="wrap">
-        <div class="foot-top foot-top--start">
-            <p class="disclaimer">Claude RTL أداة مستقلة من GRW Lab، وهي غير تابعة لشركة Anthropic ولا مُعتمَدة منها. اسم ‹Claude› علامة تجارية مملوكة لشركة Anthropic.</p>
-            <div class="foot-links">
-                <a href="/privacy">الخصوصية</a>
-                <a href="/terms">الشروط</a>
-            </div>
-        </div>
-        <div class="foot-top">
-            <span class="lab">from the lab · by <a href="https://grwlab.net/" target="_blank" rel="noopener noreferrer"><b>grw—lab</b></a></span>
-        </div>
-    </footer>
+    <?php require __DIR__ . '/includes/site-footer.php'; ?>
 
     <script src="assets/app.js" defer></script>
 </body>

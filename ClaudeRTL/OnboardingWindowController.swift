@@ -22,7 +22,7 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
 
     private init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 580),
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 560),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -83,6 +83,8 @@ final class OnboardingWindowController: NSWindowController, WKNavigationDelegate
             case "finish":
                 Settings.shared.didOnboard = true
                 self.window?.close()
+                PreferencesWindowController.show()
+            case "settings":
                 PreferencesWindowController.show()
             default:
                 break

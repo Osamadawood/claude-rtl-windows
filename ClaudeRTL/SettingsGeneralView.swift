@@ -51,20 +51,14 @@ struct SettingsGeneralView: View {
     }
 
     private var aboutSection: some View {
-        HStack(alignment: .top, spacing: 12) {
-            SettingsAppIcon.view(size: 34, radius: 9)
-            VStack(alignment: SettingsAlign.horizontal, spacing: 6) {
+        VStack(alignment: SettingsAlign.horizontal, spacing: 10) {
+            HStack(alignment: .center, spacing: 12) {
+                SettingsAppIcon.view(size: 34, radius: 9)
                 Text("Claude RTL — الإصدار \(Settings.versionLabel())")
                     .font(.settingsAboutTitle())
                     .foregroundStyle(palette.textPrimary)
-                Text("أداة مستقلة من GRW Lab، غير تابعة لـ Anthropic")
-                    .font(.settingsRowDesc())
-                    .foregroundStyle(palette.textMuted)
-                    .multilineTextAlignment(.leading)
-                Link("grwlab.net", destination: URL(string: "https://grwlab.net")!)
-                    .font(.settingsRowDesc())
-                    .tint(ClaudeRTLColors.coral)
             }
+            SettingsDisclaimerText()
         }
         .settingsContentWidth()
     }

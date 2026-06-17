@@ -9,10 +9,15 @@ RewriteRule ^index\.html$ / [R=301,L]
 # Clean URLs for legal pages
 RewriteRule ^privacy/?$ privacy.html [L]
 RewriteRule ^terms/?$ terms.html [L]
+RewriteRule ^releases/?$ releases.html [L]
 RewriteCond %{THE_REQUEST} \s/+privacy\.html[\s?] [NC]
 RewriteRule ^privacy\.html$ /privacy [R=301,L]
 RewriteCond %{THE_REQUEST} \s/+terms\.html[\s?] [NC]
 RewriteRule ^terms\.html$ /terms [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+releases\.html[\s?] [NC]
+RewriteRule ^releases\.html$ /releases [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+releases\.php[\s?] [NC]
+RewriteRule ^releases\.php$ /releases [R=301,L]
 
 # Clean download URL → tracked handler (DMG files are not web-accessible under /download/)
 RewriteRule ^download/ClaudeRTL\.dmg$ /download.php [L]

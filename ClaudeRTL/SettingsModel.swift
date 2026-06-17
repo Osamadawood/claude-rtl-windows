@@ -18,11 +18,12 @@ final class SettingsModel: ObservableObject {
         didSet { guard !suppressSync else { return }; Settings.shared.fontSize = fontSize }
     }
 
-    @Published var themeMode: ThemeMode {
+    @Published private(set) var appearanceScheme: ColorScheme
+
+    private(set) var themeMode: ThemeMode {
         didSet {
             guard !suppressSync else { return }
             Settings.shared.themeMode = themeMode
-            ThemeManager.shared.applyToAllWebViews()
         }
     }
 
@@ -33,11 +34,23 @@ final class SettingsModel: ObservableObject {
     @Published var excludedApps: [AppRecord]
     @Published var includedApps: [AppRecord]
 
-    var preferredColorScheme: ColorScheme? {
-        switch themeMode {
+    func setThemeMode(_ mode: ThemeMode) {
+        guard mode != themeMode else { return }
+        themeMode = mode
+        ThemeManager.shared.applyToAllWebViewsIfNeeded()
+        let scheme = Self.resolveColorScheme(for: mode)
+        if scheme != appearanceScheme {
+            appearanceScheme = scheme
+        }
+    }
+
+    static func resolveColorScheme(for mode: ThemeMode) -> ColorScheme {
+        switch mode {
         case .light: return .light
         case .dark: return .dark
-        case .auto: return nil
+        case .auto:
+            let best = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua])
+            return best == .darkAqua ? .dark : .light
         }
     }
 
@@ -50,6 +63,7 @@ final class SettingsModel: ObservableObject {
         triggerMode = settings.triggerMode
         fontSize = settings.fontSize
         themeMode = settings.themeMode
+        appearanceScheme = Self.resolveColorScheme(for: settings.themeMode)
         launchAtLogin = settings.isLaunchAtLoginEnabled
         excludedApps = settings.excludedAppsAlways
         includedApps = settings.includedApps
@@ -61,8 +75,12 @@ final class SettingsModel: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
-                guard self?.themeMode == .auto else { return }
-                self?.objectWillChange.send()
+                guard let self, self.themeMode == .auto else { return }
+                let scheme = Self.resolveColorScheme(for: .auto)
+                if scheme != self.appearanceScheme {
+                    self.appearanceScheme = scheme
+                }
+                ThemeManager.shared.applyToAllWebViewsIfNeeded()
             }
         }
     }
@@ -79,14 +97,15 @@ final class SettingsModel: ObservableObject {
 
     func resetAllSettings() {
         Settings.shared.resetAllSettingsExceptLaunchAtLogin()
-        ThemeManager.shared.applyToAllWebViews()
         suppressSync = true
         triggerMode = .allApps
         fontSize = 16
         themeMode = .auto
+        appearanceScheme = Self.resolveColorScheme(for: .auto)
         excludedApps = []
         includedApps = []
         suppressSync = false
+        ThemeManager.shared.applyToAllWebViews()
     }
 
     func removeExcluded(_ bundleId: String) {

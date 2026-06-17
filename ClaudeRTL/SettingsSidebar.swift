@@ -36,13 +36,12 @@ struct SettingsSidebar: View {
                         icon: section.icon,
                         isSelected: selection == section
                     ) {
-                        withAnimation(.easeInOut(duration: 0.18)) {
-                            selection = section
-                        }
+                        selection = section
                     }
                 }
             }
             Spacer(minLength: 0)
+            sidebarFooter
         }
         .padding(.top, SettingsMetrics.sidebarTopPadding)
         .padding(.horizontal, SettingsMetrics.sidebarHorizontalPadding)
@@ -56,8 +55,8 @@ struct SettingsSidebar: View {
     }
 
     private var sidebarHeader: some View {
-        HStack(spacing: 10) {
-            SettingsAppIcon.view(size: 38, radius: 10)
+        VStack(alignment: SettingsAlign.horizontal, spacing: 8) {
+            SettingsAppIcon.view(size: 36, radius: 9)
             VStack(alignment: SettingsAlign.horizontal, spacing: 2) {
                 Text("Claude RTL")
                     .font(.settingsAppName())
@@ -69,6 +68,16 @@ struct SettingsSidebar: View {
         }
         .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
         .padding(.bottom, SettingsMetrics.sidebarHeaderBottom)
+    }
+
+    private var sidebarFooter: some View {
+        let year = Calendar.current.component(.year, from: Date())
+        return Text("© \(year) GRW Lab")
+            .font(.settingsVersion())
+            .foregroundStyle(palette.textMuted)
+            .environment(\.layoutDirection, .leftToRight)
+            .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
+            .padding(.bottom, SettingsMetrics.sidebarFooterBottom)
     }
 }
 
@@ -84,7 +93,7 @@ private struct SidebarNavButton: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 16, weight: .medium))
                 Text(title)
                     .font(.settingsNav())
                 Spacer(minLength: 0)

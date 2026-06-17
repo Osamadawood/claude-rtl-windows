@@ -1,0 +1,127 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap');
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+.crtl{font-family:'IBM Plex Sans Arabic',sans-serif;}
+.navbtn{display:flex;align-items:center;gap:10px;width:100%;border:none;cursor:pointer;font-family:inherit;font-size:13.5px;padding:9px 11px;border-radius:8px;text-align:right;background:transparent;color:rgba(243,238,226,.62);transition:background .15s,color .15s;}
+.navbtn i{font-size:18px;}
+.card{background:#221C17;border:1px solid rgba(243,238,226,.07);border-radius:13px;padding:16px 18px;margin-bottom:13px;}
+.lbl{font-size:12px;color:rgba(243,238,226,.5);margin-bottom:12px;}
+.opt{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-radius:9px;padding:11px 12px;margin-bottom:4px;}
+</style>
+<h2 class="sr-only">معاينة تصميم نافذة إعدادات Claude RTL بالهوية الداكنة واللون الكورال</h2>
+<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:22px;display:flex;justify-content:center;">
+<div class="crtl" style="width:622px;background:#1A1512;border:1px solid rgba(255,255,255,.08);border-radius:13px;overflow:hidden;direction:rtl;box-shadow:0 24px 60px rgba(0,0,0,.45);">
+  <div style="height:42px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);position:relative;">
+    <div style="position:absolute;left:14px;display:flex;gap:8px;">
+      <span style="width:12px;height:12px;border-radius:50%;background:#FF5F57;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#FEBC2E;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#28C840;"></span>
+    </div>
+    <div style="flex:1;text-align:center;font-size:13px;color:rgba(243,238,226,.55);">الإعدادات</div>
+  </div>
+  <div style="display:flex;min-height:438px;">
+    <div style="width:190px;background:#15110E;padding:16px 12px;border-left:1px solid rgba(255,255,255,.05);">
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 4px 22px;">
+        <div style="width:38px;height:38px;border-radius:10px;background:#D9774E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600;">ع</div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#F3EEE2;line-height:1.2;">Claude RTL</div>
+          <div style="font-size:11px;color:rgba(243,238,226,.45);">الإصدار 1.1.0</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <button class="navbtn" data-sec="where" style="background:rgba(216,90,48,.16);color:#E88A60;"><i class="ti ti-layout-grid" aria-hidden="true"></i><span>أين يعمل</span></button>
+        <button class="navbtn" data-sec="appearance"><i class="ti ti-palette" aria-hidden="true"></i><span>المظهر</span></button>
+        <button class="navbtn" data-sec="general"><i class="ti ti-settings" aria-hidden="true"></i><span>عام</span></button>
+      </div>
+    </div>
+    <div style="flex:1;padding:24px 26px;">
+      <div id="sec-where">
+        <div style="font-size:20px;font-weight:600;color:#F3EEE2;margin-bottom:18px;">أين يعمل</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:14px;font-weight:500;color:#F3EEE2;">تفعيل Claude RTL</div>
+              <div style="font-size:12px;color:rgba(243,238,226,.5);margin-top:3px;">إظهار التصحيح عند نسخ نص عربي</div>
+            </div>
+            <div style="width:42px;height:25px;border-radius:13px;background:#D9774E;position:relative;flex-shrink:0;">
+              <div style="width:19px;height:19px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="lbl">وضع التشغيل</div>
+          <div class="opt" style="background:rgba(216,90,48,.09);">
+            <div><div style="font-size:14px;font-weight:500;color:#F3EEE2;">كل التطبيقات</div><div style="font-size:12px;color:rgba(243,238,226,.5);margin-top:2px;">يعمل في أي تطبيق على جهازك</div></div>
+            <div style="width:19px;height:19px;border-radius:50%;border:2px solid #D9774E;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div style="width:9px;height:9px;border-radius:50%;background:#D9774E;"></div></div>
+          </div>
+          <div class="opt">
+            <div><div style="font-size:14px;font-weight:500;color:#F3EEE2;">Claude فقط</div><div style="font-size:12px;color:rgba(243,238,226,.5);margin-top:2px;">يظهر داخل تطبيق Claude فقط</div></div>
+            <div style="width:19px;height:19px;border-radius:50%;border:2px solid rgba(255,255,255,.22);flex-shrink:0;"></div>
+          </div>
+          <div class="opt">
+            <div><div style="font-size:14px;font-weight:500;color:#F3EEE2;">قائمة مخصصة</div><div style="font-size:12px;color:rgba(243,238,226,.5);margin-top:2px;">تطبيقات محددة فقط</div></div>
+            <div style="width:19px;height:19px;border-radius:50%;border:2px solid rgba(255,255,255,.22);flex-shrink:0;"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="lbl">التطبيقات المستثناة</div>
+          <div style="text-align:center;padding:10px 0 16px;color:rgba(243,238,226,.4);font-size:13px;">لا توجد تطبيقات مستثناة بعد</div>
+          <button style="font-family:inherit;display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(243,238,226,.18);color:#F3EEE2;border-radius:9px;padding:8px 14px;font-size:13px;cursor:pointer;"><i class="ti ti-plus" aria-hidden="true"></i>إضافة تطبيق</button>
+        </div>
+      </div>
+      <div id="sec-appearance" style="display:none;">
+        <div style="font-size:20px;font-weight:600;color:#F3EEE2;margin-bottom:18px;">المظهر</div>
+        <div class="card">
+          <div class="lbl">السمة</div>
+          <div style="display:flex;background:#15110E;border-radius:10px;padding:3px;gap:3px;">
+            <div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#D9774E;color:#fff;font-size:13px;font-weight:500;">تلقائي</div>
+            <div style="flex:1;text-align:center;padding:8px;font-size:13px;color:rgba(243,238,226,.6);">فاتح</div>
+            <div style="flex:1;text-align:center;padding:8px;font-size:13px;color:rgba(243,238,226,.6);">داكن</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="lbl">حجم خط الفقاعة</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.12);position:relative;">
+              <div style="position:absolute;right:0;top:0;height:4px;width:50%;background:#D9774E;border-radius:2px;"></div>
+              <div style="position:absolute;right:calc(50% - 8px);top:-6px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>
+            </div>
+            <span style="font-size:13px;color:#D9774E;font-weight:500;min-width:18px;">16</span>
+            <span style="font-size:12px;color:rgba(243,238,226,.5);cursor:pointer;">إعادة تعيين</span>
+          </div>
+          <div style="background:#15110E;border-radius:9px;padding:12px 14px;font-size:16px;color:#F3EEE2;">معاينة: السلام عليكم ورحمة الله</div>
+        </div>
+      </div>
+      <div id="sec-general" style="display:none;">
+        <div style="font-size:20px;font-weight:600;color:#F3EEE2;margin-bottom:18px;">عام</div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:14px;font-weight:500;color:#F3EEE2;">تشغيل عند بدء النظام</div>
+            <div style="width:42px;height:25px;border-radius:13px;background:#D9774E;position:relative;flex-shrink:0;"><div style="width:19px;height:19px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;"></div></div>
+          </div>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;gap:11px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"><span style="font-size:14px;color:#F3EEE2;">إعادة عرض الشرح</span><i class="ti ti-chevron-left" style="color:rgba(243,238,226,.4);" aria-hidden="true"></i></div>
+          <div style="height:1px;background:rgba(243,238,226,.07);"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;"><span style="font-size:14px;color:#E0856A;">إعادة تعيين كل الإعدادات</span><i class="ti ti-chevron-left" style="color:rgba(243,238,226,.4);" aria-hidden="true"></i></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:#D9774E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:600;">ع</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:#F3EEE2;">Claude RTL — الإصدار 1.1.0</div><div style="font-size:12px;color:rgba(243,238,226,.45);margin-top:2px;">أداة مستقلة من GRW Lab، غير تابعة لـ Anthropic</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+  var btns=document.querySelectorAll('.navbtn');
+  var map={where:'sec-where',appearance:'sec-appearance',general:'sec-general'};
+  function sel(n){
+    btns.forEach(function(b){var on=b.dataset.sec===n;b.style.background=on?'rgba(216,90,48,.16)':'transparent';b.style.color=on?'#E88A60':'rgba(243,238,226,.62)';});
+    Object.keys(map).forEach(function(k){document.getElementById(map[k]).style.display=k===n?'block':'none';});
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){sel(b.dataset.sec);});});
+})();
+</script>

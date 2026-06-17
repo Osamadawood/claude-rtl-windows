@@ -70,28 +70,22 @@ extension EnvironmentValues {
     }
 }
 
-struct SettingsPaletteProvider: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
-    func body(content: Content) -> some View {
-        content.environment(\.palette, SettingsPalette(scheme: colorScheme))
-    }
-}
-
 extension View {
-    func settingsPalette() -> some View {
-        modifier(SettingsPaletteProvider())
+    func settingsPalette(scheme: ColorScheme) -> some View {
+        environment(\.palette, SettingsPalette(scheme: scheme))
     }
 }
 
 enum SettingsMetrics {
     static let windowWidth: CGFloat = 640
-    static let windowHeight: CGFloat = 500
+    static let windowHeight: CGFloat = 540
     static let windowMinWidth: CGFloat = 620
-    static let windowMinHeight: CGFloat = 480
+    static let windowMinHeight: CGFloat = 500
     static let sidebarWidth: CGFloat = 190
     static let contentPaddingH: CGFloat = 26
     static let contentPaddingV: CGFloat = 24
-    static let sectionTitleBottom: CGFloat = 18
+    static let sectionTitleBottom: CGFloat = 16
+    static let windowTitleBottom: CGFloat = 8
     static let cardRadius: CGFloat = 13
     static let cardPaddingH: CGFloat = 18
     static let cardPaddingV: CGFloat = 16
@@ -100,6 +94,7 @@ enum SettingsMetrics {
     static let sidebarTopPadding: CGFloat = 30
     static let sidebarHorizontalPadding: CGFloat = 12
     static let sidebarHeaderBottom: CGFloat = 22
+    static let sidebarFooterBottom: CGFloat = 14
     static let navGap: CGFloat = 3
     static let optionRowRadius: CGFloat = 9
     static let previewRadius: CGFloat = 9
@@ -110,6 +105,47 @@ enum SettingsMetrics {
 enum SettingsAlign {
     static let horizontal: HorizontalAlignment = .leading
     static let frame: Alignment = .leading
+}
+
+enum SettingsCopy {
+    static let independenceDisclaimer =
+        "Claude RTL أداة مستقلة من GRW Lab، غير تابعة لشركة Anthropic ولا مُعتمَدة منها. ‹Claude› علامة تجارية مملوكة لشركة Anthropic."
+
+    static var independenceDisclaimerRTL: String {
+        let lri = "\u{2066}"
+        let rli = "\u{2067}"
+        let pdi = "\u{2069}"
+        let rlm = "\u{200F}"
+        return rlm + rli
+            + lri + "Claude RTL" + pdi
+            + " أداة مستقلة من "
+            + lri + "GRW Lab" + pdi
+            + "، غير تابعة لشركة "
+            + lri + "Anthropic" + pdi
+            + " ولا مُعتمَدة منها."
+            + pdi
+            + "\n"
+            + rli
+            + lri + "‹Claude›" + pdi
+            + " علامة تجارية مملوكة لشركة "
+            + lri + "Anthropic" + pdi
+            + "."
+            + pdi
+    }
+}
+
+struct SettingsDisclaimerText: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        Text(SettingsCopy.independenceDisclaimerRTL)
+            .font(.settingsRowDesc())
+            .foregroundStyle(palette.textMuted)
+            .multilineTextAlignment(.leading)
+            .lineSpacing(2)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: SettingsAlign.frame)
+    }
 }
 
 extension View {
@@ -133,15 +169,16 @@ enum SettingsFontRegistrar {
 }
 
 extension Font {
-    static func settingsSectionTitle() -> Font { .custom("IBMPlexSansArabic-SemiBold", size: 20) }
-    static func settingsRowLabel() -> Font { .custom("IBMPlexSansArabic-Medium", size: 14) }
-    static func settingsRowDesc() -> Font { .custom("IBMPlexSansArabic-Regular", size: 12) }
-    static func settingsCardLabel() -> Font { .custom("IBMPlexSansArabic-Regular", size: 12) }
-    static func settingsNav() -> Font { .custom("IBMPlexSansArabic-Medium", size: 13.5) }
-    static func settingsAppName() -> Font { .custom("IBMPlexSansArabic-SemiBold", size: 14) }
-    static func settingsVersion() -> Font { .custom("IBMPlexSansArabic-Regular", size: 11) }
-    static func settingsEmpty() -> Font { .custom("IBMPlexSansArabic-Regular", size: 13) }
-    static func settingsAboutTitle() -> Font { .custom("IBMPlexSansArabic-Medium", size: 13) }
+    static func settingsWindowTitle() -> Font { .custom("IBMPlexSansArabic-SemiBold", size: 12) }
+    static func settingsSectionTitle() -> Font { .custom("IBMPlexSansArabic-SemiBold", size: 18) }
+    static func settingsRowLabel() -> Font { .custom("IBMPlexSansArabic-Medium", size: 13) }
+    static func settingsRowDesc() -> Font { .custom("IBMPlexSansArabic-Regular", size: 11) }
+    static func settingsCardLabel() -> Font { .custom("IBMPlexSansArabic-Regular", size: 11) }
+    static func settingsNav() -> Font { .custom("IBMPlexSansArabic-Medium", size: 12) }
+    static func settingsAppName() -> Font { .custom("IBMPlexSansArabic-SemiBold", size: 13) }
+    static func settingsVersion() -> Font { .custom("IBMPlexSansArabic-Regular", size: 10) }
+    static func settingsEmpty() -> Font { .custom("IBMPlexSansArabic-Regular", size: 12) }
+    static func settingsAboutTitle() -> Font { .custom("IBMPlexSansArabic-Medium", size: 12) }
     static func settingsArabic(size: CGFloat) -> Font { .custom("IBMPlexSansArabic-Regular", size: size) }
 }
 
@@ -253,7 +290,7 @@ struct CoralSegmentedControl: View {
         HStack(spacing: 0) {
             ForEach(ThemeMode.allCases, id: \.self) { mode in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.15)) { selection = mode }
+                    selection = mode
                 } label: {
                     Text(mode.label)
                         .font(.settingsRowLabel())
@@ -343,6 +380,68 @@ enum SettingsAppIcon {
     }
 }
 
+struct CoralSlider: View {
+    @Environment(\.palette) private var palette
+    @Binding var value: Double
+    var range: ClosedRange<Double> = 12 ... 22
+    var step: Double = 1
+
+    private var progress: Double {
+        guard range.upperBound > range.lowerBound else { return 0 }
+        return (value - range.lowerBound) / (range.upperBound - range.lowerBound)
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            let thumbSize: CGFloat = 18
+            let trackHeight: CGFloat = 4
+            let width = geo.size.width
+            let height = geo.size.height
+            let travel = max(0, width - thumbSize)
+            let thumbCenterX = (width - thumbSize / 2) - progress * travel
+            let fillWidth = min(width, max(trackHeight, width - thumbCenterX + thumbSize / 2))
+
+            ZStack {
+                Capsule()
+                    .fill(palette.switchOffTrack)
+                    .frame(height: trackHeight)
+
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    Capsule()
+                        .fill(ClaudeRTLColors.coral)
+                        .frame(width: fillWidth, height: trackHeight)
+                }
+
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: thumbSize, height: thumbSize)
+                    .shadow(color: .black.opacity(0.18), radius: 1.5, y: 1)
+                    .position(x: thumbCenterX, y: height / 2)
+            }
+            .frame(width: width, height: height)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { updateValue(at: $0.location.x, width: width, thumbSize: thumbSize) }
+            )
+            .environment(\.layoutDirection, .leftToRight)
+        }
+        .frame(height: 28)
+        .environment(\.layoutDirection, .leftToRight)
+    }
+
+    private func updateValue(at x: CGFloat, width: CGFloat, thumbSize: CGFloat) {
+        let travel = max(0, width - thumbSize)
+        guard travel > 0 else { return }
+        let clampedX = min(max(x, thumbSize / 2), width - thumbSize / 2)
+        let normalized = 1 - (clampedX - thumbSize / 2) / travel
+        let raw = range.lowerBound + normalized * (range.upperBound - range.lowerBound)
+        let stepped = (raw / step).rounded() * step
+        value = min(max(stepped, range.lowerBound), range.upperBound)
+    }
+}
+
 struct CoralSliderRow: View {
     @Environment(\.palette) private var palette
     @Binding var value: Double
@@ -350,7 +449,7 @@ struct CoralSliderRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Slider(value: $value, in: 12 ... 22, step: 1).tint(ClaudeRTLColors.coral)
+            CoralSlider(value: $value)
             Text("\(Int(value))")
                 .font(.settingsRowLabel())
                 .foregroundStyle(ClaudeRTLColors.coral)
@@ -361,6 +460,25 @@ struct CoralSliderRow: View {
                 .foregroundStyle(palette.textMuted)
                 .buttonStyle(.plain)
         }
+    }
+}
+
+struct SettingsCoralLink: View {
+    let title: String
+    let url: URL
+    @State private var isHovered = false
+
+    var body: some View {
+        Button {
+            NSWorkspace.shared.open(url)
+        } label: {
+            Text(title)
+                .font(.settingsRowDesc())
+                .foregroundStyle(isHovered ? ClaudeRTLColors.coralPressed : ClaudeRTLColors.coral)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+        .environment(\.layoutDirection, .leftToRight)
     }
 }
 

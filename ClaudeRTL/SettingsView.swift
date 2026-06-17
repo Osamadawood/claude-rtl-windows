@@ -16,6 +16,12 @@ struct SettingsView: View {
     private var contentArea: some View {
         ScrollView {
             VStack(alignment: SettingsAlign.horizontal, spacing: 0) {
+                Text("الإعدادات")
+                    .font(.settingsWindowTitle())
+                    .foregroundStyle(palette.textSecondary)
+                    .settingsContentWidth()
+                    .padding(.bottom, SettingsMetrics.windowTitleBottom)
+
                 Text(selection.title)
                     .font(.settingsSectionTitle())
                     .foregroundStyle(palette.textPrimary)
@@ -33,12 +39,10 @@ struct SettingsView: View {
                     }
                 }
                 .settingsContentWidth()
-                .transition(.opacity.combined(with: .move(edge: .leading)))
             }
             .padding(.horizontal, SettingsMetrics.contentPaddingH)
             .padding(.vertical, SettingsMetrics.contentPaddingV)
             .settingsContentWidth()
-            .animation(.easeInOut(duration: 0.2), value: selection)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(palette.contentBg)
@@ -52,7 +56,6 @@ struct SettingsRootView: View {
         SettingsView()
             .environmentObject(model)
             .environment(\.layoutDirection, .rightToLeft)
-            .settingsPalette()
-            .preferredColorScheme(model.preferredColorScheme)
+            .settingsPalette(scheme: model.appearanceScheme)
     }
 }

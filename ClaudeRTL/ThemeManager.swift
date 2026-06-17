@@ -43,8 +43,17 @@ final class ThemeManager {
     }
 
     func applyToAllWebViews() {
+        lastAppliedTheme = nil
+        applyToAllWebViewsIfNeeded()
+    }
+
+    func applyToAllWebViewsIfNeeded() {
         let theme = effectiveTheme()
+        guard theme != lastAppliedTheme else { return }
+        lastAppliedTheme = theme
         BubbleRenderer.shared.applyTheme(theme)
         OnboardingWindowController.applyThemeIfVisible(theme)
     }
+
+    private var lastAppliedTheme: String?
 }
