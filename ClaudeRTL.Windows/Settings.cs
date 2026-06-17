@@ -23,6 +23,7 @@ public sealed class ProcessAppRecord
 {
     public string ProcessName { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
+    public string? ExePath { get; set; }
 }
 
 public sealed class Settings
@@ -151,7 +152,7 @@ public sealed class Settings
         ExcludedProcessesSession.Add(processName.ToLowerInvariant());
     }
 
-    public void ExcludePermanently(string processName, string? displayName = null)
+    public void ExcludePermanently(string processName, string? displayName = null, string? exePath = null)
     {
         processName = processName.ToLowerInvariant();
         if (string.IsNullOrWhiteSpace(processName))
@@ -163,7 +164,8 @@ public sealed class Settings
         ExcludedAppsAlways.Add(new ProcessAppRecord
         {
             ProcessName = processName,
-            DisplayName = displayName ?? processName
+            DisplayName = displayName ?? processName,
+            ExePath = exePath
         });
         Save();
     }
@@ -175,7 +177,7 @@ public sealed class Settings
         Save();
     }
 
-    public void AddIncludedApp(string processName, string displayName)
+    public void AddIncludedApp(string processName, string displayName, string? exePath = null)
     {
         processName = processName.ToLowerInvariant();
         if (string.IsNullOrWhiteSpace(processName))
@@ -187,7 +189,8 @@ public sealed class Settings
         IncludedApps.Add(new ProcessAppRecord
         {
             ProcessName = processName,
-            DisplayName = displayName
+            DisplayName = displayName,
+            ExePath = exePath
         });
         Save();
     }

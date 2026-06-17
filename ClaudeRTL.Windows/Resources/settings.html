@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="fonts.css">
+<style>
+  html[data-theme="dark"], :root {
+    --coral: #D9774E;
+    --coral-text: #E88A60;
+    --coral-nav: #C15F3C;
+    --content-bg: #1A1512;
+    --sidebar-bg: #15110E;
+    --card-bg: #221C17;
+    --card-border: rgba(243,238,226,.07);
+    --text: #F3EEE2;
+    --text-secondary: rgba(243,238,226,.5);
+    --text-muted: rgba(243,238,226,.45);
+    --nav-unselected: rgba(243,238,226,.62);
+    --nav-selected-bg: rgba(217,119,78,.16);
+    --row-divider: rgba(243,238,226,.07);
+    --border-btn: rgba(243,238,226,.18);
+    --segment-track: #15110E;
+    --switch-off: rgba(255,255,255,.12);
+    --destructive: #E0856A;
+    --preview-bg: rgba(255,255,255,.03);
+  }
+  html[data-theme="light"] {
+    --coral: #D9774E;
+    --coral-text: #C15F3C;
+    --coral-nav: #C15F3C;
+    --content-bg: #F3EEE2;
+    --sidebar-bg: #EBE4D6;
+    --card-bg: #FFFFFF;
+    --card-border: rgba(23,17,9,.08);
+    --text: #171109;
+    --text-secondary: rgba(23,17,9,.55);
+    --text-muted: rgba(23,17,9,.45);
+    --nav-unselected: rgba(23,17,9,.62);
+    --nav-selected-bg: #E8D3C0;
+    --row-divider: rgba(23,17,9,.07);
+    --border-btn: rgba(23,17,9,.18);
+    --segment-track: #EBE4D6;
+    --switch-off: rgba(23,17,9,.12);
+    --destructive: #C15F3C;
+    --preview-bg: rgba(23,17,9,.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "IBM Plex Sans Arabic", system-ui, sans-serif;
+    background: var(--content-bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+  .shell { display: flex; height: 100vh; flex-direction: row-reverse; }
+  .sidebar {
+    width: 200px;
+    background: var(--sidebar-bg);
+    border-left: 1px solid rgba(255,255,255,.05);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-header { margin-bottom: 20px; }
+  .app-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--coral); margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: #fff; font-size: 14px;
+  }
+  .app-name { font-size: 15px; font-weight: 600; }
+  .app-version { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 11px; border: none; border-radius: 8px;
+    background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--nav-unselected); text-align: right; width: 100%;
+    transition: background .15s ease;
+  }
+  .nav-btn.selected { background: var(--nav-selected-bg); color: var(--coral-text); }
+  .nav-btn:hover:not(.selected) { background: rgba(255,255,255,.05); }
+  .sidebar-footer { font-size: 11px; color: var(--text-muted); direction: ltr; text-align: center; padding-bottom: 4px; }
+  .content {
+    flex: 1; overflow-y: auto; padding: 24px 28px;
+  }
+  .window-title { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .section-title { font-size: 22px; font-weight: 600; margin-bottom: 18px; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .card-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .row-label { font-size: 14px; font-weight: 500; }
+  .row-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .switch {
+    width: 44px; height: 26px; border-radius: 13px; border: none; cursor: pointer;
+    background: var(--switch-off); position: relative; flex-shrink: 0;
+    transition: background .2s ease;
+  }
+  .switch.on { background: var(--coral); }
+  .switch::after {
+    content: ""; position: absolute; top: 3px; right: 3px;
+    width: 20px; height: 20px; border-radius: 50%; background: #fff;
+    transition: transform .2s ease;
+  }
+  .switch.on::after { transform: translateX(-18px); }
+  .option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 8px; border-radius: 8px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .option:hover { background: rgba(217,119,78,.06); }
+  .option.selected { background: rgba(217,119,78,.09); }
+  .radio {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22);
+    flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center;
+  }
+  html[data-theme="light"] .radio { border-color: rgba(23,17,9,.25); }
+  .option.selected .radio { border-color: var(--coral); }
+  .option.selected .radio::after {
+    content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--coral);
+  }
+  .option-title { font-size: 14px; font-weight: 500; }
+  .option-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .app-list-empty { text-align: center; font-size: 13px; color: var(--text-muted); padding: 8px 0; }
+  .app-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0; border-bottom: 1px solid var(--row-divider);
+  }
+  .app-row:last-child { border-bottom: none; }
+  .app-row img { width: 22px; height: 22px; border-radius: 6px; }
+  .app-row-name { flex: 1; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .icon-btn {
+    width: 28px; height: 28px; border: none; border-radius: 6px;
+    background: transparent; cursor: pointer; color: var(--text-muted);
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,.05); }
+  .add-btn {
+    margin-top: 12px; width: 100%; padding: 9px 14px;
+    border: 1px solid var(--border-btn); border-radius: 8px;
+    background: transparent; color: var(--text); font-family: inherit;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .add-btn:hover { background: rgba(217,119,78,.06); }
+  .segmented {
+    display: flex; background: var(--segment-track); border-radius: 8px; padding: 3px;
+  }
+  .seg-btn {
+    flex: 1; border: none; border-radius: 6px; padding: 7px 10px;
+    font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+    background: transparent; color: var(--text-secondary);
+  }
+  .seg-btn.selected { background: var(--card-bg); color: var(--coral-text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  .slider-row input[type=range] { flex: 1; accent-color: var(--coral); }
+  .slider-val { font-size: 13px; color: var(--text-secondary); min-width: 28px; text-align: center; }
+  .reset-link {
+    border: none; background: none; color: var(--coral-text); font-family: inherit;
+    font-size: 12px; cursor: pointer; padding: 4px 8px;
+  }
+  .preview {
+    margin-top: 12px; padding: 14px 16px; border-radius: 8px;
+    background: var(--preview-bg); border: 1px solid var(--card-border);
+  }
+  .action-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; cursor: pointer; border: none; background: none;
+    width: 100%; font-family: inherit; font-size: 14px; color: var(--text); text-align: right;
+  }
+  .action-row.destructive { color: var(--destructive); }
+  .divider { height: 1px; background: var(--row-divider); }
+  .about-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .about-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--coral); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; }
+  .about-text { font-size: 14px; font-weight: 600; }
+  .about-disclaimer { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  .about-disclaimer a { color: var(--coral-text); text-decoration: none; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .info-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="app-icon">RTL</div>
+      <div class="app-name">Claude RTL</div>
+      <div class="app-version" id="sidebarVersion">الإصدار 1.1.0</div>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn selected" data-section="where">▦ أين يعمل</button>
+      <button class="nav-btn" data-section="appearance">◐ المظهر</button>
+      <button class="nav-btn" data-section="general">⚙ عام</button>
+    </nav>
+    <div class="sidebar-footer" id="footerYear">© GRW Lab</div>
+  </aside>
+  <main class="content">
+    <div class="window-title">الإعدادات</div>
+    <h1 class="section-title" id="sectionHeading">أين يعمل</h1>
+
+    <div class="panel active" id="panel-where">
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="row-label">تفعيل Claude RTL</div>
+            <div class="row-desc">إظهار التصحيح عند نسخ نص عربي</div>
+          </div>
+          <button class="switch" id="enabledSwitch" aria-label="تفعيل"></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">وضع التشغيل</div>
+        <div id="modeOptions"></div>
+      </div>
+      <div class="card" id="contextCard"></div>
+    </div>
+
+    <div class="panel" id="panel-appearance">
+      <div class="card">
+        <div class="card-label">السمة</div>
+        <div class="segmented" id="themeSegment"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">حجم خط الفقاعة</div>
+        <div class="slider-row">
+          <input type="range" id="fontSlider" min="12" max="24" step="1">
+          <span class="slider-val" id="fontVal">16</span>
+          <button class="reset-link" id="fontReset">إعادة تعيين</button>
+        </div>
+        <div class="preview">
+          <div id="fontPreview" style="font-size:16px">معاينة: السلام عليكم ورحمة الله</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-general">
+      <div class="card">
+        <div class="row">
+          <div class="row-label">تشغيل عند بدء النظام</div>
+          <button class="switch" id="loginSwitch" aria-label="تشغيل عند بدء النظام"></button>
+        </div>
+      </div>
+      <div class="card">
+        <button class="action-row" id="showOnboardingBtn">إعادة عرض الشرح</button>
+        <div class="divider"></div>
+        <button class="action-row destructive" id="resetAllBtn">إعادة تعيين كل الإعدادات</button>
+      </div>
+      <div class="card">
+        <div class="about-row">
+          <div class="about-icon">RTL</div>
+          <div class="about-text" id="aboutVersion">Claude RTL — الإصدار 1.1.0</div>
+        </div>
+        <p class="about-disclaimer">
+          Claude RTL أداة مستقلة لتحسين قراءة النص العربي — ليست منتجًا رسميًا من Anthropic.
+          <a href="#" id="grwLink">grwlab.net</a>
+        </p>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  const MODES = [
+    { id: "AllApps", title: "كل التطبيقات", sub: "يعمل في أي تطبيق على جهازك" },
+    { id: "ClaudeOnly", title: "Claude فقط", sub: "يظهر داخل تطبيق Claude فقط" },
+    { id: "CustomList", title: "قائمة مخصّصة", sub: "تطبيقات محددة فقط" }
+  ];
+  const THEMES = [
+    { id: "Auto", label: "تلقائي" },
+    { id: "Light", label: "فاتح" },
+    { id: "Dark", label: "داكن" }
+  ];
+  let state = {};
+
+  function sendToHost(msg) {
+    if (window.chrome && window.chrome.webview)
+      window.chrome.webview.postMessage(msg);
+  }
+  function bridge(msg) { sendToHost(msg); }
+
+  window.setTheme = function(theme) {
+    document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+  };
+
+  function setSwitch(el, on) {
+    el.classList.toggle("on", !!on);
+  }
+
+  function renderModes() {
+    const box = document.getElementById("modeOptions");
+    box.innerHTML = MODES.map(m => `
+      <div class="option ${state.triggerMode === m.id ? "selected" : ""}" data-mode="${m.id}">
+        <div class="radio"></div>
+        <div>
+          <div class="option-title">${m.title}</div>
+          <div class="option-sub">${m.sub}</div>
+        </div>
+      </div>`).join("");
+    box.querySelectorAll(".option").forEach(el => {
+      el.addEventListener("click", () => {
+        const mode = el.dataset.mode;
+        state.triggerMode = mode;
+        bridge({ action: "setMode", mode });
+        renderModes();
+        renderContext();
+      });
+    });
+  }
+
+  function renderAppList(apps, emptyMsg, listType) {
+    if (!apps || !apps.length)
+      return `<div class="app-list-empty">${emptyMsg}</div>`;
+    return apps.map(a => `
+      <div class="app-row">
+        ${a.iconBase64 ? `<img src="data:image/png;base64,${a.iconBase64}" alt="">` : `<div class="about-icon" style="width:22px;height:22px;font-size:9px">App</div>`}
+        <span class="app-row-name">${escapeHtml(a.displayName || a.processName)}</span>
+        <button class="icon-btn" data-remove="${a.processName}" data-list="${listType}" title="إزالة">🗑</button>
+      </div>`).join("");
+  }
+
+  function renderContext() {
+    const card = document.getElementById("contextCard");
+    if (state.triggerMode === "ClaudeOnly") {
+      card.innerHTML = `<p class="info-text">يعمل Claude RTL داخل تطبيق Claude فقط — لا حاجة لإدارة قائمة تطبيقات.</p>`;
+      return;
+    }
+    if (state.triggerMode === "AllApps") {
+      card.innerHTML = `
+        <div class="card-label">التطبيقات المستثناة</div>
+        ${renderAppList(state.excludedApps, "لا توجد تطبيقات مستثناة بعد", "excluded")}
+        <button class="add-btn" id="addExcludedBtn">إضافة تطبيق…</button>`;
+      document.getElementById("addExcludedBtn").onclick = () => bridge({ action: "addExcluded" });
+    } else {
+      card.innerHTML = `
+        <div class="card-label">التطبيقات المسموح بها</div>
+        ${renderAppList(state.includedApps, "لا توجد تطبيقات مسموح بها بعد", "included")}
+        <button class="add-btn" id="addIncludedBtn">إضافة تطبيق…</button>`;
+      document.getElementById("addIncludedBtn").onclick = () => bridge({ action: "addIncluded" });
+    }
+    card.querySelectorAll("[data-remove]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const process = btn.dataset.remove;
+        const list = btn.dataset.list;
+        bridge({ action: list === "excluded" ? "removeExcluded" : "removeIncluded", process });
+      });
+    });
+  }
+
+  function renderThemeSegment() {
+    const box = document.getElementById("themeSegment");
+    box.innerHTML = THEMES.map(t => `
+      <button class="seg-btn ${state.themeMode === t.id ? "selected" : ""}" data-theme="${t.id}">${t.label}</button>
+    `).join("");
+    box.querySelectorAll(".seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.themeMode = btn.dataset.theme;
+        bridge({ action: "setTheme", theme: state.themeMode });
+        renderThemeSegment();
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  window.applyState = function(next) {
+    state = next || {};
+    document.getElementById("sidebarVersion").textContent = "الإصدار " + (state.version || "1.1.0");
+    document.getElementById("aboutVersion").textContent = "Claude RTL — الإصدار " + (state.version || "1.1.0");
+    document.getElementById("footerYear").textContent = "© " + new Date().getFullYear() + " GRW Lab";
+    setSwitch(document.getElementById("enabledSwitch"), state.isEnabled);
+    setSwitch(document.getElementById("loginSwitch"), state.launchAtLogin);
+    const slider = document.getElementById("fontSlider");
+    slider.value = state.fontSize || 16;
+    document.getElementById("fontVal").textContent = state.fontSize || 16;
+    document.getElementById("fontPreview").style.fontSize = (state.fontSize || 16) + "px";
+    renderModes();
+    renderContext();
+    renderThemeSegment();
+  };
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      const section = btn.dataset.section;
+      const titles = { where: "أين يعمل", appearance: "المظهر", general: "عام" };
+      document.getElementById("sectionHeading").textContent = titles[section];
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      document.getElementById("panel-" + section).classList.add("active");
+    });
+  });
+
+  document.getElementById("enabledSwitch").addEventListener("click", function() {
+    state.isEnabled = !state.isEnabled;
+    setSwitch(this, state.isEnabled);
+    bridge({ action: "setEnabled", enabled: state.isEnabled });
+  });
+  document.getElementById("loginSwitch").addEventListener("click", function() {
+    state.launchAtLogin = !state.launchAtLogin;
+    setSwitch(this, state.launchAtLogin);
+    bridge({ action: "setLaunchAtLogin", enabled: state.launchAtLogin });
+  });
+  document.getElementById("fontSlider").addEventListener("input", function() {
+    state.fontSize = Number(this.value);
+    document.getElementById("fontVal").textContent = this.value;
+    document.getElementById("fontPreview").style.fontSize = this.value + "px";
+    bridge({ action: "setFontSize", size: state.fontSize });
+  });
+  document.getElementById("fontReset").addEventListener("click", () => bridge({ action: "setFontSize", size: 16 }));
+  document.getElementById("showOnboardingBtn").addEventListener("click", () => bridge({ action: "showOnboarding" }));
+  document.getElementById("resetAllBtn").addEventListener("click", () => {
+    if (confirm("إعادة تعيين كل الإعدادات؟\n\nسيتم إرجاع الوضع إلى «كل التطبيقات»، وتفريغ القوائم، وحجم الخط 16، والمظهر تلقائي.\nلن يتغيّر «تشغيل عند بدء النظام»."))
+      bridge({ action: "resetAll" });
+  });
+  document.getElementById("grwLink").addEventListener("click", e => {
+    e.preventDefault();
+    bridge({ action: "openUrl", url: "https://grwlab.net" });
+  });
+
+  bridge({ action: "ready" });
+</script>
+</body>
+</html>

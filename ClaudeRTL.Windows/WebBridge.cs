@@ -84,4 +84,19 @@ internal sealed class BridgeMessage
 
     [JsonPropertyName("bundleId")]
     public string? BundleId { get; set; }
+
+    [JsonPropertyName("enabled")]
+    public bool? Enabled { get; set; }
+
+    [JsonPropertyName("mode")]
+    public string? Mode { get; set; }
+
+    [JsonPropertyName("theme")]
+    public string? Theme { get; set; }
+
+    [JsonPropertyName("size")]
+    public double? Size { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
 }
