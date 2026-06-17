@@ -45,7 +45,6 @@ public sealed class SettingsWindow : Window
         MinWidth = 560;
         MinHeight = 460;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        FlowDirection = FlowDirection.RightToLeft;
         Content = _webView;
         Loaded += async (_, _) => await InitializeWebViewAsync();
     }

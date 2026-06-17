@@ -52,12 +52,18 @@
     height: 100vh;
     overflow: hidden;
   }
-  .shell { display: flex; height: 100vh; flex-direction: row-reverse; }
+  .shell {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    direction: rtl;
+  }
   .sidebar {
-    width: 200px;
+    width: 190px;
+    flex-shrink: 0;
     background: var(--sidebar-bg);
-    border-left: 1px solid rgba(255,255,255,.05);
-    padding: 20px 14px;
+    border-inline-start: 1px solid rgba(255,255,255,.05);
+    padding: 30px 12px 14px;
     display: flex;
     flex-direction: column;
   }
