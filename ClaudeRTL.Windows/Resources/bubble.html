@@ -468,12 +468,25 @@
             APP_NAME = "",
             APP_BUNDLE = "";
 
+        // Reliable JS -> C# channel: queue actions; C# drains them via ExecuteScriptAsync.
+        // postMessage is unreliable inside an AllowsTransparency WebView2 window, so we avoid it.
+        window.__pendingActions = [];
+
         function sendToHost(msg) {
-            if (window.chrome && window.chrome.webview)
-                window.chrome.webview.postMessage(msg);
-            else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.bridge)
-                window.webkit.messageHandlers.bridge.postMessage(msg);
+            window.__pendingActions.push(msg);
         }
+
+        window.__drainActions = function() {
+            var a = window.__pendingActions;
+            window.__pendingActions = [];
+            return a;
+        };
+
+        window.measureBubble = function() {
+            var wrap = document.querySelector(".wrap");
+            if (!wrap) return { w: 0, h: 0 };
+            return { w: Math.ceil(wrap.scrollWidth), h: Math.ceil(wrap.scrollHeight) };
+        };
 
         function bridge(msg) {
             sendToHost(msg);

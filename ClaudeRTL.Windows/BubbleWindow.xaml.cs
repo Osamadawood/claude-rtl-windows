@@ -1,4 +1,6 @@
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -32,6 +34,15 @@ public partial class BubbleWindow : Window
     private double? _pendingResizeWidth;
     private double? _pendingResizeHeight;
     private BubbleDismissMonitor? _dismissMonitor;
+    private DispatcherTimer? _actionPump;
+    private bool _pumpBusy;
+    private double _lastMeasuredWidth;
+    private double _lastMeasuredHeight;
+
+    private static readonly JsonSerializerOptions BridgeJsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public BubbleWindow(ApplicationCoordinator coordinator)
     {
@@ -152,6 +163,8 @@ public partial class BubbleWindow : Window
                 _pendingProcessName = processName ?? string.Empty;
                 _pendingResizeWidth = null;
                 _pendingResizeHeight = null;
+                _lastMeasuredWidth = 0;
+                _lastMeasuredHeight = 0;
 
                 ApplyInitialWindowSize();
 
@@ -176,7 +189,111 @@ public partial class BubbleWindow : Window
     {
         Show();
         _dismissMonitor?.Start();
+        StartActionPump();
         Dispatcher.BeginInvoke(FocusWebViewIfReady, DispatcherPriority.Loaded);
+    }
+
+    private void StartActionPump()
+    {
+        if (_actionPump is null)
+        {
+            _actionPump = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(100)
+            };
+            _actionPump.Tick += async (_, _) => await PumpAsync();
+        }
+
+        _actionPump.Start();
+    }
+
+    private void StopActionPump() => _actionPump?.Stop();
+
+    private async Task PumpAsync()
+    {
+        if (_pumpBusy)
+            return;
+
+        if (!_isReady || WebView.CoreWebView2 is null || !IsVisible)
+            return;
+
+        _pumpBusy = true;
+        try
+        {
+            await DrainActionsAsync();
+            await MeasureAndApplyAsync();
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.Pump", ex);
+        }
+        finally
+        {
+            _pumpBusy = false;
+        }
+    }
+
+    private async Task DrainActionsAsync()
+    {
+        if (WebView.CoreWebView2 is null)
+            return;
+
+        var json = await WebView.CoreWebView2.ExecuteScriptAsync(
+            "window.__drainActions ? window.__drainActions() : []");
+
+        if (string.IsNullOrEmpty(json) || json == "null")
+            return;
+
+        BridgeMessage[]? actions;
+        try
+        {
+            actions = JsonSerializer.Deserialize<BridgeMessage[]>(json, BridgeJsonOptions);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (actions is null)
+            return;
+
+        foreach (var action in actions)
+        {
+            if (action?.Action is not null)
+                HandleAction(action);
+        }
+    }
+
+    private async Task MeasureAndApplyAsync()
+    {
+        if (WebView.CoreWebView2 is null)
+            return;
+
+        var json = await WebView.CoreWebView2.ExecuteScriptAsync(
+            "window.measureBubble ? window.measureBubble() : null");
+
+        if (string.IsNullOrEmpty(json) || json == "null")
+            return;
+
+        MeasureResult? measure;
+        try
+        {
+            measure = JsonSerializer.Deserialize<MeasureResult>(json, BridgeJsonOptions);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (measure is null || measure.W <= 0 || measure.H <= 0)
+            return;
+
+        if (Math.Abs(measure.W - _lastMeasuredWidth) < 1 && Math.Abs(measure.H - _lastMeasuredHeight) < 1)
+            return;
+
+        _lastMeasuredWidth = measure.W;
+        _lastMeasuredHeight = measure.H;
+        ApplyResize(measure.W, measure.H);
     }
 
     private void FocusWebViewIfReady()
@@ -208,6 +325,8 @@ public partial class BubbleWindow : Window
                 _arrowBelow,
                 appName ?? string.Empty,
                 processName ?? string.Empty);
+
+            await MeasureAndApplyAsync();
         }
         catch (Exception ex)
         {
@@ -243,6 +362,7 @@ public partial class BubbleWindow : Window
                 _isHiding = true;
                 _speech.Stop();
                 _dismissMonitor?.Stop();
+                StopActionPump();
                 Hide();
                 _isHiding = false;
             }
@@ -253,40 +373,39 @@ public partial class BubbleWindow : Window
         });
     }
 
-    private void OnBridgeMessage(BridgeMessage message)
+    private void OnBridgeMessage(BridgeMessage message) => RunOnUiThread(() => HandleAction(message));
+
+    private void HandleAction(BridgeMessage message)
     {
-        RunOnUiThread(() =>
+        try
         {
-            try
+            switch (message.Action)
             {
-                switch (message.Action)
-                {
-                    case "copy":
-                        if (!string.IsNullOrEmpty(message.Text))
-                        {
-                            System.Windows.Clipboard.SetText(message.Text);
-                            _coordinator.NoteAppClipboardWrite();
-                        }
-                        break;
-                    case "speak":
-                        _speech.Toggle(message.Text ?? string.Empty);
-                        break;
-                    case "close":
-                        HideBubble();
-                        break;
-                    case "resize":
-                        QueueOrApplyResize(message.Width ?? message.W, message.Height ?? message.H);
-                        break;
-                    case "disableApp":
-                        HandleDisableApp(message);
-                        break;
-                }
+                case "copy":
+                    if (!string.IsNullOrEmpty(message.Text))
+                    {
+                        System.Windows.Clipboard.SetText(message.Text);
+                        _coordinator.NoteAppClipboardWrite();
+                    }
+                    break;
+                case "speak":
+                    _speech.Toggle(message.Text ?? string.Empty);
+                    break;
+                case "close":
+                    HideBubble();
+                    break;
+                case "resize":
+                    QueueOrApplyResize(message.Width ?? message.W, message.Height ?? message.H);
+                    break;
+                case "disableApp":
+                    HandleDisableApp(message);
+                    break;
             }
-            catch (Exception ex)
-            {
-                CrashLogger.Log("BubbleWindow.OnBridgeMessage", ex);
-            }
-        });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.HandleAction", ex);
+        }
     }
 
     private void HandleDisableApp(BridgeMessage message)
@@ -369,8 +488,10 @@ public partial class BubbleWindow : Window
 
             var maxHeightDip = Math.Max(MinBubbleHeight, Math.Floor(workHeightDip * MaxHeightScreenFraction));
 
-            var widthDip = Math.Clamp(width / scale, MinBubbleWidth, MaxBubbleWidth);
-            var heightDip = Math.Clamp(height / scale, MinBubbleHeight, maxHeightDip);
+            // WebView2 CSS pixels map 1:1 to WPF DIPs — do NOT divide by DPI scale here,
+            // otherwise the bubble is shrunk on high-DPI displays and the text is clipped.
+            var widthDip = Math.Clamp(width, MinBubbleWidth, MaxBubbleWidth);
+            var heightDip = Math.Clamp(height, MinBubbleHeight, maxHeightDip);
 
             var previousArrowBelow = _arrowBelow;
             Width = widthDip;
@@ -554,14 +675,25 @@ public partial class BubbleWindow : Window
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             var exStyle = Win32Interop.GetWindowLong(hwnd, Win32Interop.GWL_EXSTYLE);
+            // Keep it off the taskbar/alt-tab, but DO allow activation on click so the
+            // WebView2 reliably receives button clicks (NOACTIVATE can swallow input).
             Win32Interop.SetWindowLong(
                 hwnd,
                 Win32Interop.GWL_EXSTYLE,
-                exStyle | Win32Interop.WS_EX_NOACTIVATE | Win32Interop.WS_EX_TOOLWINDOW);
+                exStyle | Win32Interop.WS_EX_TOOLWINDOW);
         }
         catch (Exception ex)
         {
             CrashLogger.Log("BubbleWindow.OnSourceInitialized", ex);
         }
+    }
+
+    private sealed class MeasureResult
+    {
+        [JsonPropertyName("w")]
+        public double W { get; set; }
+
+        [JsonPropertyName("h")]
+        public double H { get; set; }
     }
 }
