@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
@@ -30,15 +31,21 @@ public partial class BubbleWindow : Window
     private bool _isHiding;
     private double? _pendingResizeWidth;
     private double? _pendingResizeHeight;
+    private BubbleDismissMonitor? _dismissMonitor;
 
     public BubbleWindow(ApplicationCoordinator coordinator)
     {
         _coordinator = coordinator;
         InitializeComponent();
         PrepareWebViewDefaultBackground();
+        _dismissMonitor = new BubbleDismissMonitor(this);
         Deactivated += (_, _) => HideBubble();
         Loaded += async (_, _) => await InitializeWebViewAsync();
-        Closed += (_, _) => _speech.Dispose();
+        Closed += (_, _) =>
+        {
+            _dismissMonitor?.Dispose();
+            _speech.Dispose();
+        };
 
         _speech.SpeakingChanged += async speaking =>
         {
@@ -88,6 +95,7 @@ public partial class BubbleWindow : Window
 
             await WebView.EnsureCoreWebView2Async(environment);
             TryEnableTransparentWebViewBackgroundAfterInit();
+            WebView.CoreWebView2.Settings.IsWebMessageEnabled = true;
 
             _bridge = new WebBridge(WebView);
             _bridge.MessageReceived += OnBridgeMessage;
@@ -167,7 +175,7 @@ public partial class BubbleWindow : Window
     private void ShowBubbleWindow()
     {
         Show();
-        Activate();
+        _dismissMonitor?.Start();
         Dispatcher.BeginInvoke(FocusWebViewIfReady, DispatcherPriority.Loaded);
     }
 
@@ -234,6 +242,7 @@ public partial class BubbleWindow : Window
 
                 _isHiding = true;
                 _speech.Stop();
+                _dismissMonitor?.Stop();
                 Hide();
                 _isHiding = false;
             }
@@ -535,5 +544,24 @@ public partial class BubbleWindow : Window
             return;
 
         Clip = new RectangleGeometry(new Rect(0, 0, Width, Height), BubbleCornerRadius, BubbleCornerRadius);
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        try
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            var exStyle = Win32Interop.GetWindowLong(hwnd, Win32Interop.GWL_EXSTYLE);
+            Win32Interop.SetWindowLong(
+                hwnd,
+                Win32Interop.GWL_EXSTYLE,
+                exStyle | Win32Interop.WS_EX_NOACTIVATE | Win32Interop.WS_EX_TOOLWINDOW);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.OnSourceInitialized", ex);
+        }
     }
 }
