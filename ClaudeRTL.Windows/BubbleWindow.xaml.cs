@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 
 namespace ClaudeRTL;
 
@@ -15,6 +16,7 @@ public partial class BubbleWindow : Window
     private const double MaxBubbleWidth = 520;
     private const double MinBubbleHeight = 64;
     private const double MaxHeightScreenFraction = 0.70;
+    private const double BubbleCornerRadius = 18;
 
     private readonly ApplicationCoordinator _coordinator;
     private readonly SpeechService _speech = new();
@@ -33,6 +35,7 @@ public partial class BubbleWindow : Window
     {
         _coordinator = coordinator;
         InitializeComponent();
+        PrepareWebViewDefaultBackground();
         Deactivated += (_, _) => HideBubble();
         Loaded += async (_, _) => await InitializeWebViewAsync();
         Closed += (_, _) => _speech.Dispose();
@@ -75,6 +78,8 @@ public partial class BubbleWindow : Window
             var resourcesDir = Path.Combine(AppContext.BaseDirectory, "Resources");
             Directory.CreateDirectory(resourcesDir);
 
+            PrepareWebViewDefaultBackground();
+
             var environment = await CoreWebView2Environment.CreateAsync(
                 userDataFolder: Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -82,8 +87,7 @@ public partial class BubbleWindow : Window
                     "WebView2"));
 
             await WebView.EnsureCoreWebView2Async(environment);
-            // Do not set DefaultBackgroundColor with alpha < 255 — crashes some WebView2 Runtime builds.
-            // Bubble transparency: WPF AllowsTransparency + bubble.html (body/wrap transparent, .bubble opaque).
+            TryEnableTransparentWebViewBackgroundAfterInit();
 
             _bridge = new WebBridge(WebView);
             _bridge.MessageReceived += OnBridgeMessage;
@@ -210,6 +214,7 @@ public partial class BubbleWindow : Window
 
         try
         {
+            TryUpdateWebViewBackgroundForTheme(ThemeManager.Instance.EffectiveTheme());
             await _bridge.SetThemeAsync(ThemeManager.Instance.EffectiveTheme());
         }
         catch (Exception ex)
@@ -340,6 +345,7 @@ public partial class BubbleWindow : Window
         Width = MinBubbleWidth;
         Height = MinBubbleHeight;
         SetWindowPosition(new System.Windows.Size(Width, Height));
+        UpdateRoundedWindowClip();
     }
 
     private void ApplyResize(double width, double height)
@@ -361,6 +367,7 @@ public partial class BubbleWindow : Window
             Width = widthDip;
             Height = heightDip;
             SetWindowPosition(new System.Windows.Size(Width, Height));
+            UpdateRoundedWindowClip();
 
             if (_arrowBelow != previousArrowBelow && _bridge is not null)
                 _ = _bridge.SetArrowBelowAsync(_arrowBelow);
@@ -453,5 +460,80 @@ public partial class BubbleWindow : Window
         }
 
         return 1.0;
+    }
+
+    private void PrepareWebViewDefaultBackground()
+    {
+        try
+        {
+            // Always opaque before EnsureCoreWebView2Async — WPF WebView2 defaults to transparent,
+            // which crashes some runtimes when the controller applies DefaultBackgroundColor.
+            WebView.DefaultBackgroundColor = GetOpaqueBackgroundForTheme(ThemeManager.Instance.EffectiveTheme());
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.DefaultBackgroundColor", ex);
+            TryApplyFallbackOpaqueBackground();
+        }
+    }
+
+    private void TryEnableTransparentWebViewBackgroundAfterInit()
+    {
+        if (!WebView2Capabilities.SupportsTransparentBackground())
+            return;
+
+        try
+        {
+            WebView.DefaultBackgroundColor = System.Drawing.Color.FromArgb(0, 0, 0, 0);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.DefaultBackgroundColor.Transparent", ex);
+        }
+    }
+
+    private void TryUpdateWebViewBackgroundForTheme(string theme)
+    {
+        if (WebView.CoreWebView2 is null)
+            return;
+
+        if (WebView.DefaultBackgroundColor.A == 0)
+            return;
+
+        try
+        {
+            WebView.DefaultBackgroundColor = GetOpaqueBackgroundForTheme(theme);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.Log("BubbleWindow.DefaultBackgroundColor.Theme", ex);
+        }
+    }
+
+    private static void TryApplyFallbackOpaqueBackground(WebView2 webView)
+    {
+        try
+        {
+            webView.DefaultBackgroundColor = System.Drawing.Color.FromArgb(255, 255, 255, 255);
+        }
+        catch
+        {
+            // Ignore secondary failure.
+        }
+    }
+
+    private void TryApplyFallbackOpaqueBackground() => TryApplyFallbackOpaqueBackground(WebView);
+
+    private static System.Drawing.Color GetOpaqueBackgroundForTheme(string theme) =>
+        theme == "light"
+            ? System.Drawing.Color.FromArgb(255, 243, 238, 226)
+            : System.Drawing.Color.FromArgb(255, 23, 17, 9);
+
+    private void UpdateRoundedWindowClip()
+    {
+        if (Width <= 0 || Height <= 0)
+            return;
+
+        Clip = new RectangleGeometry(new Rect(0, 0, Width, Height), BubbleCornerRadius, BubbleCornerRadius);
     }
 }
