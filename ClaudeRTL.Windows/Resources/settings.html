@@ -272,6 +272,14 @@
         </div>
       </div>
       <div class="card">
+        <div class="row">
+          <div class="row-label">التحقق التلقائي من التحديثات</div>
+          <button class="switch" id="updatesSwitch" aria-label="التحقق التلقائي من التحديثات"></button>
+        </div>
+        <div class="divider"></div>
+        <button class="action-row" id="checkUpdatesBtn">التحقق من وجود تحديثات الآن</button>
+      </div>
+      <div class="card">
         <button class="action-row" id="showOnboardingBtn">إعادة عرض الشرح</button>
         <div class="divider"></div>
         <button class="action-row destructive" id="resetAllBtn">إعادة تعيين كل الإعدادات</button>
@@ -401,6 +409,7 @@
     document.getElementById("footerYear").textContent = "© " + new Date().getFullYear() + " GRW Lab";
     setSwitch(document.getElementById("enabledSwitch"), state.isEnabled);
     setSwitch(document.getElementById("loginSwitch"), state.launchAtLogin);
+    setSwitch(document.getElementById("updatesSwitch"), state.autoCheckForUpdates !== false);
     const slider = document.getElementById("fontSlider");
     slider.value = state.fontSize || 16;
     document.getElementById("fontVal").textContent = state.fontSize || 16;
@@ -432,6 +441,12 @@
     setSwitch(this, state.launchAtLogin);
     bridge({ action: "setLaunchAtLogin", enabled: state.launchAtLogin });
   });
+  document.getElementById("updatesSwitch").addEventListener("click", function() {
+    state.autoCheckForUpdates = !state.autoCheckForUpdates;
+    setSwitch(this, state.autoCheckForUpdates);
+    bridge({ action: "setAutoUpdates", enabled: state.autoCheckForUpdates });
+  });
+  document.getElementById("checkUpdatesBtn").addEventListener("click", () => bridge({ action: "checkForUpdates" }));
   document.getElementById("fontSlider").addEventListener("input", function() {
     state.fontSize = Number(this.value);
     document.getElementById("fontVal").textContent = this.value;

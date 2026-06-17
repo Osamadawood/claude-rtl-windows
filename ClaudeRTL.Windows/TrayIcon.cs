@@ -39,12 +39,16 @@ public sealed class TrayIcon : IDisposable
         var settingsItem = new MenuItem { Header = "الإعدادات…" };
         settingsItem.Click += (_, _) => SettingsWindow.Open();
 
+        var checkUpdatesItem = new MenuItem { Header = "تحقق من التحديثات…" };
+        checkUpdatesItem.Click += (_, _) => UpdateService.CheckNow();
+
         var quitItem = new MenuItem { Header = "خروج" };
         quitItem.Click += (_, _) => System.Windows.Application.Current.Shutdown();
 
         contextMenu.Items.Add(settingsItem);
         contextMenu.Items.Add(_excludeAppItem);
         contextMenu.Items.Add(new Separator());
+        contextMenu.Items.Add(checkUpdatesItem);
         contextMenu.Items.Add(quitItem);
 
         _taskbarIcon = new TaskbarIcon

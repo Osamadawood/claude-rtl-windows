@@ -37,6 +37,8 @@ public partial class App : System.Windows.Application
         _coordinator.Start();
         _trayIcon = new TrayIcon();
 
+        UpdateService.Initialize();
+
         if (!Settings.Instance.DidOnboard)
         {
             OnboardingWindow.ShowIfNeeded();
@@ -50,6 +52,7 @@ public partial class App : System.Windows.Application
     protected override void OnExit(ExitEventArgs e)
     {
         Settings.Instance.Save();
+        UpdateService.Shutdown();
         _coordinator?.Dispose();
         ThemeManager.Instance.Dispose();
         SingleInstanceManager.Dispose();

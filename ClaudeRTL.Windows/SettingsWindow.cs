@@ -144,6 +144,17 @@ public sealed class SettingsWindow : Window
                     Settings.Instance.SetLaunchAtLogin(launch);
                 await PushStateAsync();
                 break;
+            case "setAutoUpdates":
+                if (message.Enabled is bool autoUpdates)
+                {
+                    Settings.Instance.AutoCheckForUpdates = autoUpdates;
+                    Settings.Instance.Save();
+                    UpdateService.SetAutomaticCheck(autoUpdates);
+                }
+                break;
+            case "checkForUpdates":
+                UpdateService.CheckNow();
+                break;
             case "showOnboarding":
                 OnboardingWindow.Open();
                 break;
@@ -230,6 +241,7 @@ public sealed class SettingsWindow : Window
             themeMode = Settings.Instance.ThemeMode.ToString(),
             fontSize = Settings.Instance.FontSize,
             launchAtLogin = Settings.Instance.LaunchAtLogin,
+            autoCheckForUpdates = Settings.Instance.AutoCheckForUpdates,
             version = Settings.VersionLabel(),
             excludedApps = Settings.Instance.ExcludedAppsAlways.Select(MapApp).ToList(),
             includedApps = Settings.Instance.IncludedApps.Select(MapApp).ToList()
